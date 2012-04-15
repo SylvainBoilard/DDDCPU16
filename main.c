@@ -4,18 +4,41 @@
 #include "opcodes.h"
 #include "values.h"
 
+unsigned int lil_end()
+{
+    unsigned int test = 0x00000001;
+    return *(unsigned char *)&test;
+}
+
 int main(int argc, char* argv[])
 {
-    if (argc > 1)
+    FILE* ram_img;
+
+    if (argc == 1)
     {
-	FILE* fichier = fopen(argv[1], "rb");
-	if (!fichier)
+	printf("You must specify a RAM image to load.\n");
+	return 1;
+    }
+
+    ram_img = fopen(argv[1], "rb");
+    if (!ram_img)
+    {
+	printf("Cannot open %s\n.", argv[1]);
+	return 1;
+    }
+    fread(memory, 1, 0x20000, ram_img);
+    fclose(ram_img);
+    if (lil_end())
+    {
+	unsigned char temp;
+	unsigned char* raw_mem = (unsigned char*)memory;
+	unsigned int i;
+	for (i = 0; i < 0x20000; i += 2)
 	{
-	    printf("Impossible d’ouvrir %s.", argv[1]);
-	    return 1;
+	    temp = raw_mem[i];
+	    raw_mem[i] = raw_mem[i + 1];
+	    raw_mem[i + 1] = temp;
 	}
-	fread(memory, 2, 0x10000, fichier);
-	fclose(fichier);
     }
 
     while (1)
