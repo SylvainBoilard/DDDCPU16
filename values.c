@@ -12,7 +12,7 @@ unsigned short* regad(unsigned short v)
 
 unsigned short* nwreg(unsigned short v)
 {
-    return memory + PC++ + registers[v & 0x0007];
+    return memory + ((memory[PC++] + registers[v & 0x0007]) & 0xFFFF);
 }
 
 unsigned short* adv(unsigned short v)
