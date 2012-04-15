@@ -4,7 +4,7 @@
 #include "opcodes.h"
 #include "values.h"
 
-unsigned int lil_end()
+static unsigned int lil_end()
 {
     unsigned int test = 0x00000001;
     return *(unsigned char *)&test;

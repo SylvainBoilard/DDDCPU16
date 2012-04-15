@@ -2,42 +2,42 @@
 
 #include <stdio.h>
 
-unsigned short* pop(void)
+static unsigned short* pop(void)
 {
     return memory + SP++;
 }
 
-unsigned short* peek(void)
+static unsigned short* peek(void)
 {
     return memory + SP;
 }
 
-unsigned short* push(void)
+static unsigned short* push(void)
 {
     return memory + --SP;
 }
 
-unsigned short* sp(void)
+static unsigned short* sp(void)
 {
     return &SP;
 }
 
-unsigned short* pc(void)
+static unsigned short* pc(void)
 {
     return &PC;
 }
 
-unsigned short* o(void)
+static unsigned short* o(void)
 {
     return &O;
 }
 
-unsigned short* nwad(void)
+static unsigned short* nwad(void)
 {
     return memory + memory[PC++];
 }
 
-unsigned short* nw(void)
+static unsigned short* nw(void)
 {
     static unsigned short value;
     value = memory[PC++];
