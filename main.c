@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
 {
     if (argc > 1)
     {
-	FILE* fichier = fopen(argv[1], "r");
+	FILE* fichier = fopen(argv[1], "rb");
 	if (!fichier)
 	{
 	    printf("Impossible d’ouvrir %s.", argv[1]);
