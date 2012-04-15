@@ -23,10 +23,13 @@ int main(int argc, char* argv[])
 	unsigned short o = memory[PC] & 0x000F;
 	unsigned short a = memory[PC] >> 4 & 0x003F;
 	unsigned short b = memory[PC] >> 10;
-	++PC;
+	unsigned short* va, * vb;
 
-	opcodes[o](values[a >> 3](a), values[b >> 3](b));
+	++PC;
+	va = values[a >> 3](a);
+	vb = values[b >> 3](b);
+	opcodes[o](va, vb);
     }
-    
+
     return 0;
 }
