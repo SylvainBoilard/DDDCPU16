@@ -1,12 +1,24 @@
 #!/bin/bash
 
 CC="gcc"
-FLAGS="-g -ansi -pedantic"
+FLAGS="-ansi -pedantic"
 
-for fichier in *.c ; do
-    $CC -c $fichier $FLAGS
-    if [ $? != 0 ] ; then
-	echo Échec lors de la compilation. Arrêt.
+if [ "$1" = "debug" ] ; then
+    FLAGS="$FLAGS -pg"
+else
+    FLAGS="$FLAGS -s -O2"
+fi
+
+LINK=1
+
+for file in *.c ; do
+    $CC -c $file $FLAGS
+    if [ $? -ne 0 ] ; then
+	echo $file : compilation failed.
+	LINK=0
     fi
 done
-gcc *.o -o DCPU16
+
+if [ $LINK -eq 1 ] ; then
+    gcc *.o -o DCPU16
+fi
