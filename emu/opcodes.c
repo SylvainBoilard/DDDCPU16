@@ -1,6 +1,7 @@
 #include "opcodes.h"
 
-#define RNW(op) (op & 0xf0 == 0x10) && (!(op & 0x08) || (op & 0x06 == 0x06))
+/* This macro checks if the given value reads a word. */
+#define VRW(op) (op & 0x30 == 0x10) && (!(op & 0x08) || (op & 0x06 == 0x06))
 
 static void nbi(unsigned short* a, unsigned short* b)
 {
@@ -85,25 +86,25 @@ static void xor(unsigned short* a, unsigned short* b)
 static void ife(unsigned short* a, unsigned short* b)
 {
     if (*a != *b)
-	PC += RNW(memory[PC] >> 4 & 0x3F) + RNW(memory[PC] >> 10) + 1;
+	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
 }
 
 static void ifn(unsigned short* a, unsigned short* b)
 {
     if (*a == *b)
-	PC += RNW(memory[PC] >> 4 & 0x3F) + RNW(memory[PC] >> 10) + 1;
+	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
 }
 
 static void ifg(unsigned short* a, unsigned short* b)
 {
     if (*a <= *b)
-	PC += RNW(memory[PC] >> 4 & 0x3F) + RNW(memory[PC] >> 10) + 1;
+	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
 }
 
 static void ifb(unsigned short* a, unsigned short* b)
 {
     if (!(*a & *b))
-	PC += RNW(memory[PC] >> 4 & 0x3F) + RNW(memory[PC] >> 10) + 1;
+	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
 }
 
 void (* opcodes[])(unsigned short* a, unsigned short* b) = {
