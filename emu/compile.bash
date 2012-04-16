@@ -3,11 +3,12 @@
 CC="gcc"
 FLAGS="-ansi -pedantic"
 
-if [ "$1" = "debug" ] ; then
-    FLAGS="$FLAGS -pg"
-else
-    FLAGS="$FLAGS -s -O2"
-fi
+case "$1" in
+    "debug")
+	FLAGS="$FLAGS -g" ;;
+    ""|"release")
+	FLAGS="$FLAGS -s -O2" ;;
+esac
 
 LINK=1
 
