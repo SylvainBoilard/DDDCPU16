@@ -1,0 +1,13 @@
+Emulator
+ * Implement cycle counter.
+ * Implement debug facilities.
+ * Implement GUI.
+
+Disassembler
+ * Start the project.
+
+Assembler
+ * Start the project.
+
+General
+ * Setup CMake.
