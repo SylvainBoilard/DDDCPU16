@@ -2,6 +2,7 @@
 
 #include "globals.h"
 #include "opcodes.h"
+#include "nb_instr.h"
 #include "values.h"
 
 static unsigned int lil_end()
@@ -46,12 +47,24 @@ int main(int argc, char* argv[])
 	unsigned short o = memory[PC] & 0x000F;
 	unsigned short a = memory[PC] >> 4 & 0x003F;
 	unsigned short b = memory[PC] >> 10;
-	unsigned short* va, * vb;
 
 	++PC;
-	va = values[a >> 3](a);
-	vb = values[b >> 3](b);
-	opcodes[o](va, vb);
+
+	if (o)
+	{
+	    unsigned short* va = values[a >> 3](a);
+	    unsigned short* vb = values[b >> 3](b);;
+	    opcodes[o](va, vb);
+	}
+	else if (a)
+	{
+	    unsigned short* vb = values[b >> 3](b);
+	    nb_instr[a](vb);
+	}
+	else
+	{
+	    /* Reserved for future expansion. */
+	}
     }
 
     return 0;

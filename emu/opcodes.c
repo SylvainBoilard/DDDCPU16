@@ -3,11 +3,6 @@
 /* This macro checks if the given value reads a word. */
 #define VRW(op) (op & 0x30 == 0x10) && (!(op & 0x08) || (op & 0x06 == 0x06))
 
-static void nbi(unsigned short* a, unsigned short* b)
-{
-
-}
-
 static void set(unsigned short* a, unsigned short* b)
 {
     *a = *b;
@@ -108,5 +103,5 @@ static void ifb(unsigned short* a, unsigned short* b)
 }
 
 void (* opcodes[])(unsigned short* a, unsigned short* b) = {
-    nbi, set, add, sub, mul, div, mod, shl, shr, and, bor, xor, ife, ifn, ifg, ifb
+    (void*)0, set, add, sub, mul, div, mod, shl, shr, and, bor, xor, ife, ifn, ifg, ifb
 };
