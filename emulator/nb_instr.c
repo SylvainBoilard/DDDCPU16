@@ -4,6 +4,7 @@ static void jsr(unsigned short* a)
 {
     memory[--SP] = PC;
     PC = *a;
+    cycles += 2;
 }
 
 static void NONE(unsigned short* a)

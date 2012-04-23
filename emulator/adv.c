@@ -34,6 +34,7 @@ static unsigned short* o(void)
 
 static unsigned short* nwad(void)
 {
+    ++cycles;
     return memory + memory[PC++];
 }
 
@@ -41,6 +42,7 @@ static unsigned short* nw(void)
 {
     static unsigned short value;
     value = memory[PC++];
+    ++cycles;
     return &value;
 }
 

@@ -12,6 +12,7 @@ static unsigned short* regad(unsigned short v)
 
 static unsigned short* nwreg(unsigned short v)
 {
+    ++cycles;
     return memory + ((memory[PC++] + registers[v & 0x0007]) & 0xFFFF);
 }
 
