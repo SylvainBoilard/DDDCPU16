@@ -7,8 +7,8 @@
 
 static unsigned int lil_end()
 {
-    unsigned int test = 0x00000001;
-    return *(unsigned char *)&test;
+    const unsigned int test = 0x00000001;
+    return *(const unsigned char *)&test;
 }
 
 int main(int argc, char* argv[])
@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
     fclose(ram_img);
     if (lil_end())
     {
-	unsigned char temp;
 	unsigned char* raw_mem = (unsigned char*)memory;
+	unsigned char temp;
 	unsigned int i;
 	for (i = 0; i < 0x20000; i += 2)
 	{
@@ -44,9 +44,9 @@ int main(int argc, char* argv[])
 
     while (1)
     {
-	unsigned short o = memory[PC] & 0x000F;
-	unsigned short a = memory[PC] >> 4 & 0x003F;
-	unsigned short b = memory[PC] >> 10;
+	const unsigned short o = memory[PC] & 0x000F;
+	const unsigned short a = memory[PC] >> 4 & 0x003F;
+	const unsigned short b = memory[PC] >> 10;
 
 	++PC;
 

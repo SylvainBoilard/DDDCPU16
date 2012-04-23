@@ -27,6 +27,6 @@ static unsigned short* lit(unsigned short v)
     return &value;
 }
 
-unsigned short*(* values[])(unsigned short v) = {
+unsigned short*(* const values[])(unsigned short v) = {
     reg, regad, nwreg, adv, lit, lit, lit, lit
 };

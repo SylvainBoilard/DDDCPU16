@@ -1,7 +1,7 @@
 #include "opcodes.h"
 
 /* This macro checks if the given value reads a word. */
-#define VRW(op) (op & 0x30 == 0x10) && (!(op & 0x08) || (op & 0x06 == 0x06))
+#define VRW(op) ((op & 0x30) == 0x10) && (!(op & 0x08) || ((op & 0x06) == 0x06))
 
 static void set(unsigned short* a, unsigned short* b)
 {
@@ -102,6 +102,6 @@ static void ifb(unsigned short* a, unsigned short* b)
 	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
 }
 
-void (* opcodes[])(unsigned short* a, unsigned short* b) = {
+void (* const opcodes[])(unsigned short* a, unsigned short* b) = {
     (void*)0, set, add, sub, mul, div, mod, shl, shr, and, bor, xor, ife, ifn, ifg, ifb
 };

@@ -4,6 +4,6 @@
 #include "globals.h"
 #include "adv.h"
 
-extern unsigned short*(* values[])(unsigned short v);
+extern unsigned short*(* const values[])(unsigned short v);
 
 #endif /* VALUES_H_INCLUDED */

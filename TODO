@@ -2,7 +2,6 @@ Emulator
  * Implement cycle counter.
  * Implement debug facilities.
  * Implement GUI.
- * Check const-correctness.
 
 Disassembler
  * Start the project.

@@ -7,9 +7,11 @@ static void jsr(unsigned short* a)
 }
 
 static void NONE(unsigned short* a)
-{}
+{
+    ++a; /* Prevents unneeded warning. */
+}
 
-void (* nb_instr[])(unsigned short* a) = {
+void (* const nb_instr[])(unsigned short* a) = {
     (void*)0, jsr, NONE, NONE, NONE, NONE, NONE, NONE,
     NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
     NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,

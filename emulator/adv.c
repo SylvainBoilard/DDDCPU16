@@ -44,6 +44,6 @@ static unsigned short* nw(void)
     return &value;
 }
 
-unsigned short* (* advanced[])(void) = {
+unsigned short* (* const advanced[])(void) = {
     pop, peek, push, sp, pc, o, nwad, nw
 };
