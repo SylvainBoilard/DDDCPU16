@@ -44,26 +44,22 @@ int main(int argc, char* argv[])
 
     while (1)
     {
-	const unsigned short o = memory[PC] & 0x000F;
-	const unsigned short a = memory[PC] >> 4 & 0x003F;
-	const unsigned short b = memory[PC] >> 10;
+	const unsigned short o = memory[PC] & 0x001F;
+	const unsigned short b = memory[PC] >> 5 & 0x001F;
+	const unsigned short a = memory[PC] >> 10;
 
 	++PC;
 
 	if (o)
 	{
-	    unsigned short* va = values[a >> 3](a);
-	    unsigned short* vb = values[b >> 3](b);;
+	    unsigned short* va = values[a >> 3](a, 1);
+	    unsigned short* vb = values[b >> 3](b, 0);
 	    opcodes[o](va, vb);
 	}
-	else if (a)
+	else if (b)
 	{
-	    unsigned short* vb = values[b >> 3](b);
-	    nb_instr[a](vb);
-	}
-	else
-	{
-	    /* Reserved for future expansion. */
+	    unsigned short* va = values[a >> 3](a, 1);
+	    nb_instr[b](va);
 	}
     }
 

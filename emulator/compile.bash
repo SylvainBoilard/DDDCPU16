@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CC="gcc"
-FLAGS="-ansi -pedantic -Wall -Wextra -Wmain -Wswitch-default -Wmissing-include-dirs -Wmissing-declarations -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow"
+FLAGS="-ansi -pedantic -Wall -Wextra -Wmain -Wswitch-default -Wmissing-include-dirs -Wmissing-declarations -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wno-unused-parameter"
 
 case "$1" in
     "debug")

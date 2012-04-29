@@ -1,33 +1,36 @@
 #include "values.h"
 
-static unsigned short* reg(unsigned short v)
+static unsigned short* reg(unsigned short v, unsigned short is_a)
 {
     return registers + (v & 0x0007);
 }
 
-static unsigned short* regad(unsigned short v)
+static unsigned short* regad(unsigned short v, unsigned short is_a)
 {
     return memory + registers[v & 0x0007];
 }
 
-static unsigned short* nwreg(unsigned short v)
+static unsigned short* nwreg(unsigned short v, unsigned short is_a)
 {
     ++cycles;
     return memory + ((memory[PC++] + registers[v & 0x0007]) & 0xFFFF);
 }
 
-static unsigned short* adv(unsigned short v)
+static unsigned short* adv(unsigned short v, unsigned short is_a)
 {
-    return advanced[v & 0x0007]();
+    return advanced[v & 0x0007](is_a);
 }
 
-static unsigned short* lit(unsigned short v)
+static unsigned short* lit(unsigned short v, unsigned short is_a)
 {
     static unsigned short value;
-    value = v & 0x001F;
+    if (v == 0x003F)
+	value = 0xFFFF;
+    else
+	value = v & 0x001F;
     return &value;
 }
 
-unsigned short*(* const values[])(unsigned short v) = {
+unsigned short*(* const values[])(unsigned short v, unsigned short is_a) = {
     reg, regad, nwreg, adv, lit, lit, lit, lit
 };

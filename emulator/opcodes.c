@@ -13,7 +13,7 @@ static void add(unsigned short* a, unsigned short* b)
 {
     unsigned int result = *a + *b;
     *a = result;
-    O = result >> 16;
+    EX = result >> 16;
     cycles += 2;
 }
 
@@ -21,7 +21,7 @@ static void sub(unsigned short* a, unsigned short* b)
 {
     int result = *a - *b;
     *a = result;
-    O = result >> 16;
+    EX = result >> 16;
     cycles += 2;
 }
 
@@ -29,7 +29,7 @@ static void mul(unsigned short* a, unsigned short* b)
 {
     unsigned int result = *a * *b;
     *a = result;
-    O = result >> 16;
+    EX = result >> 16;
     cycles += 2;
 }
 
@@ -39,10 +39,10 @@ static void div(unsigned short* a, unsigned short* b)
     {
 	unsigned int result = (*a << 16) / *b;
 	*a = result >> 16;
-	O = result;
+	EX = result;
     }
     else
-	*a = O = 0;
+	*a = EX = 0;
     cycles += 3;
 }
 
@@ -59,7 +59,7 @@ static void shl(unsigned short* a, unsigned short* b)
 {
     unsigned int result = *a << *b;
     *a = result;
-    O = result >> 16;
+    EX = result >> 16;
     cycles += 2;
 }
 
@@ -67,7 +67,7 @@ static void shr(unsigned short* a, unsigned short* b)
 {
     unsigned int result = *a << (16 - *b);
     *a = result >> 16;
-    O = result;
+    EX = result;
     cycles += 2;
 }
 

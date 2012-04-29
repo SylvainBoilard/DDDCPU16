@@ -2,43 +2,44 @@
 
 #include <stdio.h>
 
-static unsigned short* pop(void)
+static unsigned short* popush(unsigned short is_a)
 {
-    return memory + SP++;
+    return memory + (is_a ? SP++ : --SP);
 }
 
-static unsigned short* peek(void)
+static unsigned short* peek(unsigned short is_a)
 {
     return memory + SP;
 }
 
-static unsigned short* push(void)
+static unsigned short* pick(unsigned short is_a)
 {
-    return memory + --SP;
+    ++cycles;
+    return memory + SP + memory[PC++];
 }
 
-static unsigned short* sp(void)
+static unsigned short* sp(unsigned short is_a)
 {
     return &SP;
 }
 
-static unsigned short* pc(void)
+static unsigned short* pc(unsigned short is_a)
 {
     return &PC;
 }
 
-static unsigned short* o(void)
+static unsigned short* ex(unsigned short is_a)
 {
-    return &O;
+    return &EX;
 }
 
-static unsigned short* nwad(void)
+static unsigned short* nw(unsigned short is_a)
 {
     ++cycles;
     return memory + memory[PC++];
 }
 
-static unsigned short* nw(void)
+static unsigned short* nwlit(unsigned short is_a)
 {
     static unsigned short value;
     value = memory[PC++];
@@ -46,6 +47,6 @@ static unsigned short* nw(void)
     return &value;
 }
 
-unsigned short* (* const advanced[])(void) = {
-    pop, peek, push, sp, pc, o, nwad, nw
+unsigned short* (* const advanced[])(unsigned short is_a) = {
+    popush, peek, pick, sp, pc, ex, nw, nwlit
 };
