@@ -105,7 +105,7 @@ static void xor(unsigned short* b, unsigned short* a)
 
 static void shr(unsigned short* b, unsigned short* a)
 {
-    unsigned int result = *b << (16 - *a);
+    unsigned int result = (*b << 16) >> *a;
     *b = result >> 16;
     EX = result;
     ++cycles;
@@ -113,10 +113,8 @@ static void shr(unsigned short* b, unsigned short* a)
 
 static void asr(unsigned short* b, unsigned short* a)
 {
-    /* Check if doing it right. */
-    unsigned int result = (*b & 0x7FFF) << (16 - *a);
-    unsigned short sign_bit = *b & 0x8000;
-    *b = (result >> 16) | sign_bit;
+    unsigned int result = (*(short*)b << 16) >> *a;
+    *b = (result >> 16);
     EX = result;
     ++cycles;
 }
