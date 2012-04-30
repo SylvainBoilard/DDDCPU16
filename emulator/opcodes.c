@@ -81,7 +81,7 @@ static void mdi(unsigned short* b, unsigned short* a)
     if (*a)
 	*(short*)b %= *(short*)a;
     else
-	*(short*)b = 0;
+	*b = 0;
     cycles += 3;
 }
 
@@ -211,15 +211,15 @@ static void adx(unsigned short* b, unsigned short* a)
 {
     unsigned int result = *b + *a + EX;
     *b = result;
-    EX = !!(result >> 16);
+    EX = result >> 16;
     cycles += 2;
 }
 
 static void sbx(unsigned short* b, unsigned short* a)
 {
-    unsigned int result = *b - *a;
+    unsigned int result = *b - *a + EX;
     *b = result;
-    EX = -!!(result >> 16);
+    EX = result >> 16;
     cycles += 2;
 }
 
