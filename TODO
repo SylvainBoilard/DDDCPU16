@@ -1,6 +1,15 @@
 Emulator
+ * Implement conditional skipping correctly.
+ * Implement interrupts.
+ * Implement hardware.
  * Implement debug facilities.
  * Implement GUI.
+
+Hardware
+ * Start the project.
+ * Implement lem1802.
+ * Implement keyboard.
+ * Implement clock.
 
 Disassembler
  * Start the project.
@@ -10,3 +19,4 @@ Assembler
 
 General
  * Setup CMake.
+ * Write documentation.
