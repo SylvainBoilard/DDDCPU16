@@ -4,6 +4,7 @@
 
 static unsigned short* popush(unsigned short is_a)
 {
+    /* This value has numerous problems, contact Notch */
     return memory + (is_a ? SP++ : --SP);
 }
 

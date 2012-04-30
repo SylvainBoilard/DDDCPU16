@@ -3,6 +3,6 @@
 
 #include "globals.h"
 
-extern void (* const opcodes[])(unsigned short* a, unsigned short* b);
+extern void (* const opcodes[])(unsigned short* b, unsigned short* a);
 
 #endif /* OPCODES_H_INCLUDED */
