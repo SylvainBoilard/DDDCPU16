@@ -4,7 +4,6 @@
 
 static unsigned short* popush(unsigned short is_a)
 {
-    /* This value has numerous problems, contact Notch */
     return memory + (is_a ? SP++ : --SP);
 }
 
@@ -16,7 +15,7 @@ static unsigned short* peek(unsigned short is_a)
 static unsigned short* pick(unsigned short is_a)
 {
     ++cycles;
-    return memory + SP + memory[PC++];
+    return memory + (unsigned short)(SP + memory[PC++]);
 }
 
 static unsigned short* sp(unsigned short is_a)
