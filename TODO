@@ -2,7 +2,6 @@ Emulator
  * Implement interrupts.
  * Implement hardware.
  * Implement debug facilities.
- * Implement GUI.
 
 Hardware
  * Start the project.
