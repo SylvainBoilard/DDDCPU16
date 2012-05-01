@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 
 	if (o)
 	{
-	    unsigned short* va = values[a >> 3](a, 1);
+	    const unsigned short* va = values[a >> 3](a, 1);
 	    unsigned short* vb = values[b >> 3](b, 0);
 	    opcodes[o](vb, va);
 	}
