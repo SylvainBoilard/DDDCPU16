@@ -1,7 +1,19 @@
 #include "opcodes.h"
 
 /* This macro checks if the given value reads a word. */
-#define VRW(op) ((op & 0x30) == 0x10) && (!(op & 0x08) || ((op & 0x06) == 0x06))
+#define VRW(op) ((op & 0x30) == 0x10) && ((op & 0x0A) != 0x08) && ((op & 0x0D) != 0x09)
+
+static void skip()
+{
+    unsigned short ins;
+    do
+    {
+	ins = memory[PC++];
+	PC += VRW((ins >> 5) & 0x1F) + VRW(ins >> 10);
+	++cycles;
+    }
+    while ((ins & 0x18) == 0x10);
+}
 
 static void set(unsigned short* b, unsigned short* a)
 {
@@ -130,80 +142,56 @@ static void shl(unsigned short* b, unsigned short* a)
 static void ifb(unsigned short* b, unsigned short* a)
 {
     if (!(*b & *a))
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ifc(unsigned short* b, unsigned short* a)
 {
     if (*b & *a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ife(unsigned short* b, unsigned short* a)
 {
     if (*b != *a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ifn(unsigned short* b, unsigned short* a)
 {
     if (*b == *a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ifg(unsigned short* b, unsigned short* a)
 {
     if (*b <= *a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ifa(unsigned short* b, unsigned short* a)
 {
     if (*(short*)b <= *(short*)a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ifl(unsigned short* b, unsigned short* a)
 {
     if (*b >= *a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 
 static void ifu(unsigned short* b, unsigned short* a)
 {
     if (*(short*)b >= *(short*)a)
-    {
-	PC += VRW(memory[PC] >> 4 & 0x3F) + VRW(memory[PC] >> 10) + 1;
-	++cycles;
-    }
+	skip();
     cycles += 2;
 }
 

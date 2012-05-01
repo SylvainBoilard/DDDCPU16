@@ -1,5 +1,4 @@
 Emulator
- * Implement conditional skipping correctly.
  * Implement interrupts.
  * Implement hardware.
  * Implement debug facilities.
