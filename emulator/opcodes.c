@@ -47,7 +47,7 @@ static void mul(unsigned short* b, const unsigned short* a)
 
 static void mli(unsigned short* b, const unsigned short* a)
 {
-    int result = *(short*)b * *(short*)a;
+    unsigned int result = *(short*)b * *(short*)a;
     *b = result;
     EX = result >> 16;
     cycles += 2;
@@ -70,7 +70,7 @@ static void dvi(unsigned short* b, const unsigned short* a)
 {
     if (*a)
     {
-	int result = (*(short*)b << 16) / *(short*)a;
+	unsigned int result = (*(short*)b << 16) / *(short*)a;
 	*b = result >> 16;
 	EX = result;
     }
@@ -205,7 +205,7 @@ static void adx(unsigned short* b, const unsigned short* a)
 
 static void sbx(unsigned short* b, const unsigned short* a)
 {
-    unsigned int result = *b - *a + EX;
+    unsigned int result = *b - *a + (short)EX;
     *b = result;
     EX = result >> 16;
     cycles += 2;
