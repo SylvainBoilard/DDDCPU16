@@ -4,16 +4,9 @@ Emulator
  * Implement debug facilities.
 
 Hardware
- * Start the project.
  * Implement lem1802.
  * Implement keyboard.
  * Implement clock.
-
-Disassembler
- * Start the project.
-
-Assembler
- * Start the project.
 
 General
  * Setup CMake.
