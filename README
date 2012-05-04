@@ -1,0 +1,32 @@
+DDDCPU16 - DeathlyDeep's DCPU16, a DCPU16 emulator.
+Copyright (C) 2012 Sylvain BOILARD <boilard@crans.org>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+================================================================================
+
+DDDCPU16 is a DCPU16 emulator written by Sylvain "DeathlyDeep" Boilard, student
+at French IT engineer school EFREI, while he had way more urgent things to do.
+
+This project aims at:
+ * Efficient DCPU16 emulation at arbitrary frequency.
+ * Debug facilities, like GNU GDB's ones.
+ * Modular hardware system (plugins).
+
+This project is targeted to consoles. Whereas the hardware plugins may use
+graphical facilities (like the lem1802), the emulator itself will remain a
+textual application.
+
+I am not interested into Windows compatibility, but if you are, and you want to
+be involved in development, I will not refuse your patches.
