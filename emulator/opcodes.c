@@ -245,7 +245,9 @@ static void std(unsigned short* b, const unsigned short* a)
 }
 
 static void NONE(unsigned short* b, const unsigned short* a)
-{}
+{
+    ++cycles;
+}
 
 void (* const opcodes[])(unsigned short* b, const unsigned short* a) = {
     (void*)0, set, add, sub, mul, mli, div, dvi,
