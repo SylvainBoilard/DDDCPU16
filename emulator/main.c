@@ -47,6 +47,8 @@ int main(int argc, char* argv[])
 	    unsigned short* va = values[a >> 3](a, 1);
 	    nb_instr[b](va);
 	}
+	else
+	    cycles++;
     }
 
     return 0;
