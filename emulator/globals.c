@@ -22,4 +22,4 @@ unsigned short PC = 0;
 unsigned short SP = 0;
 unsigned short EX = 0;
 unsigned short IA = 0;
-unsigned int cycles = 0;
+unsigned long cycles = 0;

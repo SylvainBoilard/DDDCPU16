@@ -25,6 +25,6 @@ extern unsigned short PC;
 extern unsigned short SP;
 extern unsigned short EX;
 extern unsigned short IA;
-extern unsigned int cycles;
+extern unsigned long cycles;
 
 #endif /* GLOBALS_H_INCLUDED */
