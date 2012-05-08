@@ -25,6 +25,38 @@ static void jsr(unsigned short* a)
     cycles += 3;
 }
 
+static void swi(unsigned short* a) /* Called INT in spec. */
+{
+    int_queue[iq_front++] = *a;
+    cycles += 4;
+}
+
+static void iag(unsigned short* a)
+{
+    *a = IA;
+    ++cycles;
+}
+
+static void ias(unsigned short* a)
+{
+    IA = *a;
+    ++cycles;
+}
+
+static void rfi(unsigned short* a)
+{
+    int_queueing = 0;
+    registers[0] = memory[SP++];
+    PC = memory[SP++];
+    cycles += 3;
+}
+
+static void iaq(unsigned short* a)
+{
+    int_queueing = *a;
+    cycles += 2;
+}
+
 static void NONE(unsigned short* a)
 {
     ++cycles;
@@ -32,11 +64,7 @@ static void NONE(unsigned short* a)
 
 void (* const nb_instr[])(unsigned short* a) = {
     (void*)0, jsr, NONE, NONE, NONE, NONE, NONE, NONE,
-    NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
-    NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
-    NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
-    NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
-    NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
+    swi, iag, ias, rfi, iaq, NONE, NONE, NONE,
     NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
     NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE
 };

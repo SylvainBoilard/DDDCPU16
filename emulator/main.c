@@ -49,6 +49,21 @@ int main(int argc, char* argv[])
 	}
 	else
 	    cycles++;
+
+	if (!int_queueing && iq_front != iq_back)
+	{
+	    if (!IA)
+	    {
+		++iq_back;
+		break;
+	    }
+
+	    int_queueing = 1;
+	    memory[--SP] = PC;
+	    memory[--SP] = registers[0];
+	    PC = IA;
+	    registers[0] = int_queue[iq_back++];
+	}
     }
 
     return 0;

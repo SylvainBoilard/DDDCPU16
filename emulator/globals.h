@@ -24,7 +24,13 @@ extern unsigned short registers[8];
 extern unsigned short PC;
 extern unsigned short SP;
 extern unsigned short EX;
+
 extern unsigned short IA;
+extern unsigned short int_queue[256];
+extern unsigned char iq_back;
+extern unsigned char iq_front;
+extern unsigned int int_queueing;
+
 extern unsigned long cycles;
 
 #endif /* GLOBALS_H_INCLUDED */

@@ -1,5 +1,4 @@
 Emulator
- * Implement interrupts.
  * Implement hardware.
  * Implement debug facilities.
 
