@@ -52,17 +52,15 @@ int main(int argc, char* argv[])
 
 	if (!int_queueing && iq_front != iq_back)
 	{
-	    if (!IA)
+	    if (IA)
 	    {
-		++iq_back;
-		break;
+		int_queueing = 1;
+		memory[--SP] = PC;
+		memory[--SP] = registers[0];
+		PC = IA;
+		registers[0] = int_queue[iq_back];
 	    }
-
-	    int_queueing = 1;
-	    memory[--SP] = PC;
-	    memory[--SP] = registers[0];
-	    PC = IA;
-	    registers[0] = int_queue[iq_back++];
+	    ++iq_back;
 	}
     }
 
