@@ -18,6 +18,12 @@
 
 #include "init.h"
 
+static void recv_int(unsigned short int_val)
+{
+    /* Not thread safe. */
+    int_queue[iq_front++] = int_val;
+}
+
 static unsigned int lil_end(void)
 {
     const unsigned int test = 0x00000001;
