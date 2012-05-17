@@ -16,44 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "init.h"
+#include "hardware.h"
 
-static unsigned int lil_end(void)
+static void recv_int(unsigned short int_val)
 {
-    const unsigned int test = 0x00000001;
-    return *(const unsigned char *)&test;
-}
-
-int init(int argc, char* argv[])
-{
-    FILE* ram_img;
-
-    if (argc == 1)
-    {
-	printf("You must specify a RAM image to load.\n");
-	return 1;
-    }
-
-    ram_img = fopen(argv[1], "rb");
-    if (!ram_img)
-    {
-	printf("Cannot open %s\n.", argv[1]);
-	return 1;
-    }
-    fread(memory, 1, 0x20000, ram_img);
-    fclose(ram_img);
-    if (lil_end())
-    {
-	unsigned char* raw_mem = (unsigned char*)memory;
-	unsigned char temp;
-	unsigned int i;
-	for (i = 0; i < 0x20000; i += 2)
-	{
-	    temp = raw_mem[i];
-	    raw_mem[i] = raw_mem[i + 1];
-	    raw_mem[i + 1] = temp;
-	}
-    }
-
-    return 0;
+    /* Not thread safe. */
+    int_queue[iq_front++] = int_val;
 }
