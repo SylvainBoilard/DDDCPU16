@@ -28,7 +28,7 @@ static int load_ram(const char* file)
 {
     FILE* ram_img;
 
-    ram_img = fopen(argv[1], "rb");
+    ram_img = fopen(file, "rb");
     if (!ram_img)
 	return 1;
     fread(memory, 1, 0x20000, ram_img);
@@ -45,6 +45,7 @@ static int load_ram(const char* file)
 	    raw_mem[i + 1] = temp;
 	}
     }
+    return 0;
 }
 
 int init(int argc, char* argv[])
