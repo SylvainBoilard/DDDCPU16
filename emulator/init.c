@@ -24,22 +24,13 @@ static unsigned int lil_end(void)
     return *(const unsigned char *)&test;
 }
 
-int init(int argc, char* argv[])
+static int load_ram(const char* file)
 {
     FILE* ram_img;
 
-    if (argc == 1)
-    {
-	printf("You must specify a RAM image to load.\n");
-	return 1;
-    }
-
     ram_img = fopen(argv[1], "rb");
     if (!ram_img)
-    {
-	printf("Cannot open %s\n.", argv[1]);
 	return 1;
-    }
     fread(memory, 1, 0x20000, ram_img);
     fclose(ram_img);
     if (lil_end())
@@ -53,6 +44,20 @@ int init(int argc, char* argv[])
 	    raw_mem[i] = raw_mem[i + 1];
 	    raw_mem[i + 1] = temp;
 	}
+    }
+}
+
+int init(int argc, char* argv[])
+{
+    if (argc < 2)
+    {
+	printf("You must specify a RAM image to load.\n");
+	return 1;
+    }
+    if (load_ram(argv[1]))
+    {
+	printf("Cannot open %s\n.", argv[1]);
+	return 2;
     }
 
     return 0;
