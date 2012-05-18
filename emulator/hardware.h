@@ -16,12 +16,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NB_INSTR_H
-#define NB_INSTR_H
+#ifndef HARDWARE_H_INCLUDED
+#define HARDWARE_H_INCLUDED
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <dlfcn.h>
 
 #include "globals.h"
-#include "hardware.h"
 
-extern void (* const nb_instr[])(unsigned short* a);
+struct hardware
+{
+    void (* hd_info)(void);
+    unsigned int (* hd_send_int)(void);
+    void* dl_handle;
+};
 
-#endif /* NB_INSTR_H */
+extern struct hardware* hd_hard;
+extern unsigned int hd_number;
+
+int load_hard(int hard_argc, char* hard_argv[]);
+void complete_load(void);
+void free_hard(void);
+
+#endif /* HARDWARE_H_INCLUDED */

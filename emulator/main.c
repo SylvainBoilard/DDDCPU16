@@ -18,15 +18,18 @@
 
 #include "init.h"
 #include "globals.h"
+#include "hardware.h"
 #include "opcodes.h"
 #include "nb_instr.h"
 #include "values.h"
 
 int main(int argc, char* argv[])
 {
-    int init_ret = init(argc, argv);
-    if (init_ret)
-	return init_ret;
+    int ret_val = init(argc, argv);
+    if (ret_val)
+	goto terminate;
+
+    complete_load();
 
     while (1)
     {
@@ -64,5 +67,7 @@ int main(int argc, char* argv[])
 	}
     }
 
-    return 0;
+  terminate:
+    free_hard();
+    return ret_val;
 }

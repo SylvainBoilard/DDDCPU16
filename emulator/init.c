@@ -50,6 +50,8 @@ static int load_ram(const char* file)
 
 int init(int argc, char* argv[])
 {
+    int i;
+
     if (argc < 2)
     {
 	printf("You must specify a RAM image to load.\n");
@@ -59,6 +61,25 @@ int init(int argc, char* argv[])
     {
 	printf("Cannot open %s\n.", argv[1]);
 	return 2;
+    }
+
+    for (i = 2; i < argc; ++i)
+    {
+	if (!strncmp(argv[i], "-h", 2))
+	{
+	    int curr_arg = i;
+	    int ret_val;
+	    while (++i < argc && strcmp(argv[i], "--"));
+	    ret_val = load_hard(i - curr_arg, argv + curr_arg);
+	    if (ret_val)
+		return ret_val;
+	}
+	else
+	{
+	    printf("Unknown option: %s.\n", argv[i]);
+	    /* TODO : free hardware. */
+	    return 3;
+	}
     }
 
     return 0;

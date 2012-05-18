@@ -57,6 +57,28 @@ static void iaq(unsigned short* a)
     cycles += 2;
 }
 
+static void hwn(unsigned short* a)
+{
+    *a = hd_number;
+    cycles += 2;
+}
+
+static void hwq(unsigned short* a)
+{
+    unsigned short hard_no = *a;
+    if (hard_no < hd_number)
+	hd_hard[hard_no].hd_info();
+    cycles += 4;
+}
+
+static void hwi(unsigned short* a)
+{
+    unsigned short hard_no = *a;
+    if (hard_no < hd_number)
+	cycles += hd_hard[hard_no].hd_send_int();
+    cycles += 4;
+}
+
 static void NONE(unsigned short* a)
 {
     ++cycles;
@@ -65,6 +87,6 @@ static void NONE(unsigned short* a)
 void (* const nb_instr[])(unsigned short* a) = {
     (void*)0, jsr, NONE, NONE, NONE, NONE, NONE, NONE,
     swi, iag, ias, rfi, iaq, NONE, NONE, NONE,
-    NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
+    hwn, hwq, hwi, NONE, NONE, NONE, NONE, NONE,
     NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE
 };

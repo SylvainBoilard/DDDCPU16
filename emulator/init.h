@@ -19,9 +19,11 @@
 #ifndef INIT_H_INCLUDED
 #define INIT_H_INCLUDED
 
+#include <string.h>
 #include <stdio.h>
 
 #include "globals.h"
+#include "hardware.h"
 
 int init(int argc, char* argv[]);
 
