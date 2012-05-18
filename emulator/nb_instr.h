@@ -20,6 +20,7 @@
 #define NB_INSTR_H
 
 #include "globals.h"
+#include "hardware.h"
 
 extern void (* const nb_instr[])(unsigned short* a);
 

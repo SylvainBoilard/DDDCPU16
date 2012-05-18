@@ -19,6 +19,24 @@
 #ifndef HARDWARE_H_INCLUDED
 #define HARDWARE_H_INCLUDED
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <dlfcn.h>
+
 #include "globals.h"
+
+struct hardware
+{
+    void (* hd_info)(void);
+    unsigned int (* hd_send_int)(void);
+    void* dl_handle;
+};
+
+extern struct hardware* hd_hard;
+extern unsigned int hd_number;
+
+int load_hard(int hard_argc, char* hard_argv[]);
+void complete_load(void);
+void free_hard(void);
 
 #endif /* HARDWARE_H_INCLUDED */
