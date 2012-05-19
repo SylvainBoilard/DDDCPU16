@@ -77,7 +77,6 @@ int init(int argc, char* argv[])
 	else
 	{
 	    printf("Unknown option: %s.\n", argv[i]);
-	    /* TODO : free hardware. */
 	    return 3;
 	}
     }
