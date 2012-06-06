@@ -18,6 +18,9 @@
 
 #include "hardware.h"
 
+struct hardware* hd_hard = NULL;
+unsigned int hd_number = 0;
+
 struct hardware_node
 {
     struct hardware_node* next;
@@ -25,8 +28,6 @@ struct hardware_node
 };
 
 static struct hardware_node* hd_list = NULL;
-struct hardware* hd_hard = NULL;
-unsigned int hd_number = 0;
 
 static void recv_int(unsigned short int_val)
 {
@@ -100,16 +101,15 @@ void complete_load_hard(void)
 
 void free_hard(void)
 {
-    if (hd_list)
-	do
-	{
-	    struct hardware_node* hard_node = hd_list;
-	    hd_list = hard_node->next;
-	    dlclose(hard_node->hard.dl_handle);
-	    free(hard_node);
-	}
-	while (hd_list);
-    else
+    while (hd_list)
+    {
+	struct hardware_node* hard_node = hd_list;
+	hd_list = hard_node->next;
+	dlclose(hard_node->hard.dl_handle);
+	free(hard_node);
+	--hd_number;
+    }
+    if (hd_hard)
     {
 	unsigned int i;
 	for (i = 0; i < hd_number; ++i)
