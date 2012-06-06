@@ -16,16 +16,45 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INIT_H_INCLUDED
-#define INIT_H_INCLUDED
+#include "emulator.h"
 
-#include <string.h>
-#include <stdio.h>
+int emulate(void)
+{
+    while (1)
+    {
+	const unsigned short o = memory[PC] & 0x001F;
+	const unsigned short b = memory[PC] >> 5 & 0x001F;
+	const unsigned short a = memory[PC] >> 10;
 
-#include "globals.h"
-#include "hardware.h"
+	++PC;
 
-int init(int argc, char* argv[]);
-void term(void);
+	if (o)
+	{
+	    const unsigned short* va = values[a >> 3](a, 1);
+	    unsigned short* vb = values[b >> 3](b, 0);
+	    opcodes[o](vb, va);
+	}
+	else if (b)
+	{
+	    unsigned short* va = values[a >> 3](a, 1);
+	    nb_instr[b](va);
+	}
+	else
+	    cycles++;
 
-#endif /* INIT_H_INCLUDED */
+	if (!int_queueing && iq_front != iq_back)
+	{
+	    if (IA)
+	    {
+		int_queueing = 1;
+		memory[--SP] = PC;
+		memory[--SP] = registers[0];
+		PC = IA;
+		registers[0] = int_queue[iq_back];
+	    }
+	    ++iq_back;
+	}
+    }
+
+    return 0;
+}

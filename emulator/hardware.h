@@ -36,7 +36,7 @@ extern struct hardware* hd_hard;
 extern unsigned int hd_number;
 
 int load_hard(int hard_argc, char* hard_argv[]);
-void complete_load(void);
+void complete_load_hard(void);
 void free_hard(void);
 
 #endif /* HARDWARE_H_INCLUDED */

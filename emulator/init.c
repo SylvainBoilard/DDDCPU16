@@ -81,5 +81,12 @@ int init(int argc, char* argv[])
 	}
     }
 
+    complete_load_hard();
+
     return 0;
+}
+
+void term(void)
+{
+    free_hard();
 }

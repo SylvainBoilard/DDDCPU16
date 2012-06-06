@@ -17,57 +17,19 @@
 */
 
 #include "init.h"
-#include "globals.h"
-#include "hardware.h"
-#include "opcodes.h"
-#include "nb_instr.h"
-#include "values.h"
+#include "emulator.h"
 
 int main(int argc, char* argv[])
 {
-    int ret_val = init(argc, argv);
+    int ret_val;
+
+    ret_val = init(argc, argv);
     if (ret_val)
 	goto terminate;
 
-    complete_load();
-
-    while (1)
-    {
-	const unsigned short o = memory[PC] & 0x001F;
-	const unsigned short b = memory[PC] >> 5 & 0x001F;
-	const unsigned short a = memory[PC] >> 10;
-
-	++PC;
-
-	if (o)
-	{
-	    const unsigned short* va = values[a >> 3](a, 1);
-	    unsigned short* vb = values[b >> 3](b, 0);
-	    opcodes[o](vb, va);
-	}
-	else if (b)
-	{
-	    unsigned short* va = values[a >> 3](a, 1);
-	    nb_instr[b](va);
-	}
-	else
-	    cycles++;
-
-	if (!int_queueing && iq_front != iq_back)
-	{
-	    if (IA)
-	    {
-		int_queueing = 1;
-		memory[--SP] = PC;
-		memory[--SP] = registers[0];
-		PC = IA;
-		registers[0] = int_queue[iq_back];
-	    }
-	    ++iq_back;
-	}
-    }
+    ret_val = emulate();
 
   terminate:
-    free_hard();
+    term();
     return ret_val;
 }

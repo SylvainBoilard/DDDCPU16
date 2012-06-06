@@ -85,7 +85,7 @@ int load_hard(int hard_argc, char* hard_argv[])
     return hd_init(memory, registers, recv_int, hard_argc, hard_argv);
 }
 
-void complete_load(void)
+void complete_load_hard(void)
 {
     unsigned int i;
     hd_hard = (struct hardware*)malloc(sizeof(struct hardware) * hd_number);

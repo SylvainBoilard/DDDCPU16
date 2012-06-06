@@ -16,16 +16,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INIT_H_INCLUDED
-#define INIT_H_INCLUDED
-
-#include <string.h>
-#include <stdio.h>
+#ifndef EMULATOR_H_INCLUDED
+#define EMULATOR_H_INCLUDED
 
 #include "globals.h"
 #include "hardware.h"
+#include "opcodes.h"
+#include "nb_instr.h"
+#include "values.h"
 
-int init(int argc, char* argv[]);
-void term(void);
+int emulate(void);
 
-#endif /* INIT_H_INCLUDED */
+#endif /* EMULATOR_H_INCLUDED */
