@@ -20,7 +20,6 @@
 #define EMULATOR_H_INCLUDED
 
 #include "globals.h"
-#include "hardware.h"
 #include "opcodes.h"
 #include "nb_instr.h"
 #include "values.h"
