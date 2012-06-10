@@ -20,6 +20,12 @@
 
 int emulate(void)
 {
+    unsigned long last_sleep = 0;
+    struct timespec begin;
+    struct timespec end;
+
+    clock_gettime(CLOCK_MONOTONIC, &begin);
+
     while (1)
     {
 	const unsigned short o = memory[PC] & 0x001F;
@@ -53,6 +59,26 @@ int emulate(void)
 		registers[0] = int_queue[iq_back];
 	    }
 	    ++iq_back;
+	}
+
+	if (cycles - last_sleep >= cycles_per_chunk)
+	{
+	    struct timespec sleep;
+
+	    clock_gettime(CLOCK_MONOTONIC, &end);
+	    sleep.tv_sec = 0;
+	    sleep.tv_nsec = nsec_per_chunk - (end.tv_nsec - begin.tv_nsec) -
+		(end.tv_sec - begin.tv_sec) * 1000000000;
+	    if (sleep.tv_nsec > 0)
+		nanosleep(&sleep, NULL);
+
+	    begin.tv_nsec += nsec_per_chunk;
+	    if (begin.tv_nsec >= 1000000000)
+	    {
+		begin.tv_nsec -= 1000000000;
+		++begin.tv_sec;
+	    }
+	    last_sleep += cycles_per_chunk;
 	}
     }
 

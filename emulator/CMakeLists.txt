@@ -11,4 +11,4 @@ FILE(GLOB_RECURSE source_files
   values.c
   )
 ADD_EXECUTABLE(dddcpu16 ${source_files})
-TARGET_LINK_LIBRARIES(dddcpu16 dl)
+TARGET_LINK_LIBRARIES(dddcpu16 dl rt)

@@ -29,3 +29,5 @@ unsigned char iq_front = 0;
 unsigned int int_queueing = 0;
 
 unsigned long cycles = 0;
+unsigned long cycles_per_chunk = 100;
+unsigned long nsec_per_chunk = 1000000; /* 1 ms */

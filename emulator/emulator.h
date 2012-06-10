@@ -19,6 +19,9 @@
 #ifndef EMULATOR_H_INCLUDED
 #define EMULATOR_H_INCLUDED
 
+#define _POSIX_C_SOURCE 200112L
+#include <time.h>
+
 #include "globals.h"
 #include "opcodes.h"
 #include "nb_instr.h"
