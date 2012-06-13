@@ -66,11 +66,13 @@ int emulate(void)
 	    struct timespec sleep;
 
 	    clock_gettime(CLOCK_MONOTONIC, &end);
-	    sleep.tv_sec = 0;
 	    sleep.tv_nsec = nsec_per_chunk - (end.tv_nsec - begin.tv_nsec) -
 		(end.tv_sec - begin.tv_sec) * 1000000000;
 	    if (sleep.tv_nsec > 0)
+	    {
+		sleep.tv_sec = 0;
 		nanosleep(&sleep, NULL);
+	    }
 
 	    begin.tv_nsec += nsec_per_chunk;
 	    if (begin.tv_nsec >= 1000000000)
