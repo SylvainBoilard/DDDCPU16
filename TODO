@@ -1,5 +1,4 @@
 Emulator
- * Add options to modify emulation speed and smoothness.
  * Implement debug facilities.
 
 Hardware
