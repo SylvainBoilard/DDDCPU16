@@ -50,35 +50,48 @@ static int load_ram(const char* file)
 
 int init(int argc, char* argv[])
 {
+    unsigned int ram_image_index = 0;
     int i;
 
-    if (argc < 2)
+    for (i = 1; i < argc; ++i)
+    {
+	if (argv[i][0] == '-')
+	{
+	    int curr_arg = i;
+	    int ret_val;
+
+	    switch (argv[i][1])
+	    {
+	    case 'h':
+		while (++i < argc && strcmp(argv[i], "--"));
+		ret_val = load_hard(i - curr_arg, argv + curr_arg);
+		if (ret_val)
+		    return ret_val;
+		break;
+
+	    default:
+		printf("Unknown option: %s.\n", argv[i]);
+		return 1;
+	    }
+	}
+	else if (!ram_image_index)
+	    ram_image_index = i;
+	else
+	{
+	    printf("There is more than one ram image specified.\n");
+	    return 1;
+	}
+    }
+
+    if (!ram_image_index)
     {
 	printf("You must specify a RAM image to load.\n");
 	return 1;
     }
-    if (load_ram(argv[1]))
+    if (load_ram(argv[ram_image_index]))
     {
-	printf("Cannot open %s\n.", argv[1]);
+	printf("Cannot open %s.\n", argv[ram_image_index]);
 	return 2;
-    }
-
-    for (i = 2; i < argc; ++i)
-    {
-	if (!strncmp(argv[i], "-h", 2))
-	{
-	    int curr_arg = i;
-	    int ret_val;
-	    while (++i < argc && strcmp(argv[i], "--"));
-	    ret_val = load_hard(i - curr_arg, argv + curr_arg);
-	    if (ret_val)
-		return ret_val;
-	}
-	else
-	{
-	    printf("Unknown option: %s.\n", argv[i]);
-	    return 3;
-	}
     }
 
     complete_load_hard();
