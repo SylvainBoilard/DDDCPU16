@@ -48,6 +48,69 @@ static int load_ram(const char* file)
     return 0;
 }
 
+static long read_hz(const char* string)
+{
+    unsigned long result = 0;
+
+    while (*string)
+    {
+	if (*string >= '0' && *string <= '9')
+	    result = result * 10 + *string - '0';
+	else
+	    break;
+	++string;
+    }
+
+    if (!*string)
+	return result;
+    switch (*string)
+    {
+    case 'G':
+	result *= 1000;
+    case 'M':
+	result *= 1000;
+    case 'k':
+	result *= 1000;
+	++string;
+    default:;
+    }
+    if (*string == 'H' && *++string == 'z' && !*++string)
+	return result;
+    return -1;
+}
+
+static long read_ns(const char* string)
+{
+    unsigned long result = 0;
+
+    while (*string)
+    {
+	if (*string >= '0' && *string <= '9')
+	    result = result * 10 + *string - '0';
+	else
+	    break;
+	++string;
+    }
+
+    if (!*string)
+	return result;
+    switch (*string)
+    {
+    case 'm':
+	result *= 1000;
+    case 'u':
+	result *= 1000;
+    case 'n':
+	break;
+
+    default:
+	return -1;
+    }
+    if (*++string == 's' && !*++string)
+	return result;
+    return -1;
+}
+
 int init(int argc, char* argv[])
 {
     unsigned int ram_image_index = 0;
@@ -59,9 +122,64 @@ int init(int argc, char* argv[])
 	{
 	    int curr_arg = i;
 	    int ret_val;
+	    long value;
 
 	    switch (argv[i][1])
 	    {
+	    case 'C':
+		++i;
+		if (i < argc)
+		    value = read_ns(argv[i]);
+		else
+		{
+		    printf("You need to precise a chunk size with option -C.\n");
+		    return -1;
+		}
+
+		if (value < 0)
+		{
+		    printf("Error reading chunk size: %s.\n", argv[i]);
+		    return -1;
+		}
+		if (!value)
+		{
+		    printf("Cannot set chunk size to 0 nanosecond.\n");
+		    return -1;
+		}
+		if (value >= 1000000000)
+		{
+		    printf("Cannot set chunk size greater than 1 second.\n");
+		    return -1;
+		}
+
+		cycles_per_chunk *= (float)value / (float)nsec_per_chunk;
+		nsec_per_chunk = value;
+		break;
+
+	    case 'f':
+		++i;
+		if (i < argc)
+		    value = read_hz(argv[i]);
+		else
+		{
+		    printf("You need to precise a frequency with option -f.\n");
+		    return -1;
+		}
+
+		if (value < 0)
+		{
+		    printf("Error reading emulation speed: %s.\n", argv[i]);
+		    return -1;
+		}
+		if (!value)
+		{
+		    printf("Cannot set emulation speed to 0 Hz.\n");
+		    return -1;
+		}
+
+		cycles_per_chunk = value / (1000000000 / nsec_per_chunk);
+		break;
+
 	    case 'h':
 		++curr_arg;
 		while (++i < argc && strcmp(argv[i], "--"));
