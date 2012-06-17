@@ -31,8 +31,10 @@ static struct hardware_node* hd_list = NULL;
 
 static void recv_int(unsigned short int_val)
 {
-    /* Not thread safe. */
+    static pthread_mutex_t iq_front_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&iq_front_mutex);
     int_queue[iq_front++] = int_val;
+    pthread_mutex_unlock(&iq_front_mutex);
 }
 
 int load_hard(int hard_argc, char* hard_argv[])
