@@ -45,17 +45,16 @@ int load_hard(int hard_argc, char* hard_argv[])
 		    char* argv[]);
     struct hardware_node* hard_node;
 
-    /* We have to drop the "-h" prefix of hard_argv[0] to get the filename. */
-    if (!hard_argv[0][2])
+    if (!hard_argc)
     {
-	printf("You have to specify a hardware library with option -h.");
-	return -1;
+	printf("You have to specify a hardware library with option -h.\n");
+	return 1;
     }
-    dl_handle = dlopen(hard_argv[0] + 2, RTLD_LAZY);
+    dl_handle = dlopen(hard_argv[0], RTLD_LAZY);
     if (!dl_handle)
     {
 	printf("%s\n", dlerror());
-	return -1;
+	return 2;
     }
 
     hd_info = dlsym(dl_handle, "info");
@@ -72,7 +71,7 @@ int load_hard(int hard_argc, char* hard_argv[])
     if (!(hd_init && hd_info && hd_send_int))
     {
 	dlclose(dl_handle);
-	return -1;
+	return 2;
     }
 
     hard_node = (struct hardware_node*)malloc(sizeof(struct hardware_node));

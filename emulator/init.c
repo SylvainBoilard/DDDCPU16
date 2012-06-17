@@ -63,6 +63,7 @@ int init(int argc, char* argv[])
 	    switch (argv[i][1])
 	    {
 	    case 'h':
+		++curr_arg;
 		while (++i < argc && strcmp(argv[i], "--"));
 		ret_val = load_hard(i - curr_arg, argv + curr_arg);
 		if (ret_val)
