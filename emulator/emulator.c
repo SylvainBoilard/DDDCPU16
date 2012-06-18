@@ -45,7 +45,11 @@ int emulate(void)
 	    nb_instr[b](va);
 	}
 	else
-	    cycles++;
+	    /* These opcodes have currently no purpose. We just spend a cycle
+	       doing nothing so that the instruction lasts a non-null period of
+	       time to prevent running through the RAM at full speed in case the
+	       RAM is full of zeros. */
+	    ++cycles;
 
 	if (!int_queueing && iq_front != iq_back)
 	{
