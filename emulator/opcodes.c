@@ -66,7 +66,7 @@ static void mul(unsigned short* b, const unsigned short* a)
 
 static void mli(unsigned short* b, const unsigned short* a)
 {
-    unsigned int result = *(short*)b * *(short*)a;
+    unsigned int result = *(short*)b * *(const short*)a;
     *b = result;
     EX = result >> 16;
     cycles += 2;
@@ -88,7 +88,7 @@ static void div(unsigned short* b, const unsigned short* a)
 
 static void dvi(unsigned short* b, const unsigned short* a)
 {
-    const short va = *(short*)a;
+    const short va = *(const short*)a;
     if (va)
     {
 	unsigned int result = (*(short*)b << 16) / va;
@@ -102,7 +102,7 @@ static void dvi(unsigned short* b, const unsigned short* a)
 
 static void mod(unsigned short* b, const unsigned short* a)
 {
-    static unsigned short va = *a;
+    const unsigned short va = *a;
     if (va)
 	*b %= va;
     else
@@ -112,7 +112,7 @@ static void mod(unsigned short* b, const unsigned short* a)
 
 static void mdi(unsigned short* b, const unsigned short* a)
 {
-    const short va =  *(short*)*a;
+    const short va =  *(const short*)a;
     if (va)
 	*(short*)b %= va;
     else
@@ -199,7 +199,7 @@ static void ifg(unsigned short* b, const unsigned short* a)
 
 static void ifa(unsigned short* b, const unsigned short* a)
 {
-    if (*(short*)b <= *(short*)a)
+    if (*(short*)b <= *(const short*)a)
 	skip();
     cycles += 2;
 }
@@ -213,7 +213,7 @@ static void ifl(unsigned short* b, const unsigned short* a)
 
 static void ifu(unsigned short* b, const unsigned short* a)
 {
-    if (*(short*)b >= *(short*)a)
+    if (*(short*)b >= *(const short*)a)
 	skip();
     cycles += 2;
 }
