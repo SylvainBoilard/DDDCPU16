@@ -36,6 +36,7 @@ struct hardware
 extern struct hardware* hd_hard;
 extern unsigned int hd_number;
 
+void recv_int(unsigned short int_val);
 int load_hard(int hard_argc, char* hard_argv[]);
 void complete_load_hard(void);
 void free_hard(void);

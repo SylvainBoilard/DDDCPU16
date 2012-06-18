@@ -29,7 +29,7 @@ struct hardware_node
 
 static struct hardware_node* hd_list = NULL;
 
-static void recv_int(unsigned short int_val)
+void recv_int(unsigned short int_val)
 {
     static pthread_mutex_t iq_front_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&iq_front_mutex);

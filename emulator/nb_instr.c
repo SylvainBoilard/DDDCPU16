@@ -27,7 +27,7 @@ static void jsr(unsigned short* a)
 
 static void swi(unsigned short* a) /* Called INT in spec. */
 {
-    int_queue[iq_front++] = *a;
+    recv_int(*a);
     cycles += 4;
 }
 
