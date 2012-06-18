@@ -69,8 +69,10 @@ int emulate(void)
 	    struct timespec current;
 	    struct timespec sleep;
 
+	    last_sleep += cycles_per_chunk;
 	    clock_gettime(CLOCK_MONOTONIC, &current);
-	    sleep.tv_nsec = nsec_per_chunk - (current.tv_nsec - chunk_start.tv_nsec) -
+	    sleep.tv_nsec = nsec_per_chunk -
+		(current.tv_nsec - chunk_start.tv_nsec) -
 		(current.tv_sec - chunk_start.tv_sec) * 1000000000;
 	    if (sleep.tv_nsec > 0)
 	    {
@@ -84,7 +86,6 @@ int emulate(void)
 		chunk_start.tv_nsec -= 1000000000;
 		++chunk_start.tv_sec;
 	    }
-	    last_sleep += cycles_per_chunk;
 	}
     }
 
