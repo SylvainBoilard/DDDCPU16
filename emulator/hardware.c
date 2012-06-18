@@ -34,7 +34,7 @@ void recv_int(unsigned short int_val)
     static pthread_mutex_t iq_front_mutex = PTHREAD_MUTEX_INITIALIZER;
     pthread_mutex_lock(&iq_front_mutex);
     int_queue[iq_front] = int_val;
-    ++iq_front; /* Do net increment iq_front until queuing complete. */
+    ++iq_front; /* Do not increment iq_front until queuing complete. */
     pthread_mutex_unlock(&iq_front_mutex);
 }
 
@@ -103,14 +103,6 @@ void complete_load_hard(void)
 
 void free_hard(void)
 {
-    while (hd_list)
-    {
-	struct hardware_node* hard_node = hd_list;
-	hd_list = hard_node->next;
-	dlclose(hard_node->hard.dl_handle);
-	free(hard_node);
-	--hd_number;
-    }
     if (hd_hard)
     {
 	unsigned int i;
@@ -119,5 +111,12 @@ void free_hard(void)
 	free(hd_hard);
 	hd_hard = NULL;
     }
-    hd_number = 0;
+    else
+	while (hd_list)
+	{
+	    struct hardware_node* hard_node = hd_list;
+	    hd_list = hard_node->next;
+	    dlclose(hard_node->hard.dl_handle);
+	    free(hard_node);
+	}
 }
