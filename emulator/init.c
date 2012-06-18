@@ -133,23 +133,23 @@ int init(int argc, char* argv[])
 		else
 		{
 		    printf("You need to precise a chunk size with option -C.\n");
-		    return -1;
+		    return 1;
 		}
 
 		if (value < 0)
 		{
 		    printf("Error reading chunk size: %s.\n", argv[i]);
-		    return -1;
+		    return 1;
 		}
 		if (!value)
 		{
 		    printf("Cannot set chunk size to 0 nanosecond.\n");
-		    return -1;
+		    return 1;
 		}
 		if (value >= 1000000000)
 		{
 		    printf("Cannot set chunk size greater than 1 second.\n");
-		    return -1;
+		    return 1;
 		}
 
 		cycles_per_chunk *= (float)value / (float)nsec_per_chunk;
@@ -163,18 +163,18 @@ int init(int argc, char* argv[])
 		else
 		{
 		    printf("You need to precise a frequency with option -f.\n");
-		    return -1;
+		    return 1;
 		}
 
 		if (value < 0)
 		{
 		    printf("Error reading emulation speed: %s.\n", argv[i]);
-		    return -1;
+		    return 1;
 		}
 		if (!value)
 		{
 		    printf("Cannot set emulation speed to 0 Hz.\n");
-		    return -1;
+		    return 1;
 		}
 
 		cycles_per_chunk = value / (1000000000 / nsec_per_chunk);
