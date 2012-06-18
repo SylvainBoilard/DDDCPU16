@@ -74,9 +74,10 @@ static void mli(unsigned short* b, const unsigned short* a)
 
 static void div(unsigned short* b, const unsigned short* a)
 {
-    if (*a)
+    const unsigned short va = *a;
+    if (va)
     {
-	unsigned int result = (*b << 16) / *a;
+	unsigned int result = (*b << 16) / va;
 	*b = result >> 16;
 	EX = result;
     }
@@ -87,9 +88,10 @@ static void div(unsigned short* b, const unsigned short* a)
 
 static void dvi(unsigned short* b, const unsigned short* a)
 {
-    if (*a)
+    const short va = *(short*)a;
+    if (va)
     {
-	unsigned int result = (*(short*)b << 16) / *(short*)a;
+	unsigned int result = (*(short*)b << 16) / va;
 	*b = result >> 16;
 	EX = result;
     }
@@ -100,8 +102,9 @@ static void dvi(unsigned short* b, const unsigned short* a)
 
 static void mod(unsigned short* b, const unsigned short* a)
 {
-    if (*a)
-	*b %= *a;
+    static unsigned short va = *a;
+    if (va)
+	*b %= va;
     else
 	*b = 0;
     cycles += 3;
@@ -109,8 +112,9 @@ static void mod(unsigned short* b, const unsigned short* a)
 
 static void mdi(unsigned short* b, const unsigned short* a)
 {
-    if (*a)
-	*(short*)b %= *(short*)a;
+    const short va =  *(short*)*a;
+    if (va)
+	*(short*)b %= va;
     else
 	*b = 0;
     cycles += 3;
@@ -124,7 +128,7 @@ static void and(unsigned short* b, const unsigned short* a)
 
 static void bor(unsigned short* b, const unsigned short* a)
 {
-    *b |= *b;
+    *b |= *a;
     ++cycles;
 }
 
