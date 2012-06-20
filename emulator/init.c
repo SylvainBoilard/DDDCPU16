@@ -18,13 +18,14 @@
 
 #include "init.h"
 
-static unsigned int lil_end(void)
+/* Returns 1 if host uses little-endian, 0 overwise. */
+static unsigned int host_endn(void)
 {
     const unsigned int test = 0x00000001;
     return *(const unsigned char *)&test;
 }
 
-static int load_ram(const char* file)
+static int load_ram(const char* file, unsigned int file_endn)
 {
     FILE* ram_img;
 
@@ -33,7 +34,7 @@ static int load_ram(const char* file)
 	return 1;
     fread(memory, 1, 0x20000, ram_img);
     fclose(ram_img);
-    if (lil_end())
+    if (host_endn() != file_endn)
     {
 	unsigned char* raw_mem = (unsigned char*)memory;
 	unsigned char temp;
@@ -114,6 +115,7 @@ static long read_ns(const char* string)
 int init(int argc, char* argv[])
 {
     unsigned int ram_image_index = 0;
+    unsigned int ram_image_endn = 1; /* Default is little endian. */
     int i;
 
     for (i = 1; i < argc; ++i)
@@ -126,7 +128,15 @@ int init(int argc, char* argv[])
 
 	    switch (argv[i][1])
 	    {
-	    case 'C':
+	    case 'B': /* Ram image's endian-ness options. */
+		ram_image_endn = 0;
+		break;
+
+	    case 'L':
+		ram_image_endn = 1;
+		break;
+
+	    case 'C': /* Chunk size for emulation timing option. */
 		++i;
 		if (i < argc)
 		    value = read_ns(argv[i]);
@@ -156,7 +166,7 @@ int init(int argc, char* argv[])
 		nsec_per_chunk = value;
 		break;
 
-	    case 'f':
+	    case 'f': /* Frequency option. */
 		++i;
 		if (i < argc)
 		    value = read_hz(argv[i]);
@@ -180,7 +190,7 @@ int init(int argc, char* argv[])
 		cycles_per_chunk = value / (1000000000 / nsec_per_chunk);
 		break;
 
-	    case 'h':
+	    case 'h': /* Hardware loading option. */
 		++curr_arg;
 		while (++i < argc && strcmp(argv[i], "--"));
 		ret_val = load_hard(i - curr_arg, argv + curr_arg);
@@ -207,7 +217,7 @@ int init(int argc, char* argv[])
 	printf("You must specify a RAM image to load.\n");
 	return 1;
     }
-    if (load_ram(argv[ram_image_index]))
+    if (load_ram(argv[ram_image_index], ram_image_endn))
     {
 	printf("Cannot open %s.\n", argv[ram_image_index]);
 	return 2;
