@@ -8,6 +8,7 @@ FILE(GLOB_RECURSE source_files
   main.c
   nb_instr.c
   opcodes.c
+  parse.c
   values.c
   )
 ADD_EXECUTABLE(dddcpu16 ${source_files})

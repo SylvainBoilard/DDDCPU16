@@ -16,17 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INIT_H_INCLUDED
-#define INIT_H_INCLUDED
+#ifndef PARSE_H_INCLUDED
+#define PARSE_H_INCLUDED
 
-#include <string.h>
-#include <stdio.h>
+long read_hz(const char* string);
+long read_ns(const char* string);
 
-#include "globals.h"
-#include "hardware.h"
-#include "parse.h"
-
-int init(int argc, char* argv[]);
-void term(void);
-
-#endif /* INIT_H_INCLUDED */
+#endif /* PARSE_H_INCLUDED */

@@ -49,69 +49,6 @@ static int load_ram(const char* file, unsigned int file_endn)
     return 0;
 }
 
-static long read_hz(const char* string)
-{
-    unsigned long result = 0;
-
-    while (*string)
-    {
-	if (*string >= '0' && *string <= '9')
-	    result = result * 10 + *string - '0';
-	else
-	    break;
-	++string;
-    }
-
-    if (!*string)
-	return result;
-    switch (*string)
-    {
-    case 'G':
-	result *= 1000;
-    case 'M':
-	result *= 1000;
-    case 'k':
-	result *= 1000;
-	++string;
-    default:;
-    }
-    if (*string == 'H' && *++string == 'z' && !*++string)
-	return result;
-    return -1;
-}
-
-static long read_ns(const char* string)
-{
-    unsigned long result = 0;
-
-    while (*string)
-    {
-	if (*string >= '0' && *string <= '9')
-	    result = result * 10 + *string - '0';
-	else
-	    break;
-	++string;
-    }
-
-    if (!*string)
-	return result;
-    switch (*string)
-    {
-    case 'm':
-	result *= 1000;
-    case 'u':
-	result *= 1000;
-    case 'n':
-	break;
-
-    default:
-	return -1;
-    }
-    if (*++string == 's' && !*++string)
-	return result;
-    return -1;
-}
-
 int init(int argc, char* argv[])
 {
     unsigned int ram_image_index = 0;
