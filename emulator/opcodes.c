@@ -250,7 +250,7 @@ static void std(unsigned short* b, const unsigned short* a)
 
 static void NONE(unsigned short* b, const unsigned short* a)
 {
-    ++cycles;
+    ++cycles; /* See emulator.c for explanations. */
 }
 
 void (* const opcodes[])(unsigned short* b, const unsigned short* a) = {
