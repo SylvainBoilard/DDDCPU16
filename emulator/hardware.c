@@ -18,8 +18,6 @@
 
 #include "hardware.h"
 
-static const struct dddcpu16_context context = { memory, registers, recv_int };
-
 struct hardware* hd_hard = NULL;
 unsigned int hd_number = 0;
 
@@ -42,12 +40,15 @@ void recv_int(unsigned short int_val)
 
 int load_hard(int hard_argc, char* hard_argv[])
 {
+    static const struct dddcpu16_context context = {
+	memory, registers, recv_int
+    };
+    struct hardware_node* hard_node_tmp;
     void* dl_handle;
     void* hd_info;
     void* hd_send_int;
     int (* hd_init)(const struct dddcpu16_context* hd_context,
 		    int hd_argc, char* hd_argv[]);
-    struct hardware_node* hard_node;
 
     if (!hard_argc)
     {
@@ -78,12 +79,13 @@ int load_hard(int hard_argc, char* hard_argv[])
 	return 2;
     }
 
-    hard_node = (struct hardware_node*)malloc(sizeof(struct hardware_node));
-    *(void**)(&hard_node->hard.hd_info) = hd_info;
-    *(void**)(&hard_node->hard.hd_send_int) = hd_send_int;
-    hard_node->hard.dl_handle = dl_handle;
-    hard_node->next = hd_list;
-    hd_list = hard_node;
+    /* Hardware is correctly loaded, we can push it. */
+    hard_node_tmp = (struct hardware_node*)malloc(sizeof(struct hardware_node));
+    *(void**)(&hard_node_tmp->hard.hd_info) = hd_info;
+    *(void**)(&hard_node_tmp->hard.hd_send_int) = hd_send_int;
+    hard_node_tmp->hard.dl_handle = dl_handle;
+    hard_node_tmp->next = hd_list;
+    hd_list = hard_node_tmp;
     ++hd_number;
 
     return hd_init(&context, hard_argc, hard_argv);
