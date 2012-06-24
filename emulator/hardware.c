@@ -18,6 +18,8 @@
 
 #include "hardware.h"
 
+static const struct dddcpu16_context context = { memory, registers, recv_int };
+
 struct hardware* hd_hard = NULL;
 unsigned int hd_number = 0;
 
@@ -43,9 +45,8 @@ int load_hard(int hard_argc, char* hard_argv[])
     void* dl_handle;
     void* hd_info;
     void* hd_send_int;
-    int (* hd_init)(unsigned short* dcpu_mem, unsigned short* dcpu_regs,
-		    void(* dcpu_recv_int)(unsigned short), int argc,
-		    char* argv[]);
+    int (* hd_init)(const struct dddcpu16_context* hd_context,
+		    int hd_argc, char* hd_argv[]);
     struct hardware_node* hard_node;
 
     if (!hard_argc)
@@ -85,7 +86,7 @@ int load_hard(int hard_argc, char* hard_argv[])
     hd_list = hard_node;
     ++hd_number;
 
-    return hd_init(memory, registers, recv_int, hard_argc, hard_argv);
+    return hd_init(&context, hard_argc, hard_argv);
 }
 
 void complete_load_hard(void)

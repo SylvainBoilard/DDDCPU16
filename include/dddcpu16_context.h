@@ -16,31 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HARDWARE_H_INCLUDED
-#define HARDWARE_H_INCLUDED
+#ifndef DDDCPU16_CONTEXT_H_INCLUDED
+#define DDDCPU16_CONTEXT_H_INCLUDED
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <dlfcn.h>
-#include <pthread.h>
-
-#include <dddcpu16_context.h>
-
-#include "globals.h"
-
-struct hardware
+struct dddcpu16_context
 {
-    void (* hd_info)(void);
-    unsigned int (* hd_send_int)(void);
-    void* dl_handle;
+    unsigned short* memory;
+    unsigned short* registers;
+    void (* send_int)(unsigned short);
 };
 
-extern struct hardware* hd_hard;
-extern unsigned int hd_number;
-
-void recv_int(unsigned short int_val);
-int load_hard(int hard_argc, char* hard_argv[]);
-void complete_load_hard(void);
-void free_hard(void);
-
-#endif /* HARDWARE_H_INCLUDED */
+#endif /* DDDCPU16_CONTEXT_H_INCLUDED */
