@@ -106,11 +106,18 @@ void complete_load_hard(void)
 
 void free_hard(void)
 {
+    void (* hd_term)(void);
+
     if (hd_hard)
     {
 	unsigned int i;
 	for (i = 0; i < hd_number; ++i)
+	{
+	    *(void**)&hd_term = dlsym(hd_hard[i].dl_handle, "term");
+	    if (hd_term)
+		hd_term();
 	    dlclose(hd_hard[i].dl_handle);
+	}
 	free(hd_hard);
 	hd_hard = NULL;
     }
@@ -119,6 +126,10 @@ void free_hard(void)
 	{
 	    struct hardware_node* hard_node = hd_list;
 	    hd_list = hard_node->next;
+
+	    *(void**)&hd_term = dlsym(hard_node->hard.dl_handle, "term");
+	    if (hd_term)
+		hd_term();
 	    dlclose(hard_node->hard.dl_handle);
 	    free(hard_node);
 	}
