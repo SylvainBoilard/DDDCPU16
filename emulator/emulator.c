@@ -20,7 +20,7 @@
 
 int emulate(void)
 {
-    unsigned long last_sleep = cycles;
+    unsigned long last_sleep = cycles_counter;
     struct timespec chunk_start;
 
     clock_gettime(CLOCK_MONOTONIC, &chunk_start);
@@ -49,7 +49,7 @@ int emulate(void)
 	       doing nothing so that the instruction lasts a non-null period of
 	       time to prevent running through the RAM at full speed in case the
 	       RAM is full of those. */
-	    ++cycles;
+	    ++cycles_counter;
 
 	if (!int_queueing && iq_front != iq_back)
 	{
@@ -64,7 +64,7 @@ int emulate(void)
 	    ++iq_back;
 	}
 
-	if (cycles - last_sleep >= cycles_per_chunk)
+	if (cycles_counter - last_sleep >= cycles_per_chunk)
 	{
 	    struct timespec current;
 	    struct timespec sleep;

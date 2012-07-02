@@ -49,6 +49,17 @@ static int load_ram(const char* file, unsigned int file_endn)
     return 0;
 }
 
+/* Updates cycles_per_chunk. */
+static void update_cpc(void)
+{
+    /* These operations must be done in an order
+       such that it minimizes rounding errors. */
+    cycles_per_chunk =
+	emu_freq *
+	emu_speed / 1000 *
+	nsec_per_chunk / 1000000000;
+}
+
 int init(int argc, char* argv[])
 {
     unsigned int ram_image_index = 0;
@@ -99,11 +110,36 @@ int init(int argc, char* argv[])
 		    return 1;
 		}
 
-		cycles_per_chunk *= (float)value / (float)nsec_per_chunk;
 		nsec_per_chunk = value;
+		update_cpc();
 		break;
 
-	    case 'f': /* Frequency option. */
+	    case 's': /* Emulation speed option. */
+		++i;
+		if (i < argc)
+		    value = read_float_10E3(argv[i]);
+		else
+		{
+		    printf("You need to precise a speed with option -s.\n");
+		    return 1;
+		}
+
+		if (value < 0)
+		{
+		    printf("Error reading emulation speed: %s.\n", argv[i]);
+		    return 1;
+		}
+		if (!value)
+		{
+		    printf("Cannot set emulation speed to 0.\n");
+		    return 1;
+		}
+
+		emu_speed = value;
+		update_cpc();
+		break;
+
+	    case 'f': /* Emulation frequency option. */
 		++i;
 		if (i < argc)
 		    value = read_hz(argv[i]);
@@ -115,16 +151,17 @@ int init(int argc, char* argv[])
 
 		if (value < 0)
 		{
-		    printf("Error reading emulation speed: %s.\n", argv[i]);
+		    printf("Error reading emulation frequency: %s.\n", argv[i]);
 		    return 1;
 		}
 		if (!value)
 		{
-		    printf("Cannot set emulation speed to 0 Hz.\n");
+		    printf("Cannot set emulation frequency to 0 Hz.\n");
 		    return 1;
 		}
 
-		cycles_per_chunk = value / (1000000000 / nsec_per_chunk);
+		emu_freq = value;
+		update_cpc();
 		break;
 
 	    case 'h': /* Hardware loading option. */

@@ -31,8 +31,10 @@ extern unsigned char iq_back;
 extern unsigned char iq_front;
 extern unsigned int int_queueing;
 
-extern unsigned long cycles;
-extern unsigned long cycles_per_chunk;
+extern unsigned long cycles_counter;
+extern unsigned long emu_freq;
+extern unsigned int emu_speed;
 extern unsigned long nsec_per_chunk;
+extern unsigned long cycles_per_chunk;
 
 #endif /* GLOBALS_H_INCLUDED */

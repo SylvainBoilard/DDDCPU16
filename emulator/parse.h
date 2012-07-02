@@ -21,5 +21,6 @@
 
 long read_hz(const char* string);
 long read_ns(const char* string);
+long read_float_10E3(const char* string);
 
 #endif /* PARSE_H_INCLUDED */

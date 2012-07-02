@@ -29,7 +29,7 @@ static void skip(void)
     {
 	ins = memory[PC++];
 	PC += VRW((ins >> 5) & 0x1F) + VRW(ins >> 10);
-	++cycles;
+	++cycles_counter;
     }
     while ((ins & 0x18) == 0x10);
 }
@@ -37,7 +37,7 @@ static void skip(void)
 static void set(unsigned short* b, const unsigned short* a)
 {
     *b = *a;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void add(unsigned short* b, const unsigned short* a)
@@ -45,7 +45,7 @@ static void add(unsigned short* b, const unsigned short* a)
     unsigned int result = *b + *a;
     *b = result;
     EX = result >> 16;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void sub(unsigned short* b, const unsigned short* a)
@@ -53,7 +53,7 @@ static void sub(unsigned short* b, const unsigned short* a)
     unsigned int result = *b - *a;
     *b = result;
     EX = result >> 16;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void mul(unsigned short* b, const unsigned short* a)
@@ -61,7 +61,7 @@ static void mul(unsigned short* b, const unsigned short* a)
     unsigned int result = *b * *a;
     *b = result;
     EX = result >> 16;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void mli(unsigned short* b, const unsigned short* a)
@@ -69,7 +69,7 @@ static void mli(unsigned short* b, const unsigned short* a)
     unsigned int result = *(short*)b * *(const short*)a;
     *b = result;
     EX = result >> 16;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void div(unsigned short* b, const unsigned short* a)
@@ -83,7 +83,7 @@ static void div(unsigned short* b, const unsigned short* a)
     }
     else
 	*b = EX = 0;
-    cycles += 3;
+    cycles_counter += 3;
 }
 
 static void dvi(unsigned short* b, const unsigned short* a)
@@ -97,7 +97,7 @@ static void dvi(unsigned short* b, const unsigned short* a)
     }
     else
 	*b = EX = 0;
-    cycles += 3;
+    cycles_counter += 3;
 }
 
 static void mod(unsigned short* b, const unsigned short* a)
@@ -107,7 +107,7 @@ static void mod(unsigned short* b, const unsigned short* a)
 	*b %= va;
     else
 	*b = 0;
-    cycles += 3;
+    cycles_counter += 3;
 }
 
 static void mdi(unsigned short* b, const unsigned short* a)
@@ -117,25 +117,25 @@ static void mdi(unsigned short* b, const unsigned short* a)
 	*(short*)b %= va;
     else
 	*b = 0;
-    cycles += 3;
+    cycles_counter += 3;
 }
 
 static void and(unsigned short* b, const unsigned short* a)
 {
     *b &= *a;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void bor(unsigned short* b, const unsigned short* a)
 {
     *b |= *a;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void xor(unsigned short* b, const unsigned short* a)
 {
     *b ^= *a;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void shr(unsigned short* b, const unsigned short* a)
@@ -143,7 +143,7 @@ static void shr(unsigned short* b, const unsigned short* a)
     unsigned int result = (*b << 16) >> *a;
     *b = result >> 16;
     EX = result;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void asr(unsigned short* b, const unsigned short* a)
@@ -151,7 +151,7 @@ static void asr(unsigned short* b, const unsigned short* a)
     unsigned int result = (*(short*)b << 16) >> *a;
     *b = (result >> 16);
     EX = result;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void shl(unsigned short* b, const unsigned short* a)
@@ -159,63 +159,63 @@ static void shl(unsigned short* b, const unsigned short* a)
     unsigned int result = *b << *a;
     *b = result;
     EX = result >> 16;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void ifb(unsigned short* b, const unsigned short* a)
 {
     if (!(*b & *a))
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ifc(unsigned short* b, const unsigned short* a)
 {
     if (*b & *a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ife(unsigned short* b, const unsigned short* a)
 {
     if (*b != *a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ifn(unsigned short* b, const unsigned short* a)
 {
     if (*b == *a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ifg(unsigned short* b, const unsigned short* a)
 {
     if (*b <= *a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ifa(unsigned short* b, const unsigned short* a)
 {
     if (*(short*)b <= *(const short*)a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ifl(unsigned short* b, const unsigned short* a)
 {
     if (*b >= *a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void ifu(unsigned short* b, const unsigned short* a)
 {
     if (*(short*)b >= *(const short*)a)
 	skip();
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void adx(unsigned short* b, const unsigned short* a)
@@ -223,7 +223,7 @@ static void adx(unsigned short* b, const unsigned short* a)
     unsigned int result = *b + *a + EX;
     *b = result;
     EX = result >> 16;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void sbx(unsigned short* b, const unsigned short* a)
@@ -231,7 +231,7 @@ static void sbx(unsigned short* b, const unsigned short* a)
     unsigned int result = *b - *a + (short)EX;
     *b = result;
     EX = result >> 16;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void sti(unsigned short* b, const unsigned short* a)
@@ -250,7 +250,7 @@ static void std(unsigned short* b, const unsigned short* a)
 
 static void NONE(unsigned short* b, const unsigned short* a)
 {
-    ++cycles; /* See emulator.c for explanations. */
+    ++cycles_counter; /* See emulator.c for explanations. */
 }
 
 void (* const opcodes[])(unsigned short* b, const unsigned short* a) = {

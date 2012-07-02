@@ -80,3 +80,38 @@ long read_ns(const char* string)
 	return result;
     return -1;
 }
+
+long read_float_10E3(const char* string)
+{
+    long result = 0;
+    unsigned int i;
+
+    while (*string)
+    {
+	if (*string >= '0' && *string <= '9')
+	    result = result * 10 + *string - '0';
+	else
+	    break;
+	++string;
+    }
+    if (!*string)
+	return result * 1000;
+    if (*string != '.')
+	return -1;
+    ++string;
+    for (i = 0; i < 3; ++i)
+    {
+	if (!*string)
+	    result *= 10;
+	else if (*string >= '0' && *string <= '9')
+	{
+	    result = result * 10 + *string - '0';
+	    ++string;
+	}
+	else
+	    return -1;
+    }
+    if (!*string)
+	return result;
+    return -1;
+}

@@ -22,25 +22,25 @@ static void jsr(unsigned short* a)
 {
     memory[--SP] = PC;
     PC = *a;
-    cycles += 3;
+    cycles_counter += 3;
 }
 
 static void swi(unsigned short* a) /* Called INT in spec. */
 {
     recv_int(*a);
-    cycles += 4;
+    cycles_counter += 4;
 }
 
 static void iag(unsigned short* a)
 {
     *a = IA;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void ias(unsigned short* a)
 {
     IA = *a;
-    ++cycles;
+    ++cycles_counter;
 }
 
 static void rfi(unsigned short* a)
@@ -48,19 +48,19 @@ static void rfi(unsigned short* a)
     int_queueing = 0;
     registers[0] = memory[SP++];
     PC = memory[SP++];
-    cycles += 3;
+    cycles_counter += 3;
 }
 
 static void iaq(unsigned short* a)
 {
     int_queueing = *a;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void hwn(unsigned short* a)
 {
     *a = hd_number;
-    cycles += 2;
+    cycles_counter += 2;
 }
 
 static void hwq(unsigned short* a)
@@ -68,20 +68,20 @@ static void hwq(unsigned short* a)
     unsigned short hard_no = *a;
     if (hard_no < hd_number)
 	hd_hard[hard_no].hd_info();
-    cycles += 4;
+    cycles_counter += 4;
 }
 
 static void hwi(unsigned short* a)
 {
     unsigned short hard_no = *a;
     if (hard_no < hd_number)
-	cycles += hd_hard[hard_no].hd_send_int();
-    cycles += 4;
+	cycles_counter += hd_hard[hard_no].hd_send_int();
+    cycles_counter += 4;
 }
 
 static void NONE(unsigned short* a)
 {
-    ++cycles; /* See emulator.c for explanations. */
+    ++cycles_counter; /* See emulator.c for explanations. */
 }
 
 void (* const nb_instr[])(unsigned short* a) = {

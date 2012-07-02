@@ -32,7 +32,7 @@ static unsigned short* peek(unsigned short is_a)
 
 static unsigned short* pick(unsigned short is_a)
 {
-    ++cycles;
+    ++cycles_counter;
     return memory + (unsigned short)(SP + memory[PC++]);
 }
 
@@ -53,7 +53,7 @@ static unsigned short* ex(unsigned short is_a)
 
 static unsigned short* nw(unsigned short is_a)
 {
-    ++cycles;
+    ++cycles_counter;
     return memory + memory[PC++];
 }
 
@@ -61,7 +61,7 @@ static unsigned short* nwlit(unsigned short is_a)
 {
     static unsigned short value;
     value = memory[PC++];
-    ++cycles;
+    ++cycles_counter;
     return &value;
 }
 

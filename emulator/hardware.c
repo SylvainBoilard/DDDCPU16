@@ -41,7 +41,7 @@ void recv_int(unsigned short int_val)
 int load_hard(int hard_argc, char* hard_argv[])
 {
     static const struct dddcpu16_context context = {
-	memory, registers, recv_int
+	memory, registers, &emu_freq, &emu_speed, &cycles_counter, recv_int
     };
     struct hardware_node* hard_node_tmp;
     void* dl_handle;
