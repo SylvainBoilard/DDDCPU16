@@ -5,29 +5,37 @@ DDDCPU16 - DeathlyDeep's DCPU16, a DCPU16 emulator.
 DDDCPU16 is a DCPU16 emulator written by Sylvain "DeathlyDeep" Boilard, student
 at French IT engineer school EFREI, while he had way more urgent things to do.
 
-This project aims at:
- * Efficient DCPU16 emulation at arbitrary frequency.
- * Debug facilities, like GNU GDB's ones.
- * Modular hardware system (plugins).
+The DCPU16 is an imaginary CPU designed by Markus "Notch" Personn for his
+eventually-upcoming, nerd-friendly, space-exploration-and-stuff game "0x10c".
 
-This project is targeted to terminals. Whereas the hardware plugins may use
-graphical facilities (like the lem1802), the emulator itself will remain a
+This project aims at:
+ * Efficient DCPU16 emulation, at arbitrary speed and frequency.
+ * Modular hardware system, using reentrant plugins.
+ * And probably some sort of debug facilities, like GNU GDB's.
+
+This project is targeted to terminals. Whereas the hardware plugins (like the
+lem180x's) may use graphical facilities, the emulator itself will remain a
 textual application.
 
-I am not interested into Windows compatibility, but if you are, and you want to
-be involved in development, I will not refuse your patches.
+I am not interested into Windows compatibility, but if you are, and want to be
+involved in development, I will not refuse your patches. This said, I am
+probably not going to use any fancy feature or library, so you should be able to
+run this program as-is under Windows using Cygwin.
 
 === KNOWN BUGS =================================================================
 
 DCPU16 interrupts
  * If the size of the interrupts queue grows longer than 256, the DCPU16
-   processor is supposed to catch fire. Instead, in DDDCPU16, if the size of
-   the queue reaches 256, the queue will be considered emptied, and subsequent
-   interrupts will then be queued normally.
+   processor is supposed to catch fire. Practically, this would lead to random
+   words in the RAM getting randomly corrupted every once in a while, quickly
+   ending up with chaotic behaviour.
+
+   In DDDCPU16, instead of this, if the size of the queue reaches 256, the queue
+   is considered emptied, and subsequent interrupts are then queued normally.
 
 === AUTHORS ====================================================================
 
-Sylvain "Deathly Deep" Boilard
+Sylvain "DeathlyDeep" Boilard
  * e-mail : boilard@crans.org
  * twitter : @DeathlyDeep
 

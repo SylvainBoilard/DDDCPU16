@@ -2,9 +2,12 @@ Emulator
  * Implement debug facilities.
 
 Hardware
- * Implement lem1802.
+ * Implement lem180x.
  * Implement keyboard.
  * Implement clock.
 
 General
  * Write documentation.
+ * Test.
+   * Fix bugs.
+     * Test again.
