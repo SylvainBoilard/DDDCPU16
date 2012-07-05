@@ -24,7 +24,7 @@
 #include <dlfcn.h>
 #include <pthread.h>
 
-#include <dddcpu16_context.h>
+#include <dddcpu16.h>
 
 #include "globals.h"
 

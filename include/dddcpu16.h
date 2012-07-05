@@ -16,8 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DDDCPU16_CONTEXT_H_INCLUDED
-#define DDDCPU16_CONTEXT_H_INCLUDED
+#ifndef DDDCPU16_H_INCLUDED
+#define DDDCPU16_H_INCLUDED
 
 struct dddcpu16_context
 {
@@ -29,4 +29,4 @@ struct dddcpu16_context
     void (* send_int)(unsigned short);
 };
 
-#endif /* DDDCPU16_CONTEXT_H_INCLUDED */
+#endif /* DDDCPU16_H_INCLUDED */
