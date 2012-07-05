@@ -47,8 +47,7 @@ int load_hard(int hard_argc, char* hard_argv[])
     void* dl_handle;
     void* hd_info;
     void* hd_send_int;
-    int (* hd_init)(const struct dddcpu16_context* hd_context,
-		    int hd_argc, char* hd_argv[]);
+    int (* hd_init)(const struct dddcpu16_context*, int, char*[]);
 
     if (!hard_argc)
     {
