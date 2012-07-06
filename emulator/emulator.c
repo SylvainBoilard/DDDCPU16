@@ -64,6 +64,8 @@ int emulate(void)
 	    ++iq_back;
 	}
 
+	trigger_events();
+
 	if (cycles_counter - last_sleep >= cycles_per_chunk)
 	{
 	    struct timespec current;

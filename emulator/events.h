@@ -16,18 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EMULATOR_H_INCLUDED
-#define EMULATOR_H_INCLUDED
+#ifndef EVENTS_H_INCLUDED
+#define EVENTS_H_INCLUDED
 
-#define _POSIX_C_SOURCE 200112L
-#include <time.h>
+#include <stdlib.h>
+#include <dddcpu16.h>
 
 #include "globals.h"
-#include "opcodes.h"
-#include "nb_instr.h"
-#include "values.h"
-#include "events.h"
 
-int emulate(void);
+void schedule_event(unsigned long trigger,
+		    void (* callback)(unsigned long, void*), void* arguments);
+void trigger_events(void);
 
-#endif /* EMULATOR_H_INCLUDED */
+#endif /* EVENTS_H_INCLUDED */

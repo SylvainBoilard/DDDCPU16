@@ -2,6 +2,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/)
 FILE(GLOB_RECURSE source_files
   adv.c
   emulator.c
+  events.c
   globals.c
   hardware.c
   init.c
