@@ -20,7 +20,6 @@
 #define EVENTS_H_INCLUDED
 
 #include <stdlib.h>
-#include <dddcpu16.h>
 
 #include "globals.h"
 
