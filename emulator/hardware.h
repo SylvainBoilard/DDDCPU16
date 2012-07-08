@@ -27,6 +27,7 @@
 #include <dddcpu16.h>
 
 #include "globals.h"
+#include "events.h"
 
 struct hardware
 {
