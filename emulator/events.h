@@ -19,13 +19,12 @@
 #ifndef EVENTS_H_INCLUDED
 #define EVENTS_H_INCLUDED
 
-#include <stdlib.h>
+#include <dddcpu16.h>
 
 #include "globals.h"
 
 unsigned int get_agent_ID(void);
-void schedule_event(unsigned int agent_ID, unsigned long trigger,
-		    void (* callback)(unsigned int, void*), void* arguments);
+void schedule_event(const struct event* event);
 void trigger_events(void);
 
 #endif /* EVENTS_H_INCLUDED */
