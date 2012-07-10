@@ -27,8 +27,8 @@ struct dddcpu16_context
     const unsigned int* emu_speed;
     const unsigned long* cycles_counter;
     void (* send_int)(unsigned short);
-    void (* schedule_event)(unsigned long, void (*)(unsigned long, void*),
-			    void*);
+    void (* schedule_event)(unsigned int, unsigned long,
+			    void (*)(unsigned int, void*), void*);
 };
 
 #endif /* DDDCPU16_H_INCLUDED */

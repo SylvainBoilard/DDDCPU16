@@ -23,8 +23,9 @@
 
 #include "globals.h"
 
-void schedule_event(unsigned long trigger,
-		    void (* callback)(unsigned long, void*), void* arguments);
+unsigned int get_agent_ID(void);
+void schedule_event(unsigned int agent_ID, unsigned long trigger,
+		    void (* callback)(unsigned int, void*), void* arguments);
 void trigger_events(void);
 
 #endif /* EVENTS_H_INCLUDED */

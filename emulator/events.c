@@ -23,8 +23,9 @@ struct heap_node
     struct heap_node* left;
     struct heap_node* right;
     unsigned int balance;
+    unsigned int agent_ID;
     unsigned long trigger;
-    void (* callback)(unsigned long, void*);
+    void (* callback)(unsigned int, void*);
     void* arguments;
 };
 
@@ -86,6 +87,7 @@ static void heap_pop(struct heap_node** heap)
 	else
 	{
 	    (*heap)->trigger = (*heap)->right->trigger;
+	    (*heap)->agent_ID = (*heap)->right->agent_ID;
 	    (*heap)->callback = (*heap)->right->callback;
 	    (*heap)->arguments = (*heap)->right->arguments;
 	    --(*heap)->balance;
@@ -96,6 +98,7 @@ static void heap_pop(struct heap_node** heap)
     if (!(*heap)->right)
     {
 	(*heap)->trigger = (*heap)->left->trigger;
+	(*heap)->agent_ID = (*heap)->left->agent_ID;
 	(*heap)->callback = (*heap)->left->callback;
 	(*heap)->arguments = (*heap)->left->arguments;
 	++(*heap)->balance;
@@ -105,6 +108,7 @@ static void heap_pop(struct heap_node** heap)
     if ((*heap)->left->trigger < (*heap)->right->trigger)
     {
 	(*heap)->trigger = (*heap)->left->trigger;
+	(*heap)->agent_ID = (*heap)->left->agent_ID;
 	(*heap)->callback = (*heap)->left->callback;
 	(*heap)->arguments = (*heap)->left->arguments;
 	++(*heap)->balance;
@@ -113,6 +117,7 @@ static void heap_pop(struct heap_node** heap)
     else
     {
 	(*heap)->trigger = (*heap)->right->trigger;
+	(*heap)->agent_ID = (*heap)->right->agent_ID;
 	(*heap)->callback = (*heap)->right->callback;
 	(*heap)->arguments = (*heap)->right->arguments;
 	--(*heap)->balance;
@@ -120,12 +125,19 @@ static void heap_pop(struct heap_node** heap)
     }
 }
 
-void schedule_event(unsigned long trigger,
-		    void (* callback)(unsigned long, void*), void* arguments)
+unsigned int get_agent_ID(void)
+{
+    static unsigned int number = 0;
+    return number++;
+}
+
+void schedule_event(unsigned int agent_ID, unsigned long trigger,
+		    void (* callback)(unsigned int, void*), void* arguments)
 {
     struct heap_node* temp =
 	(struct heap_node*)malloc(sizeof(struct heap_node));
     temp->trigger = trigger;
+    temp->agent_ID = agent_ID;
     temp->callback = callback;
     temp->arguments = arguments;
     if (!events_heap)
@@ -145,7 +157,7 @@ void trigger_events(void)
     {
 	if (events_heap->trigger <= cycles_counter)
 	{
-	    events_heap->callback(events_heap->trigger, events_heap->arguments);
+	    events_heap->callback(events_heap->agent_ID, events_heap->arguments);
 	    heap_pop(&events_heap);
 	}
 	else
