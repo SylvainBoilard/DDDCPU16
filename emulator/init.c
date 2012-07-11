@@ -164,7 +164,7 @@ int init(int argc, char* argv[])
 		update_cpc();
 		break;
 
-	    case 'h': /* Hardware loading option. */
+	    case 'p': /* Plugin loading option. */
 		++curr_arg;
 		while (++i < argc && strcmp(argv[i], "--"));
 		ret_val = load_hard(i - curr_arg, argv + curr_arg);
