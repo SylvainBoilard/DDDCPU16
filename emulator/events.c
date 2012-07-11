@@ -32,6 +32,48 @@ static void swap_events(unsigned int first, unsigned int second)
     events_heap[second] = temp;
 }
 
+static void reorder_elem_up(unsigned int index)
+{
+    while (index)
+    {
+	unsigned int parent = (index - 1) / 2;
+	if (events_heap[index].trigger >= events_heap[parent].trigger)
+	    return;
+	swap_events(index, parent);
+	index = parent;
+    }
+}
+
+static void reorder_elem_down(unsigned int index)
+{
+    /* If the size of the heap is even, there is a node with only one leaf, so
+       we should stop reordering the heap before encountering such a node, and
+       treat it specificaly if necessary. This trick does not behave correctly
+       if the heap size is 0, but then we do not need to reorder anything. */
+    unsigned int half_size = (heap_size - 1) / 2;
+
+    while (index < half_size)
+    {
+	unsigned int childs = index * 2 + 1;
+	unsigned int lower_child = childs +
+	    (events_heap[childs].trigger >= events_heap[childs + 1].trigger);
+
+	if (events_heap[index].trigger <= events_heap[lower_child].trigger)
+	    return;
+	swap_events(index, lower_child);
+	index = lower_child;
+    }
+
+    /* Special case for a possible mono-leaf node. */
+    if (index == half_size && !(heap_size % 2))
+    {
+	unsigned int child = index * 2 + 1;
+
+	if (events_heap[index].trigger > events_heap[child].trigger)
+	    swap_events(index, child);
+    }
+}
+
 unsigned int get_agent_ID(void)
 {
     static unsigned int number = 0;
@@ -40,8 +82,6 @@ unsigned int get_agent_ID(void)
 
 void schedule_event(const struct event* event)
 {
-    unsigned int current_elem = heap_size;
-
     if (heap_size == MAX_EVENTS)
     {
 	printf("Ignored event scheduling: "
@@ -49,15 +89,29 @@ void schedule_event(const struct event* event)
 	return;
     }
 
-    events_heap[heap_size++] = *event;
-    while (current_elem)
+    events_heap[heap_size] = *event;
+    reorder_elem_up(heap_size++);
+}
+
+void cancel_event(unsigned int agent_ID, void (* callback)(void*))
+{
+    unsigned int i;
+
+    for (i = 0; i < heap_size; ++i)
+	if (events_heap[i].agent_ID == agent_ID)
+	    goto found;
+    return;
+
+  found:
+    if (--heap_size != i)
     {
-	unsigned int parent = (current_elem - 1) / 2;
-	if (events_heap[current_elem].trigger >= events_heap[parent].trigger)
-	    return;
-	swap_events(current_elem, parent);
-	current_elem = parent;
+	swap_events(i, heap_size);
+	reorder_elem_up(i);
+	reorder_elem_down(i);
     }
+
+    if (callback)
+	callback(events_heap[heap_size].arguments);
 }
 
 void trigger_events(void)
@@ -66,45 +120,9 @@ void trigger_events(void)
     {
 	if (--heap_size)
 	{
-	    unsigned int current_elem = 0;
-	    /* If the size of the heap is even, there is a node with only one
-	       leaf, so we should stop reordering the heap before encountering
-	       such a node, and treat it specificaly if necessary. */
-	    unsigned int half_size = (heap_size - 1) / 2;
-
 	    swap_events(0, heap_size);
-
-	    while (current_elem < half_size)
-	    {
-		unsigned int childs = current_elem * 2 + 1;
-		unsigned int lower_child = childs +
-		    (events_heap[childs].trigger >=
-		     events_heap[childs + 1].trigger);
-
-		if (events_heap[current_elem].trigger >
-		    events_heap[lower_child].trigger)
-		{
-		    swap_events(current_elem, lower_child);
-		    current_elem = lower_child;
-		}
-		else /* The heap is reordered, we can move on. */
-		    goto execute_event_callback;
-	    }
-
-	    /* Special case for a possible mono-leaf node. */
-	    if (current_elem == half_size && !(heap_size % 2))
-	    {
-		unsigned int child = current_elem * 2 + 1;
-
-		if (events_heap[current_elem].trigger >
-		    events_heap[child].trigger)
-		{
-		    swap_events(current_elem, child);
-		}
-	    }
+	    reorder_elem_down(0);
 	}
-
-      execute_event_callback:
 	events_heap[heap_size].callback(events_heap[heap_size].agent_ID,
 					events_heap[heap_size].arguments);
     }
