@@ -18,13 +18,27 @@ about fancy display facilities, custom fonts and colors and stuff.
 
 Synopsis:
 
-  ./dddcpu16 [options...] ram_image
+  dddcpu16 [options...] ram_image
+
+ram_image
+    The content of this RAM image will be loaded into the RAM on the DCPU16 at
+    the beginning of the emulation, and the execution will begin at address 0.
+    You can generate this file by runing a DASM16 assembler on a DASM16 source
+    file, but DDDCPU16 does not provide such a tool.
+
 
 Options:
+
+The options are evaluated from left to right so, for example, if you set the
+emulation speed twice, the second value will be recorded.
 
 -s speed
     Select the speed of the emulation. Default is 1. Do not confuse with
     emulation frequency, which is a different value.
+
+    This value can be a decimal value with up to 3 digits in the decimal part.
+    For example, with a value of 0.125 , you will slow the emulation speed to
+    1/8 of the normal behaviour.
 
 -f frequency
     Select the frequency of the emulation. Default is 100kHz. Do not confuse
@@ -37,16 +51,18 @@ Options:
 -p plugin [options...] [--]
     Load a plugin. You can pass options to the plugin by putting them after the
     plugin's name, and you can separate the plugin's options from the rest of
-    the emulator's options with --.
+    the emulator's options with --. This is particularily usefull when you want
+    to load multiple plugins.
 
 -B, -L
     Select desired endianness (Big or Little) for the ram image. Default is
     little endian.
 
--C granularity
+-G granularity
     Select time granularity. The value can be suffixed with ms, us or ns to give
     a value in milli, micro or nano-seconds. If no suffix is added, the value is
-    considered to be nanoseconds. Default is 1 millisecond.
+    considered to be nanoseconds. This value can not be greater than 1 second.
+    Default is 1 millisecond.
 
     This value represents the granularity of time for the emulation process. For
     example, with default values of frequency and speed, a granularity of 1

@@ -84,7 +84,7 @@ int init(int argc, char* argv[])
 		ram_image_endn = 1;
 		break;
 
-	    case 'C': /* Chunk size for emulation timing option. */
+	    case 'G': /* Chunk size for emulation timing option. */
 		++i;
 		if (i < argc)
 		    value = read_ns(argv[i]);
