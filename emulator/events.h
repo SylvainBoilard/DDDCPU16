@@ -25,9 +25,9 @@
 
 #include "globals.h"
 
-unsigned int get_agent_ID(void);
+unsigned int get_event_ID(void);
 void schedule_event(const struct event* event);
-void cancel_event(unsigned int agent_ID, void (* callback)(void*));
+void cancel_event(unsigned int event_ID, void (* callback)(void*));
 void trigger_events(void);
 
 #endif /* EVENTS_H_INCLUDED */

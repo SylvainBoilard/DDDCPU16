@@ -74,7 +74,7 @@ static void reorder_elem_down(unsigned int index)
     }
 }
 
-unsigned int get_agent_ID(void)
+unsigned int get_event_ID(void)
 {
     static unsigned int number = 0;
     return number++;
@@ -93,12 +93,12 @@ void schedule_event(const struct event* event)
     reorder_elem_up(heap_size++);
 }
 
-void cancel_event(unsigned int agent_ID, void (* callback)(void*))
+void cancel_event(unsigned int event_ID, void (* callback)(void*))
 {
     unsigned int i;
 
     for (i = 0; i < heap_size; ++i)
-	if (events_heap[i].agent_ID == agent_ID)
+	if (events_heap[i].event_ID == event_ID)
 	    goto found;
     return;
 
@@ -123,7 +123,7 @@ void trigger_events(void)
 	    swap_events(0, heap_size);
 	    reorder_elem_down(0);
 	}
-	events_heap[heap_size].callback(events_heap[heap_size].agent_ID,
+	events_heap[heap_size].callback(events_heap[heap_size].event_ID,
 					events_heap[heap_size].arguments);
     }
 }

@@ -22,7 +22,7 @@
 struct event
 {
     unsigned long trigger;
-    unsigned int agent_ID;
+    unsigned int event_ID;
     void (* callback)(unsigned int, void*);
     void* arguments;
 };
@@ -35,7 +35,7 @@ struct dddcpu16_context
     const unsigned int* emu_speed;
     const unsigned long* cycles_counter;
     void (* send_int)(unsigned short);
-    unsigned int (* get_agent_ID)(void);
+    unsigned int (* get_event_ID)(void);
     void (* schedule_event)(const struct event*);
     void (* cancel_event)(unsigned int, void (*)(void*));
 };
