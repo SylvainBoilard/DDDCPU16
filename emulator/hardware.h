@@ -32,7 +32,7 @@
 struct hardware
 {
     void (* hd_info)(void);
-    unsigned int (* hd_send_int)(void);
+    unsigned int (* hd_send_int)(unsigned short hard_no);
     void* dl_handle;
 };
 
