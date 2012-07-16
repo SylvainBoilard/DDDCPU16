@@ -6,6 +6,7 @@ FILE(GLOB_RECURSE source_files
   globals.c
   hardware.c
   init.c
+  interrupts.c
   main.c
   nb_instr.c
   opcodes.c

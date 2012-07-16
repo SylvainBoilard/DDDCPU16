@@ -16,31 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HARDWARE_H_INCLUDED
-#define HARDWARE_H_INCLUDED
+#ifndef INTERRUPTS_H_INCLUDED
+#define INTERRUPTS_H_INCLUDED
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <dlfcn.h>
-
-#include <dddcpu16.h>
+#include <pthread.h>
 
 #include "globals.h"
-#include "events.h"
-#include "interrupts.h"
 
-struct hardware
-{
-    void (* hd_info)(void);
-    unsigned int (* hd_send_int)(unsigned short hard_no);
-    void* dl_handle;
-};
+extern unsigned short IA;
+extern unsigned int int_queueing;
 
-extern struct hardware* hd_hard;
-extern unsigned int hd_number;
+void recv_int(unsigned short int_val);
+void trigger_interrupt(void);
 
-int load_hard(int hard_argc, char* hard_argv[]);
-void complete_load_hard(void);
-void free_hard(void);
-
-#endif /* HARDWARE_H_INCLUDED */
+#endif /* INTERRUPTS_H_INCLUDED */

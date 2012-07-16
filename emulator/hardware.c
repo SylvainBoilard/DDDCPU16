@@ -29,15 +29,6 @@ struct hardware_node
 
 static struct hardware_node* hd_list = NULL;
 
-void recv_int(unsigned short int_val)
-{
-    static pthread_mutex_t iq_front_mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_lock(&iq_front_mutex);
-    int_queue[iq_front] = int_val;
-    ++iq_front; /* Do not increment iq_front until queuing complete. */
-    pthread_mutex_unlock(&iq_front_mutex);
-}
-
 int load_hard(int hard_argc, char* hard_argv[])
 {
     static const struct dddcpu16_context context = {

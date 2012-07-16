@@ -21,6 +21,7 @@
 
 #include "globals.h"
 #include "hardware.h"
+#include "interrupts.h"
 
 extern void (* const nb_instr[])(unsigned short* a);
 

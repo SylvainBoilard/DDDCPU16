@@ -27,6 +27,7 @@
 #include "nb_instr.h"
 #include "values.h"
 #include "events.h"
+#include "interrupts.h"
 
 int emulate(void);
 

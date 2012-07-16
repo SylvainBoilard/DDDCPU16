@@ -51,19 +51,7 @@ int emulate(void)
 	       RAM is full of those. */
 	    ++cycles_counter;
 
-	if (!int_queueing && iq_front != iq_back)
-	{
-	    if (IA)
-	    {
-		int_queueing = 1;
-		memory[--SP] = PC;
-		memory[--SP] = registers[0];
-		PC = IA;
-		registers[0] = int_queue[iq_back];
-	    }
-	    ++iq_back;
-	}
-
+	trigger_interrupt();
 	trigger_events();
 
 	if (cycles_counter - last_sleep >= cycles_per_chunk)

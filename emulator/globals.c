@@ -22,12 +22,6 @@ unsigned short PC = 0;
 unsigned short SP = 0;
 unsigned short EX = 0;
 
-unsigned short IA = 0;
-unsigned short int_queue[256] = {0};
-unsigned char iq_back = 0;
-unsigned char iq_front = 0;
-unsigned int int_queueing = 0;
-
 unsigned long cycles_counter = 0;
 unsigned long emu_freq = 100000; /* 100 kHz */
 unsigned int emu_speed = 1000; /* Exprimed by 10E-3 increments. Default is 1. */

@@ -16,31 +16,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HARDWARE_H_INCLUDED
-#define HARDWARE_H_INCLUDED
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <dlfcn.h>
-
-#include <dddcpu16.h>
-
-#include "globals.h"
-#include "events.h"
 #include "interrupts.h"
 
-struct hardware
+unsigned short IA = 0;
+unsigned int int_queueing = 0;
+
+unsigned short int_queue[256];
+unsigned char iq_back = 0;
+unsigned char iq_front = 0;
+
+void recv_int(unsigned short int_val)
 {
-    void (* hd_info)(void);
-    unsigned int (* hd_send_int)(unsigned short hard_no);
-    void* dl_handle;
-};
+    static pthread_mutex_t iq_front_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&iq_front_mutex);
+    int_queue[iq_front] = int_val;
+    ++iq_front; /* Do not increment iq_front until queuing complete. */
+    pthread_mutex_unlock(&iq_front_mutex);
+}
 
-extern struct hardware* hd_hard;
-extern unsigned int hd_number;
-
-int load_hard(int hard_argc, char* hard_argv[]);
-void complete_load_hard(void);
-void free_hard(void);
-
-#endif /* HARDWARE_H_INCLUDED */
+void trigger_interrupt(void)
+{
+    if (!int_queueing && iq_front != iq_back)
+    {
+	if (IA)
+	{
+	    int_queueing = 1;
+	    memory[--SP] = PC;
+	    memory[--SP] = registers[0];
+	    PC = IA;
+	    registers[0] = int_queue[iq_back];
+	}
+	++iq_back;
+    }
+}
