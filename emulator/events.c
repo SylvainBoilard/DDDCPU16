@@ -116,7 +116,7 @@ void cancel_event(unsigned int event_ID, void (* callback)(void*))
 
 void trigger_events(void)
 {
-    while (heap_size && events_heap[0].trigger >= cycles_counter)
+    while (heap_size && events_heap[0].trigger <= cycles_counter)
     {
 	if (--heap_size)
 	{
