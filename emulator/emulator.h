@@ -22,6 +22,8 @@
 #define _POSIX_C_SOURCE 200112L
 #include <time.h>
 
+#include <dddcpu16.h>
+
 #include "globals.h"
 #include "opcodes.h"
 #include "nb_instr.h"

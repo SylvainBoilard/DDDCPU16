@@ -18,11 +18,40 @@
 
 #include "emulator.h"
 
+struct event emu_sleep_event;
+struct timespec chunk_start;
+
+static void emu_sleep(unsigned int event_ID, void* arguments)
+{
+    struct timespec current;
+    struct timespec sleep;
+
+    clock_gettime(CLOCK_MONOTONIC, &current);
+    sleep.tv_nsec = nsec_per_chunk -
+	(current.tv_nsec - chunk_start.tv_nsec) -
+	(current.tv_sec - chunk_start.tv_sec) * 1000000000;
+    if (sleep.tv_nsec > 0)
+    {
+	sleep.tv_sec = 0;
+	nanosleep(&sleep, NULL);
+    }
+
+    chunk_start.tv_nsec += nsec_per_chunk;
+    if (chunk_start.tv_nsec >= 1000000000)
+    {
+	chunk_start.tv_nsec -= 1000000000;
+	++chunk_start.tv_sec;
+    }
+    emu_sleep_event.trigger += cycles_per_chunk;
+    schedule_event(&emu_sleep_event);
+}
+
 int emulate(void)
 {
-    unsigned long last_sleep = cycles_counter;
-    struct timespec chunk_start;
-
+    emu_sleep_event.trigger = cycles_per_chunk;
+    emu_sleep_event.event_ID = get_event_ID();
+    emu_sleep_event.callback = emu_sleep;
+    schedule_event(&emu_sleep_event);
     clock_gettime(CLOCK_MONOTONIC, &chunk_start);
 
     while (1)
@@ -53,31 +82,8 @@ int emulate(void)
 
 	trigger_interrupt();
 	trigger_events();
-
-	if (cycles_counter - last_sleep >= cycles_per_chunk)
-	{
-	    struct timespec current;
-	    struct timespec sleep;
-
-	    last_sleep += cycles_per_chunk;
-	    clock_gettime(CLOCK_MONOTONIC, &current);
-	    sleep.tv_nsec = nsec_per_chunk -
-		(current.tv_nsec - chunk_start.tv_nsec) -
-		(current.tv_sec - chunk_start.tv_sec) * 1000000000;
-	    if (sleep.tv_nsec > 0)
-	    {
-		sleep.tv_sec = 0;
-		nanosleep(&sleep, NULL);
-	    }
-
-	    chunk_start.tv_nsec += nsec_per_chunk;
-	    if (chunk_start.tv_nsec >= 1000000000)
-	    {
-		chunk_start.tv_nsec -= 1000000000;
-		++chunk_start.tv_sec;
-	    }
-	}
     }
 
+    cancel_event(emu_sleep_event.event_ID, NULL);
     return 0;
 }
