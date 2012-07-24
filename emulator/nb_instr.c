@@ -81,7 +81,7 @@ static void hwi(unsigned short* a)
 
 static void NONE(unsigned short* a)
 {
-    ++cycles_counter; /* See emulator.c for explanations. */
+    ++cycles_counter; /* See main.c for explanations. */
 }
 
 void (* const nb_instr[])(unsigned short* a) = {

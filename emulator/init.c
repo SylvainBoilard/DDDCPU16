@@ -197,6 +197,7 @@ int init(int argc, char* argv[])
 	return 2;
     }
 
+    init_timing();
     complete_load_hard();
 
     return 0;
@@ -204,5 +205,6 @@ int init(int argc, char* argv[])
 
 void term(void)
 {
+    term_timing();
     free_hard();
 }

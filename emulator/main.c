@@ -17,19 +17,52 @@
 */
 
 #include "init.h"
-#include "emulator.h"
+#include "globals.h"
+#include "opcodes.h"
+#include "nb_instr.h"
+#include "values.h"
+#include "events.h"
+#include "interrupts.h"
 
 int main(int argc, char* argv[])
 {
-    int ret_val;
-
-    ret_val = init(argc, argv);
+    int ret_val = init(argc, argv);
     if (ret_val)
-	goto terminate;
+    {
+	term();
+	return ret_val;
+    }
 
-    ret_val = emulate();
+    while (1)
+    {
+	const unsigned short o = memory[PC] & 0x001F;
+	const unsigned short b = memory[PC] >> 5 & 0x001F;
+	const unsigned short a = memory[PC] >> 10;
 
-  terminate:
+	++PC;
+
+	if (o)
+	{
+	    const unsigned short* va = values[a >> 3](a, 1);
+	    unsigned short* vb = values[b >> 3](b, 0);
+	    opcodes[o](vb, va);
+	}
+	else if (b)
+	{
+	    unsigned short* va = values[a >> 3](a, 1);
+	    nb_instr[b](va);
+	}
+	else
+	    /* These opcodes have currently no purpose. We just spend a cycle
+	       doing nothing so that the instruction lasts a non-null period of
+	       time to prevent running through the RAM at full speed in case the
+	       RAM is full of those. */
+	    ++cycles_counter;
+
+	trigger_interrupt();
+	trigger_events();
+    }
+
     term();
-    return ret_val;
+    return 0;
 }

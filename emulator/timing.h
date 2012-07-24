@@ -16,21 +16,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EMULATOR_H_INCLUDED
-#define EMULATOR_H_INCLUDED
+#ifndef TIMING_H_INCLUDED
+#define TIMING_H_INCLUDED
 
 #define _POSIX_C_SOURCE 200112L
 #include <time.h>
 
 #include <dddcpu16.h>
 
-#include "globals.h"
-#include "opcodes.h"
-#include "nb_instr.h"
-#include "values.h"
 #include "events.h"
-#include "interrupts.h"
 
-int emulate(void);
+void init_timing(void);
+void term_timing(void);
 
-#endif /* EMULATOR_H_INCLUDED */
+#endif /* TIMING_H_INCLUDED */

@@ -25,6 +25,7 @@
 #include "globals.h"
 #include "hardware.h"
 #include "parse.h"
+#include "timing.h"
 
 int init(int argc, char* argv[]);
 void term(void);

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "emulator.h"
+#include "timing.h"
 
 struct event emu_sleep_event;
 struct timespec chunk_start;
@@ -46,44 +46,16 @@ static void emu_sleep(unsigned int event_ID, void* arguments)
     schedule_event(&emu_sleep_event);
 }
 
-int emulate(void)
+void init_timing(void)
 {
     emu_sleep_event.trigger = cycles_per_chunk;
     emu_sleep_event.event_ID = get_event_ID();
     emu_sleep_event.callback = emu_sleep;
     schedule_event(&emu_sleep_event);
     clock_gettime(CLOCK_MONOTONIC, &chunk_start);
+}
 
-    while (1)
-    {
-	const unsigned short o = memory[PC] & 0x001F;
-	const unsigned short b = memory[PC] >> 5 & 0x001F;
-	const unsigned short a = memory[PC] >> 10;
-
-	++PC;
-
-	if (o)
-	{
-	    const unsigned short* va = values[a >> 3](a, 1);
-	    unsigned short* vb = values[b >> 3](b, 0);
-	    opcodes[o](vb, va);
-	}
-	else if (b)
-	{
-	    unsigned short* va = values[a >> 3](a, 1);
-	    nb_instr[b](va);
-	}
-	else
-	    /* These opcodes have currently no purpose. We just spend a cycle
-	       doing nothing so that the instruction lasts a non-null period of
-	       time to prevent running through the RAM at full speed in case the
-	       RAM is full of those. */
-	    ++cycles_counter;
-
-	trigger_interrupt();
-	trigger_events();
-    }
-
+void term_timing(void)
+{
     cancel_event(emu_sleep_event.event_ID, NULL);
-    return 0;
 }

@@ -1,7 +1,6 @@
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/)
 FILE(GLOB_RECURSE source_files
   adv.c
-  emulator.c
   events.c
   globals.c
   hardware.c
@@ -11,6 +10,7 @@ FILE(GLOB_RECURSE source_files
   nb_instr.c
   opcodes.c
   parse.c
+  timing.c
   values.c
   )
 ADD_EXECUTABLE(dddcpu16 ${source_files})
