@@ -90,23 +90,23 @@ int init(int argc, char* argv[])
 		    value = read_ns(argv[i]);
 		else
 		{
-		    printf("You need to precise a chunk size with option -C.\n");
+		    printf("You need to precise a granularity with option -G.\n");
 		    return 1;
 		}
 
 		if (value < 0)
 		{
-		    printf("Error reading chunk size: %s.\n", argv[i]);
+		    printf("Error reading granularity: %s.\n", argv[i]);
 		    return 1;
 		}
 		if (!value)
 		{
-		    printf("Cannot set chunk size to 0 nanosecond.\n");
+		    printf("Cannot set granularity to 0 nanosecond.\n");
 		    return 1;
 		}
 		if (value >= 1000000000)
 		{
-		    printf("Cannot set chunk size greater than 1 second.\n");
+		    printf("Cannot set granularity greater than 1 second.\n");
 		    return 1;
 		}
 
