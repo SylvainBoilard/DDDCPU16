@@ -18,6 +18,7 @@
 
 #include "timing.h"
 
+unsigned long cycles_per_chunk;
 struct event emu_sleep_event;
 struct timespec chunk_start;
 
@@ -48,6 +49,13 @@ static void emu_sleep(unsigned int event_ID, void* arguments)
 
 void init_timing(void)
 {
+    /* These operations must be done in an order
+       such that it minimizes rounding errors. */
+    cycles_per_chunk =
+	emu_freq *
+	emu_speed / 1000 *
+	nsec_per_chunk / 1000000000;
+
     emu_sleep_event.trigger = cycles_per_chunk;
     emu_sleep_event.event_ID = get_event_ID();
     emu_sleep_event.callback = emu_sleep;

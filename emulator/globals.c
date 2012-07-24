@@ -26,4 +26,3 @@ unsigned long cycles_counter = 0;
 unsigned long emu_freq = 100000; /* 100 kHz */
 unsigned int emu_speed = 1000; /* Exprimed by 10E-3 increments. Default is 1. */
 unsigned long nsec_per_chunk = 1000000; /* 1 ms */
-unsigned long cycles_per_chunk = 100;

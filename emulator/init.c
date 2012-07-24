@@ -49,17 +49,6 @@ static int load_ram(const char* file, unsigned int file_endn)
     return 0;
 }
 
-/* Updates cycles_per_chunk. */
-static void update_cpc(void)
-{
-    /* These operations must be done in an order
-       such that it minimizes rounding errors. */
-    cycles_per_chunk =
-	emu_freq *
-	emu_speed / 1000 *
-	nsec_per_chunk / 1000000000;
-}
-
 int init(int argc, char* argv[])
 {
     unsigned int ram_image_index = 0;
@@ -109,7 +98,6 @@ int init(int argc, char* argv[])
 		}
 
 		nsec_per_chunk = value;
-		update_cpc();
 		break;
 
 	    case 's': /* Emulation speed option. */
@@ -132,7 +120,6 @@ int init(int argc, char* argv[])
 		}
 
 		emu_speed = value;
-		update_cpc();
 		break;
 
 	    case 'f': /* Emulation frequency option. */
@@ -155,7 +142,6 @@ int init(int argc, char* argv[])
 		}
 
 		emu_freq = value;
-		update_cpc();
 		break;
 
 	    case 'p': /* Plugin loading option. */
