@@ -85,14 +85,12 @@ int init(int argc, char* argv[])
 		break;
 
 	    case 'G': /* Chunk size for emulation timing option. */
-		++i;
-		if (i < argc)
-		    value = read_ns(argv[i]);
-		else
+		if (++i >= argc)
 		{
 		    printf("You need to precise a granularity with option -G.\n");
 		    return 1;
 		}
+		value = read_ns(argv[i]);
 
 		if (value < 0)
 		{
@@ -115,14 +113,12 @@ int init(int argc, char* argv[])
 		break;
 
 	    case 's': /* Emulation speed option. */
-		++i;
-		if (i < argc)
-		    value = read_float_10E3(argv[i]);
-		else
+		if (++i >= argc)
 		{
 		    printf("You need to precise a speed with option -s.\n");
 		    return 1;
 		}
+		value = read_float_10E3(argv[i]);
 
 		if (value < 0)
 		{
@@ -140,14 +136,12 @@ int init(int argc, char* argv[])
 		break;
 
 	    case 'f': /* Emulation frequency option. */
-		++i;
-		if (i < argc)
-		    value = read_hz(argv[i]);
-		else
+		if (++i < argc)
 		{
 		    printf("You need to precise a frequency with option -f.\n");
 		    return 1;
 		}
+		value = read_hz(argv[i]);
 
 		if (value < 0)
 		{
