@@ -32,8 +32,8 @@ static struct hardware_node* hd_list = NULL;
 int load_hard(int hard_argc, char* hard_argv[])
 {
     static const struct dddcpu16_context context = {
-	memory, registers, &emu_freq, &emu_speed, &cycles_counter, recv_int,
-	get_event_ID, schedule_event, cancel_event
+	memory, registers, &emu_freq, &emu_speed, &nsec_per_chunk,
+	&cycles_counter, recv_int, get_event_ID, schedule_event, cancel_event
     };
     struct hardware_node* hard_node_tmp;
     void* dl_handle;

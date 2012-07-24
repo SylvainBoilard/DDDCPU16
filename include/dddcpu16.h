@@ -33,6 +33,7 @@ struct dddcpu16_context
     unsigned short* registers;
     const unsigned long* emu_freq;
     const unsigned int* emu_speed;
+    const unsigned long* granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
     void (* send_int)(unsigned short);
     unsigned int (* get_event_ID)(void);
