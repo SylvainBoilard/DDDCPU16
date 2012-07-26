@@ -16,18 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef HARDWARE_H_INCLUDED
-#define HARDWARE_H_INCLUDED
+#ifndef PLUGIN_H_INCLUDED
+#define PLUGIN_H_INCLUDED
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <dlfcn.h>
 
 #include <dddcpu16.h>
 
-extern struct hardware* hd_hard;
-extern unsigned int hd_number;
+#include "globals.h"
+#include "events.h"
+#include "interrupts.h"
+#include "hardware.h"
 
-unsigned int add_hard(const struct hardware*);
-void complete_load_hard(void);
-void free_hard(void);
+int load_plugin(int plugin_argc, char* plugin_argv[]);
+void free_plugins(void);
 
-#endif /* HARDWARE_H_INCLUDED */
+#endif /* PLUGIN_H_INCLUDED */

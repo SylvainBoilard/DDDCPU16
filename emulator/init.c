@@ -147,7 +147,7 @@ int init(int argc, char* argv[])
 	    case 'p': /* Plugin loading option. */
 		++curr_arg;
 		while (++i < argc && strcmp(argv[i], "--"));
-		ret_val = load_hard(i - curr_arg, argv + curr_arg);
+		ret_val = load_plugin(i - curr_arg, argv + curr_arg);
 		if (ret_val)
 		    return ret_val;
 		break;

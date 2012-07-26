@@ -10,6 +10,7 @@ FILE(GLOB_RECURSE source_files
   nb_instr.c
   opcodes.c
   parse.c
+  plugin.c
   timing.c
   values.c
   )

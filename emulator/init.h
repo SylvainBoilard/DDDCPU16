@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 #include "globals.h"
-#include "hardware.h"
+#include "plugin.h"
 #include "parse.h"
 #include "timing.h"
 

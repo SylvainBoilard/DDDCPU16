@@ -29,67 +29,34 @@ struct hardware_node
 
 static struct hardware_node* hd_list = NULL;
 
-int load_hard(int hard_argc, char* hard_argv[])
+unsigned int add_hard(const struct hardware* hardware)
 {
-    static const struct dddcpu16_context context = {
-	memory, registers, &emu_freq, &emu_speed, &nsec_per_chunk,
-	&cycles_counter, recv_int, get_event_ID, schedule_event, cancel_event
-    };
-    struct hardware_node* hard_node_tmp;
-    void* dl_handle;
-    void* hd_info;
-    void* hd_send_int;
-    int (* hd_init)(const struct dddcpu16_context*, int, char*[]);
-
-    if (!hard_argc)
-    {
-	printf("You have to specify a hardware library with option -h.\n");
-	return 1;
-    }
-    dl_handle = dlopen(hard_argv[0], RTLD_LAZY);
-    if (!dl_handle)
-    {
-	printf("%s\n", dlerror());
-	return 2;
-    }
-
-    hd_info = dlsym(dl_handle, "info");
-    if (!hd_info)
-	printf("%s\n", dlerror());
-    hd_send_int = dlsym(dl_handle, "recv_int");
-    if (!hd_send_int)
-	printf("%s\n", dlerror());
-    /* C9X leaves cast from void* to function pointer undefined.
-       The assignement used below is the POSIX.1-2003 TC1 workaround. */
-    *(void**)(&hd_init) = dlsym(dl_handle, "init");
-    if (!hd_init)
-	printf("%s\n", dlerror());
-    if (!(hd_init && hd_info && hd_send_int))
-    {
-	dlclose(dl_handle);
-	return 2;
-    }
-
-    /* Hardware is correctly loaded, we can push it. */
-    hard_node_tmp = (struct hardware_node*)malloc(sizeof(struct hardware_node));
-    *(void**)(&hard_node_tmp->hard.hd_info) = hd_info;
-    *(void**)(&hard_node_tmp->hard.hd_send_int) = hd_send_int;
-    hard_node_tmp->hard.dl_handle = dl_handle;
-    hard_node_tmp->next = hd_list;
-    hd_list = hard_node_tmp;
-    ++hd_number;
-
-    return hd_init(&context, hard_argc, hard_argv);
+    struct hardware_node* hd_node_tmp =
+	(struct hardware_node*)malloc(sizeof(struct hardware_node));
+    hd_node_tmp->hard = *hardware;
+    hd_node_tmp->next = hd_list;
+    hd_list = hd_node_tmp;
+    return hd_number++;
 }
 
 void complete_load_hard(void)
 {
     unsigned int i;
+    struct hardware_node* hd_list_reverse = NULL;
+
+    while (hd_list)
+    {
+	struct hardware_node* hard_node = hd_list;
+	hd_list = hd_list->next;
+	hard_node->next = hd_list_reverse;
+	hd_list_reverse = hard_node;
+    }
+
     hd_hard = (struct hardware*)malloc(sizeof(struct hardware) * hd_number);
     for (i = 0; i < hd_number; ++i)
     {
-	struct hardware_node* hard_node = hd_list;
-	hd_list = hard_node->next;
+	struct hardware_node* hard_node = hd_list_reverse;
+	hd_list_reverse = hd_list_reverse->next;
 	hd_hard[i] = hard_node->hard;
 	free(hard_node);
     }
@@ -97,31 +64,13 @@ void complete_load_hard(void)
 
 void free_hard(void)
 {
-    void (* hd_term)(void);
-
     if (hd_hard)
-    {
-	unsigned int i;
-	for (i = 0; i < hd_number; ++i)
-	{
-	    *(void**)&hd_term = dlsym(hd_hard[i].dl_handle, "term");
-	    if (hd_term)
-		hd_term();
-	    dlclose(hd_hard[i].dl_handle);
-	}
 	free(hd_hard);
-	hd_hard = NULL;
-    }
     else
 	while (hd_list)
 	{
-	    struct hardware_node* hard_node = hd_list;
-	    hd_list = hard_node->next;
-
-	    *(void**)&hd_term = dlsym(hard_node->hard.dl_handle, "term");
-	    if (hd_term)
-		hd_term();
-	    dlclose(hard_node->hard.dl_handle);
-	    free(hard_node);
+	    struct hardware_node* current_node = hd_list;
+	    hd_list = hd_list->next;
+	    free(current_node);
 	}
 }

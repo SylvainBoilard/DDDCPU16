@@ -71,7 +71,7 @@ emulation speed twice, the second value will be recorded.
       * If less than a millisecond passed, the emulator sleeps the time needed
         to match this delay.
 
-    Doing this is necessary because the overhead of the sleep function in not
+    Doing this is necessary because the overhead of the sleep function is not
     neglectible, and sleeping between each instruction would waste lots of
     ressources. (This does not mean that the emulation timing is imprecise. The
     overhead of time of the sleep function and the overhead of cycles at the end
@@ -94,9 +94,6 @@ DCPU16 interrupts
    is considered emptied, and subsequent interrupts are then queued normally.
 
 === TODO =======================================================================
-
-Emulator
- * Turn hardware system into a plugin system.
 
 Plugins
  * Implement debug plugin.
