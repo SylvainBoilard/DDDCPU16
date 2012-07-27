@@ -26,12 +26,11 @@
 
 int main(int argc, char* argv[])
 {
-    int ret_val = init(argc, argv);
+    int ret_val;
+
+    ret_val = init(argc, argv);
     if (ret_val)
-    {
-	term();
-	return ret_val;
-    }
+	goto terminate;
 
     while (1)
     {
@@ -63,6 +62,7 @@ int main(int argc, char* argv[])
 	trigger_events();
     }
 
+  terminate:
     term();
-    return 0;
+    return ret_val;
 }
