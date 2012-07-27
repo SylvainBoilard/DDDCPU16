@@ -27,36 +27,31 @@ struct hardware_node
     struct hardware hard;
 };
 
-static struct hardware_node* hd_list = NULL;
+static struct hardware_node* hd_stack = NULL;
 
 unsigned int add_hard(const struct hardware* hardware)
 {
     struct hardware_node* hd_node_tmp =
 	(struct hardware_node*)malloc(sizeof(struct hardware_node));
     hd_node_tmp->hard = *hardware;
-    hd_node_tmp->next = hd_list;
-    hd_list = hd_node_tmp;
+    hd_node_tmp->next = hd_stack;
+    hd_stack = hd_node_tmp;
     return hd_number++;
 }
 
 void complete_load_hard(void)
 {
-    unsigned int i;
-    struct hardware_node* hd_list_reverse = NULL;
-
-    while (hd_list)
-    {
-	struct hardware_node* hard_node = hd_list;
-	hd_list = hd_list->next;
-	hard_node->next = hd_list_reverse;
-	hd_list_reverse = hard_node;
-    }
+    unsigned int i = hd_number;
 
     hd_hard = (struct hardware*)malloc(sizeof(struct hardware) * hd_number);
-    for (i = 0; i < hd_number; ++i)
+    /* Since the new pieces of hardware are pushed onto a stack during the
+       initialization, when we need to unfold it to put the hardware in an
+       array, the hardware on top of the stack has the highest index, so we have
+       to start from the end of the array. */
+    while (i--)
     {
-	struct hardware_node* hard_node = hd_list_reverse;
-	hd_list_reverse = hd_list_reverse->next;
+	struct hardware_node* hard_node = hd_stack;
+	hd_stack = hd_stack->next;
 	hd_hard[i] = hard_node->hard;
 	free(hard_node);
     }
@@ -67,10 +62,10 @@ void free_hard(void)
     if (hd_hard)
 	free(hd_hard);
     else
-	while (hd_list)
+	while (hd_stack)
 	{
-	    struct hardware_node* current_node = hd_list;
-	    hd_list = hd_list->next;
+	    struct hardware_node* current_node = hd_stack;
+	    hd_stack = hd_stack->next;
 	    free(current_node);
 	}
 }
