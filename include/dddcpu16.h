@@ -39,7 +39,7 @@ struct dddcpu16_context
     unsigned short* registers;
     const unsigned long* emu_freq;
     const unsigned int* emu_speed;
-    const unsigned long* granularity; /* In nanoseconds. */
+    const unsigned int* granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
     unsigned int (* add_hard)(const struct hardware*);
     void (* send_int)(unsigned short);

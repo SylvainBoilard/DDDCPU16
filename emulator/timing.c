@@ -19,48 +19,45 @@
 #include "timing.h"
 
 unsigned long cycles_per_chunk;
+unsigned long chunk_start;
 struct event emu_sleep_event;
-struct timespec chunk_start;
 
 static void emu_sleep(unsigned int event_ID, void* arguments)
 {
     struct timespec current;
     struct timespec sleep;
 
+    chunk_start += nsec_per_chunk;
+    emu_sleep_event.trigger += cycles_per_chunk;
+    schedule_event(&emu_sleep_event);
+
     clock_gettime(CLOCK_MONOTONIC, &current);
-    sleep.tv_nsec = nsec_per_chunk -
-	(current.tv_nsec - chunk_start.tv_nsec) -
-	(current.tv_sec - chunk_start.tv_sec) * 1000000000;
+    sleep.tv_nsec = chunk_start - current.tv_sec * 1000000000 - current.tv_nsec;
     if (sleep.tv_nsec > 0)
     {
+	/* nsec_per_chunk is strictly lower than 1 second, so if we
+	   need to sleep, it will always be less than 1 second. */
 	sleep.tv_sec = 0;
 	nanosleep(&sleep, NULL);
     }
-
-    chunk_start.tv_nsec += nsec_per_chunk;
-    if (chunk_start.tv_nsec >= 1000000000)
-    {
-	chunk_start.tv_nsec -= 1000000000;
-	++chunk_start.tv_sec;
-    }
-    emu_sleep_event.trigger += cycles_per_chunk;
-    schedule_event(&emu_sleep_event);
 }
 
 void init_timing(void)
 {
+    struct timespec temp;
+
     /* These operations must be done in an order
        such that it minimizes rounding errors. */
     cycles_per_chunk =
-	emu_freq *
-	emu_speed / 1000 *
-	nsec_per_chunk / 1000000000;
+	emu_freq * emu_speed / 1000 * nsec_per_chunk / 1000000000;
 
     emu_sleep_event.trigger = cycles_per_chunk;
     emu_sleep_event.event_ID = get_event_ID();
     emu_sleep_event.callback = emu_sleep;
     schedule_event(&emu_sleep_event);
-    clock_gettime(CLOCK_MONOTONIC, &chunk_start);
+
+    clock_gettime(CLOCK_MONOTONIC, &temp);
+    chunk_start = temp.tv_sec * 1000000000 + temp.tv_sec;
 }
 
 void term_timing(void)
