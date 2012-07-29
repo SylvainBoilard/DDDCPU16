@@ -123,7 +123,7 @@ int init(int argc, char* argv[])
 		break;
 
 	    case 'f': /* Emulation frequency option. */
-		if (++i < argc)
+		if (++i >= argc)
 		{
 		    printf("You need to precise a frequency with option -f.\n");
 		    return 1;
