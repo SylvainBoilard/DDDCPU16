@@ -67,7 +67,7 @@ static void hwq(unsigned short* a)
 {
     unsigned short hard_no = *a;
     if (hard_no < hd_number)
-	hd_hard[hard_no].hd_info();
+        hd_hard[hard_no].hd_info();
     cycles_counter += 4;
 }
 
@@ -75,7 +75,7 @@ static void hwi(unsigned short* a)
 {
     unsigned short hard_no = *a;
     if (hard_no < hd_number)
-	cycles_counter += hd_hard[hard_no].hd_send_int(hard_no);
+        cycles_counter += hd_hard[hard_no].hd_send_int(hard_no);
     cycles_counter += 4;
 }
 

@@ -32,7 +32,7 @@ static struct hardware_node* hd_stack = NULL;
 unsigned int add_hard(const struct hardware* hardware)
 {
     struct hardware_node* hd_node_tmp =
-	(struct hardware_node*)malloc(sizeof(struct hardware_node));
+        (struct hardware_node*)malloc(sizeof(struct hardware_node));
     hd_node_tmp->hard = *hardware;
     hd_node_tmp->next = hd_stack;
     hd_stack = hd_node_tmp;
@@ -50,22 +50,22 @@ void complete_load_hard(void)
        to start from the end of the array. */
     while (i--)
     {
-	struct hardware_node* hard_node = hd_stack;
-	hd_stack = hd_stack->next;
-	hd_hard[i] = hard_node->hard;
-	free(hard_node);
+        struct hardware_node* hard_node = hd_stack;
+        hd_stack = hd_stack->next;
+        hd_hard[i] = hard_node->hard;
+        free(hard_node);
     }
 }
 
 void free_hard(void)
 {
     if (hd_hard)
-	free(hd_hard);
+        free(hd_hard);
     else
-	while (hd_stack)
-	{
-	    struct hardware_node* current_node = hd_stack;
-	    hd_stack = hd_stack->next;
-	    free(current_node);
-	}
+        while (hd_stack)
+        {
+            struct hardware_node* current_node = hd_stack;
+            hd_stack = hd_stack->next;
+            free(current_node);
+        }
 }

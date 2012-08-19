@@ -27,9 +27,9 @@ static void skip(void)
     unsigned short ins;
     do
     {
-	ins = memory[PC++];
-	PC += VRW((ins >> 5) & 0x1F) + VRW(ins >> 10);
-	++cycles_counter;
+        ins = memory[PC++];
+        PC += VRW((ins >> 5) & 0x1F) + VRW(ins >> 10);
+        ++cycles_counter;
     }
     while ((ins & 0x18) == 0x10);
 }
@@ -77,12 +77,12 @@ static void div(unsigned short* b, const unsigned short* a)
     const unsigned short va = *a;
     if (va)
     {
-	unsigned int result = (*b << 16) / va;
-	*b = result >> 16;
-	EX = result;
+        unsigned int result = (*b << 16) / va;
+        *b = result >> 16;
+        EX = result;
     }
     else
-	*b = EX = 0;
+        *b = EX = 0;
     cycles_counter += 3;
 }
 
@@ -91,12 +91,12 @@ static void dvi(unsigned short* b, const unsigned short* a)
     const short va = *(const short*)a;
     if (va)
     {
-	unsigned int result = (*(short*)b << 16) / va;
-	*b = result >> 16;
-	EX = result;
+        unsigned int result = (*(short*)b << 16) / va;
+        *b = result >> 16;
+        EX = result;
     }
     else
-	*b = EX = 0;
+        *b = EX = 0;
     cycles_counter += 3;
 }
 
@@ -104,9 +104,9 @@ static void mod(unsigned short* b, const unsigned short* a)
 {
     const unsigned short va = *a;
     if (va)
-	*b %= va;
+        *b %= va;
     else
-	*b = 0;
+        *b = 0;
     cycles_counter += 3;
 }
 
@@ -114,9 +114,9 @@ static void mdi(unsigned short* b, const unsigned short* a)
 {
     const short va =  *(const short*)a;
     if (va)
-	*(short*)b %= va;
+        *(short*)b %= va;
     else
-	*b = 0;
+        *b = 0;
     cycles_counter += 3;
 }
 
@@ -165,56 +165,56 @@ static void shl(unsigned short* b, const unsigned short* a)
 static void ifb(unsigned short* b, const unsigned short* a)
 {
     if (!(*b & *a))
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ifc(unsigned short* b, const unsigned short* a)
 {
     if (*b & *a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ife(unsigned short* b, const unsigned short* a)
 {
     if (*b != *a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ifn(unsigned short* b, const unsigned short* a)
 {
     if (*b == *a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ifg(unsigned short* b, const unsigned short* a)
 {
     if (*b <= *a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ifa(unsigned short* b, const unsigned short* a)
 {
     if (*(short*)b <= *(const short*)a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ifl(unsigned short* b, const unsigned short* a)
 {
     if (*b >= *a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 
 static void ifu(unsigned short* b, const unsigned short* a)
 {
     if (*(short*)b >= *(const short*)a)
-	skip();
+        skip();
     cycles_counter += 2;
 }
 

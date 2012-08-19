@@ -35,10 +35,10 @@ static void emu_sleep(unsigned int event_ID, void* arguments)
     sleep.tv_nsec = chunk_start - current.tv_sec * 1000000000 - current.tv_nsec;
     if (sleep.tv_nsec > 0)
     {
-	/* nsec_per_chunk is strictly lower than 1 second, so if we
-	   need to sleep, it will always be less than 1 second. */
-	sleep.tv_sec = 0;
-	nanosleep(&sleep, NULL);
+        /* nsec_per_chunk is strictly lower than 1 second, so if we
+           need to sleep, it will always be less than 1 second. */
+        sleep.tv_sec = 0;
+        nanosleep(&sleep, NULL);
     }
 }
 
@@ -49,7 +49,7 @@ void init_timing(void)
     /* These operations must be done in an order
        such that it minimizes rounding errors. */
     cycles_per_chunk =
-	emu_freq * emu_speed / 1000 * nsec_per_chunk / 1000000000;
+        emu_freq * emu_speed / 1000 * nsec_per_chunk / 1000000000;
 
     emu_sleep_event.trigger = cycles_per_chunk;
     emu_sleep_event.event_ID = get_event_ID();

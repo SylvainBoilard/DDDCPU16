@@ -38,14 +38,14 @@ void trigger_interrupt(void)
 {
     if (!int_queueing && iq_front != iq_back)
     {
-	if (IA)
-	{
-	    int_queueing = 1;
-	    memory[--SP] = PC;
-	    memory[--SP] = registers[0];
-	    PC = IA;
-	    registers[0] = int_queue[iq_back];
-	}
-	++iq_back;
+        if (IA)
+        {
+            int_queueing = 1;
+            memory[--SP] = PC;
+            memory[--SP] = registers[0];
+            PC = IA;
+            registers[0] = int_queue[iq_back];
+        }
+        ++iq_back;
     }
 }

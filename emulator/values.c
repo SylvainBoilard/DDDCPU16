@@ -43,9 +43,9 @@ static unsigned short* lit(unsigned short v, unsigned short is_a)
 {
     static unsigned short value;
     if (v == 0x003F)
-	value = 0xFFFF;
+        value = 0xFFFF;
     else
-	value = v & 0x001F;
+        value = v & 0x001F;
     return &value;
 }
 

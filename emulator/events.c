@@ -36,11 +36,11 @@ static void reorder_elem_up(unsigned int index)
 {
     while (index)
     {
-	unsigned int parent = (index - 1) / 2;
-	if (events_heap[index].trigger >= events_heap[parent].trigger)
-	    return;
-	swap_events(index, parent);
-	index = parent;
+        unsigned int parent = (index - 1) / 2;
+        if (events_heap[index].trigger >= events_heap[parent].trigger)
+            return;
+        swap_events(index, parent);
+        index = parent;
     }
 }
 
@@ -54,23 +54,23 @@ static void reorder_elem_down(unsigned int index)
 
     while (index < half_size)
     {
-	unsigned int childs = index * 2 + 1;
-	unsigned int lower_child = childs +
-	    (events_heap[childs].trigger >= events_heap[childs + 1].trigger);
+        unsigned int childs = index * 2 + 1;
+        unsigned int lower_child = childs +
+            (events_heap[childs].trigger >= events_heap[childs + 1].trigger);
 
-	if (events_heap[index].trigger <= events_heap[lower_child].trigger)
-	    return;
-	swap_events(index, lower_child);
-	index = lower_child;
+        if (events_heap[index].trigger <= events_heap[lower_child].trigger)
+            return;
+        swap_events(index, lower_child);
+        index = lower_child;
     }
 
     /* Special case for a possible mono-leaf node. */
     if (index == half_size && !(heap_size % 2))
     {
-	unsigned int child = index * 2 + 1;
+        unsigned int child = index * 2 + 1;
 
-	if (events_heap[index].trigger > events_heap[child].trigger)
-	    swap_events(index, child);
+        if (events_heap[index].trigger > events_heap[child].trigger)
+            swap_events(index, child);
     }
 }
 
@@ -84,9 +84,9 @@ void schedule_event(const struct event* event)
 {
     if (heap_size == MAX_EVENTS)
     {
-	printf("Ignored event scheduling: "
-	       "no more space available on events heap.");
-	return;
+        printf("Ignored event scheduling: "
+               "no more space available on events heap.");
+        return;
     }
 
     events_heap[heap_size] = *event;
@@ -98,32 +98,32 @@ void cancel_event(unsigned int event_ID, void (* callback)(void*))
     unsigned int i;
 
     for (i = 0; i < heap_size; ++i)
-	if (events_heap[i].event_ID == event_ID)
-	    goto found;
+        if (events_heap[i].event_ID == event_ID)
+            goto found;
     return;
 
   found:
     if (--heap_size != i)
     {
-	swap_events(i, heap_size);
-	reorder_elem_up(i);
-	reorder_elem_down(i);
+        swap_events(i, heap_size);
+        reorder_elem_up(i);
+        reorder_elem_down(i);
     }
 
     if (callback)
-	callback(events_heap[heap_size].arguments);
+        callback(events_heap[heap_size].arguments);
 }
 
 void trigger_events(void)
 {
     while (heap_size && events_heap[0].trigger <= cycles_counter)
     {
-	if (--heap_size)
-	{
-	    swap_events(0, heap_size);
-	    reorder_elem_down(0);
-	}
-	events_heap[heap_size].callback(events_heap[heap_size].event_ID,
-					events_heap[heap_size].arguments);
+        if (--heap_size)
+        {
+            swap_events(0, heap_size);
+            reorder_elem_down(0);
+        }
+        events_heap[heap_size].callback(events_heap[heap_size].event_ID,
+                                        events_heap[heap_size].arguments);
     }
 }

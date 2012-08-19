@@ -23,34 +23,34 @@ long read_hz(const char* string)
     unsigned long result = 0;
 
     if (*string < '0' || *string > '9')
-	return -1;
+        return -1;
 
     do
-	result = result * 10 + *string - '0';
+        result = result * 10 + *string - '0';
     while (*++string >= '0' && *string <= '9');
 
     if (!*string)
-	return result;
+        return result;
     switch (*string)
     {
     case 'G':
-	result *= 1000000000;
-	++string;
-	break;
+        result *= 1000000000;
+        ++string;
+        break;
 
     case 'M':
-	result *= 1000000;
-	++string;
-	break;
+        result *= 1000000;
+        ++string;
+        break;
 
     case 'k':
-	result *= 1000;
-	++string;
+        result *= 1000;
+        ++string;
 
     default:;
     }
     if (*string == 'H' && *++string == 'z' && !*++string)
-	return result;
+        return result;
     return -1;
 }
 
@@ -59,32 +59,32 @@ long read_ns(const char* string)
     unsigned long result = 0;
 
     if (*string < '0' || *string > '9')
-	return -1;
+        return -1;
 
     do
-	result = result * 10 + *string - '0';
+        result = result * 10 + *string - '0';
     while (*++string >= '0' && *string <= '9');
 
     if (!*string)
-	return result;
+        return result;
     switch (*string)
     {
     case 'm':
-	result *= 1000000;
-	break;
+        result *= 1000000;
+        break;
 
     case 'u':
-	result *= 1000;
-	break;
+        result *= 1000;
+        break;
 
     case 'n':
-	break;
+        break;
 
     default:
-	return -1;
+        return -1;
     }
     if (*++string == 's' && !*++string)
-	return result;
+        return result;
     return -1;
 }
 
@@ -93,38 +93,38 @@ long read_float_10E3(const char* string)
     unsigned long result = 0;
 
     if (*string < '0' || *string > '9')
-	return -1;
+        return -1;
 
     do
-	result = result * 10 + *string - '0';
+        result = result * 10 + *string - '0';
     while (*++string >= '0' && *string <= '9');
 
     if (!*string)
-	return result * 1000;
+        return result * 1000;
     if (*string != '.')
-	return -1;
+        return -1;
     ++string;
 
     if (*string < '0' || *string > '9')
-	return -1;
+        return -1;
     result = result * 10 + *string - '0';
     ++string;
 
     if (!*string)
-	return result * 100;
+        return result * 100;
     if (*string < '0' || *string > '9')
-	return -1;
+        return -1;
     result = result * 10 + *string - '0';
     ++string;
 
     if (!*string)
-	return result * 10;
+        return result * 10;
     if (*string < '0' || *string > '9')
-	return -1;
+        return -1;
     result = result * 10 + *string - '0';
     ++string;
 
     if (!*string)
-	return result;
+        return result;
     return -1;
 }

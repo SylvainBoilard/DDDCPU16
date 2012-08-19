@@ -29,9 +29,9 @@ static struct plugin_node* plugin_list = NULL;
 int load_plugin(int plugin_argc, char* plugin_argv[])
 {
     static const struct dddcpu16_context context = {
-	memory, registers, &emu_freq, &emu_speed, &nsec_per_chunk,
-	&cycles_counter, add_hard, recv_int, get_event_ID, schedule_event,
-	cancel_event
+        memory, registers, &emu_freq, &emu_speed, &nsec_per_chunk,
+        &cycles_counter, add_hard, recv_int, get_event_ID, schedule_event,
+        cancel_event
     };
     struct plugin_node* plugin_node_tmp;
     void* dl_handle;
@@ -39,14 +39,14 @@ int load_plugin(int plugin_argc, char* plugin_argv[])
 
     if (!plugin_argc)
     {
-	printf("You have to specify a plugin with option -h.\n");
-	return 1;
+        printf("You have to specify a plugin with option -h.\n");
+        return 1;
     }
     dl_handle = dlopen(plugin_argv[0], RTLD_LAZY);
     if (!dl_handle)
     {
-	printf("%s\n", dlerror());
-	return 2;
+        printf("%s\n", dlerror());
+        return 2;
     }
 
     /* C9X leaves cast from void* to function pointer undefined.
@@ -54,9 +54,9 @@ int load_plugin(int plugin_argc, char* plugin_argv[])
     *(void**)(&plugin_init) = dlsym(dl_handle, "init");
     if (!plugin_init)
     {
-	printf("%s\n", dlerror());
-	dlclose(dl_handle);
-	return 2;
+        printf("%s\n", dlerror());
+        dlclose(dl_handle);
+        return 2;
     }
 
     /* Plugin is correctly loaded, we can push it. */
@@ -72,14 +72,14 @@ void free_plugins(void)
 {
     while (plugin_list)
     {
-	void (* plugin_term)(void);
-	struct plugin_node* current_node = plugin_list;
-	plugin_list = plugin_list->next;
+        void (* plugin_term)(void);
+        struct plugin_node* current_node = plugin_list;
+        plugin_list = plugin_list->next;
 
-	*(void**)&plugin_term = dlsym(current_node->dl_handle, "term");
-	if (plugin_term)
-	    plugin_term();
-	dlclose(current_node->dl_handle);
-	free(current_node);
+        *(void**)&plugin_term = dlsym(current_node->dl_handle, "term");
+        if (plugin_term)
+            plugin_term();
+        dlclose(current_node->dl_handle);
+        free(current_node);
     }
 }
