@@ -23,8 +23,8 @@
 
 #include <dddcpu16.h>
 
-extern struct hardware* hd_hard;
-extern unsigned int hd_number;
+extern struct hardware* hard_array;
+extern unsigned int hard_number;
 
 unsigned int add_hard(const struct hardware*);
 void complete_load_hard(void);

@@ -29,8 +29,8 @@ struct event
 
 struct hardware
 {
-    void (* hd_info)(void);
-    unsigned int (* hd_send_int)(unsigned short);
+    void (* hard_info)(void);
+    unsigned int (* hard_send_int)(unsigned short);
 };
 
 struct dddcpu16_context
@@ -39,7 +39,7 @@ struct dddcpu16_context
     unsigned short* registers;
     const unsigned long* emu_freq;
     const unsigned int* emu_speed;
-    const unsigned int* granularity; /* In nanoseconds. */
+    const unsigned int* emu_granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
     unsigned int (* add_hard)(const struct hardware*);
     void (* send_int)(unsigned short);

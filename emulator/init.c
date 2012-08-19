@@ -73,10 +73,11 @@ int init(int argc, char* argv[])
                 ram_image_endn = 1;
                 break;
 
-            case 'G': /* Chunk size for emulation timing option. */
+            case 'G': /* Granularity for emulation timing option. */
                 if (++i >= argc)
                 {
-                    printf("You need to precise a granularity with option -G.\n");
+                    printf("You need to precise a granularity "
+                           "with option -G.\n");
                     return 1;
                 }
                 value = read_ns(argv[i]);
@@ -97,7 +98,7 @@ int init(int argc, char* argv[])
                     return 1;
                 }
 
-                nsec_per_chunk = value;
+                emu_granularity = value;
                 break;
 
             case 's': /* Emulation speed option. */

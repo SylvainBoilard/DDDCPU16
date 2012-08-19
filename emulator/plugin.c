@@ -29,11 +29,13 @@ static struct plugin_node* plugin_list = NULL;
 int load_plugin(int plugin_argc, char* plugin_argv[])
 {
     static const struct dddcpu16_context context = {
-        memory, registers, &emu_freq, &emu_speed, &nsec_per_chunk,
-        &cycles_counter, add_hard, recv_int, get_event_ID, schedule_event,
-        cancel_event
+        /* Variables */
+        memory, registers, &emu_freq, &emu_speed, &emu_granularity,
+        &cycles_counter,
+        /* Functions */
+        add_hard, recv_int, get_event_ID, schedule_event, cancel_event
     };
-    struct plugin_node* plugin_node_tmp;
+    struct plugin_node* plugin_node_temp;
     void* dl_handle;
     int (* plugin_init)(const struct dddcpu16_context*, int, char*[]);
 
@@ -60,10 +62,10 @@ int load_plugin(int plugin_argc, char* plugin_argv[])
     }
 
     /* Plugin is correctly loaded, we can push it. */
-    plugin_node_tmp = (struct plugin_node*)malloc(sizeof(struct plugin_node));
-    plugin_node_tmp->dl_handle = dl_handle;
-    plugin_node_tmp->next = plugin_list;
-    plugin_list = plugin_node_tmp;
+    plugin_node_temp = (struct plugin_node*)malloc(sizeof(struct plugin_node));
+    plugin_node_temp->dl_handle = dl_handle;
+    plugin_node_temp->next = plugin_list;
+    plugin_list = plugin_node_temp;
 
     return plugin_init(&context, plugin_argc, plugin_argv);
 }

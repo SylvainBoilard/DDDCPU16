@@ -59,23 +59,23 @@ static void iaq(unsigned short* a)
 
 static void hwn(unsigned short* a)
 {
-    *a = hd_number;
+    *a = hard_number;
     cycles_counter += 2;
 }
 
 static void hwq(unsigned short* a)
 {
     unsigned short hard_no = *a;
-    if (hard_no < hd_number)
-        hd_hard[hard_no].hd_info();
+    if (hard_no < hard_number)
+        hard_array[hard_no].hard_info();
     cycles_counter += 4;
 }
 
 static void hwi(unsigned short* a)
 {
     unsigned short hard_no = *a;
-    if (hard_no < hd_number)
-        cycles_counter += hd_hard[hard_no].hd_send_int(hard_no);
+    if (hard_no < hard_number)
+        cycles_counter += hard_array[hard_no].hard_send_int(hard_no);
     cycles_counter += 4;
 }
 
