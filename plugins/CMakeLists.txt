@@ -1,1 +1,0 @@
-SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/plugins/)
