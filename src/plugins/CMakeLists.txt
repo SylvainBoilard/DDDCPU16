@@ -1,1 +1,3 @@
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib/dddcpu16/plugins/)
+
+ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/plugins/clock/)
