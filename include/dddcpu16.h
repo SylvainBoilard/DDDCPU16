@@ -31,6 +31,7 @@ struct hardware
 {
     void (* hard_info)(void);
     unsigned int (* hard_send_int)(unsigned short);
+    unsigned short hard_PCID;
 };
 
 struct dddcpu16_context
@@ -41,7 +42,7 @@ struct dddcpu16_context
     const unsigned int* emu_speed;
     const unsigned int* emu_granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
-    unsigned int (* add_hard)(const struct hardware*);
+    void (* add_hard)(const struct hardware*);
     void (* send_int)(unsigned short);
     unsigned int (* get_event_ID)(void);
     void (* schedule_event)(const struct event*);

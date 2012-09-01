@@ -29,27 +29,23 @@ struct hardware_node
 
 static struct hardware_node* hard_stack = NULL;
 
-unsigned int add_hard(const struct hardware* hardware)
+void add_hard(const struct hardware* hardware)
 {
     struct hardware_node* hard_node_temp =
         (struct hardware_node*)malloc(sizeof(struct hardware_node));
     hard_node_temp->hard = *hardware;
     hard_node_temp->next = hard_stack;
     hard_stack = hard_node_temp;
-    return hard_number++;
+    ++hard_number;
 }
 
 void complete_load_hard(void)
 {
-    unsigned int i = hard_number;
+    unsigned int i;
 
     hard_array =
         (struct hardware*)malloc(sizeof(struct hardware) * hard_number);
-    /* Since the new pieces of hardware are pushed onto a stack during the
-       initialization, when we need to unfold it to put the hardware in an
-       array, the hardware on top of the stack has the highest index, so we have
-       to start from the end of the array. */
-    while (i--)
+    for (i = 0; i < hard_number; ++i)
     {
         struct hardware_node* hard_node = hard_stack;
         hard_stack = hard_stack->next;

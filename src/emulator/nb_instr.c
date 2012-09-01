@@ -75,7 +75,10 @@ static void hwi(unsigned short* a)
 {
     unsigned short hard_no = *a;
     if (hard_no < hard_number)
-        cycles_counter += hard_array[hard_no].hard_send_int(hard_no);
+    {
+        struct hardware* hardware = hard_array + hard_no;
+        cycles_counter += hardware->hard_send_int(hardware->hard_PCID);
+    }
     cycles_counter += 4;
 }
 

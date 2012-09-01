@@ -70,6 +70,22 @@ int load_plugin(int plugin_argc, char* plugin_argv[])
     return plugin_init(&context, plugin_argc, plugin_argv);
 }
 
+void complete_load_plugins(void)
+{
+    struct plugin_node* plugin_node_iter = plugin_list;
+
+    while (plugin_node_iter)
+    {
+        void (* complete_load)(void);
+        *(void**)&complete_load =
+            dlsym(plugin_node_iter->dl_handle, "complete_load");
+
+        if (complete_load)
+            complete_load();
+        plugin_node_iter = plugin_node_iter->next;
+    }
+}
+
 void free_plugins(void)
 {
     while (plugin_list)

@@ -26,7 +26,7 @@
 extern struct hardware* hard_array;
 extern unsigned int hard_number;
 
-unsigned int add_hard(const struct hardware*);
+void add_hard(const struct hardware* hardware);
 void complete_load_hard(void);
 void free_hard(void);
 

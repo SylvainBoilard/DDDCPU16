@@ -180,6 +180,7 @@ int init(int argc, char* argv[])
 
     init_timing();
     complete_load_hard();
+    complete_load_plugins();
 
     return 0;
 }
@@ -188,4 +189,5 @@ void term(void)
 {
     term_timing();
     free_hard();
+    free_plugins();
 }
