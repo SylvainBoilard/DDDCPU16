@@ -179,8 +179,8 @@ int init(int argc, char* argv[])
     }
 
     init_timing();
-    complete_load_hard();
     complete_load_plugins();
+    complete_load_hard();
 
     return 0;
 }
