@@ -20,16 +20,17 @@
 
 unsigned long cycles_per_chunk;
 unsigned long chunk_start;
-struct event emu_sleep_event;
+unsigned long event_ID;
+unsigned long trigger;
 
-static void emu_sleep(unsigned int event_ID, void* arguments)
+static void emu_sleep(void* arguments)
 {
     struct timespec current;
     struct timespec sleep;
 
     chunk_start += emu_granularity;
-    emu_sleep_event.trigger += cycles_per_chunk;
-    schedule_event(&emu_sleep_event);
+    trigger += cycles_per_chunk;
+    event_ID = schedule_event(trigger, emu_sleep, NULL);
 
     clock_gettime(CLOCK_MONOTONIC, &current);
     sleep.tv_nsec = chunk_start - current.tv_sec * 1000000000 - current.tv_nsec;
@@ -51,10 +52,8 @@ void init_timing(void)
     cycles_per_chunk =
         emu_freq * emu_speed / 1000 * emu_granularity / 1000000000;
 
-    emu_sleep_event.trigger = cycles_per_chunk;
-    emu_sleep_event.event_ID = get_event_ID();
-    emu_sleep_event.callback = emu_sleep;
-    schedule_event(&emu_sleep_event);
+    trigger = cycles_per_chunk;
+    event_ID = schedule_event(trigger, emu_sleep, NULL);
 
     clock_gettime(CLOCK_MONOTONIC, &temp);
     chunk_start = temp.tv_sec * 1000000000 + temp.tv_sec;
@@ -62,5 +61,5 @@ void init_timing(void)
 
 void term_timing(void)
 {
-    cancel_event(emu_sleep_event.event_ID, NULL);
+    cancel_event(event_ID, NULL);
 }
