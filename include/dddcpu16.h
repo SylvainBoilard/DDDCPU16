@@ -27,13 +27,6 @@ struct event
     void* arguments;
 };
 
-struct hardware
-{
-    void (* hard_info)(void);
-    unsigned int (* hard_send_int)(unsigned short);
-    unsigned short hard_PCID;
-};
-
 struct dddcpu16_context
 {
     unsigned short* memory;
@@ -42,7 +35,16 @@ struct dddcpu16_context
     const unsigned int* emu_speed;
     const unsigned int* emu_granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
-    void (* add_hard)(const struct hardware*);
+    /* add_hard() takes three arguments :
+       - a pointer to a function whos job is to load the registers with the
+         hardware informations.
+       - a pointer to a function whos job is to handle interrupts sent to a
+         piece of hardware designated by a plugin-side ID and returning the
+         number of cycles needed to do so.
+       - a plugin-side ID to differenciate between numerous instances of the
+         same piece of hardware. */
+    void (* add_hard)(void (*)(void), unsigned int (*)(unsigned short),
+                      unsigned short);
     void (* send_int)(unsigned short);
     unsigned int (* get_event_ID)(void);
     void (* schedule_event)(const struct event*);

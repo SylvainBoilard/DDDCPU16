@@ -18,8 +18,15 @@
 
 #include "hardware.h"
 
-struct hardware* hard_array = NULL;
-unsigned int hard_number = 0;
+static struct hardware* hard_array = NULL;
+static unsigned int hard_number = 0;
+
+struct hardware
+{
+    void (* hard_info)(void);
+    unsigned int (* hard_send_int)(unsigned short);
+    unsigned short hard_PCID;
+};
 
 struct hardware_node
 {
@@ -29,11 +36,16 @@ struct hardware_node
 
 static struct hardware_node* hard_stack = NULL;
 
-void add_hard(const struct hardware* hardware)
+void add_hard(void (* hard_info_callback)(void),
+              unsigned int (* hard_send_int_callback)(unsigned short),
+              unsigned short hard_PCID)
 {
     struct hardware_node* hard_node_temp =
         (struct hardware_node*)malloc(sizeof(struct hardware_node));
-    hard_node_temp->hard = *hardware;
+    hard_node_temp->hard.hard_info = hard_info_callback;
+    hard_node_temp->hard.hard_send_int = hard_send_int_callback;
+    hard_node_temp->hard.hard_PCID = hard_PCID;
+
     hard_node_temp->next = hard_stack;
     hard_stack = hard_node_temp;
     ++hard_number;
@@ -65,4 +77,25 @@ void free_hard(void)
             hard_stack = hard_stack->next;
             free(current_node);
         }
+}
+
+unsigned short hard_count(void)
+{
+    return hard_number;
+}
+
+void hard_info(unsigned short hard_no)
+{
+    if (hard_no < hard_number)
+        hard_array[hard_no].hard_info();
+}
+
+unsigned long hard_send_int(unsigned short hard_no)
+{
+    if (hard_no < hard_number)
+    {
+        struct hardware* hardware = hard_array + hard_no;
+        return hardware->hard_send_int(hardware->hard_PCID);
+    }
+    return 0;
 }

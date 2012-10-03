@@ -21,13 +21,13 @@
 
 #include <stdlib.h>
 
-#include <dddcpu16.h>
-
-extern struct hardware* hard_array;
-extern unsigned int hard_number;
-
-void add_hard(const struct hardware* hardware);
+void add_hard(void (* hard_info_callback)(void),
+              unsigned int (* hard_send_int_callback)(unsigned short),
+              unsigned short hard_PCID);
 void complete_load_hard(void);
 void free_hard(void);
+unsigned short hard_count(void);
+void hard_info(unsigned short hard_no);
+unsigned long hard_send_int(unsigned short hard_no);
 
 #endif /* HARDWARE_H_INCLUDED */

@@ -59,27 +59,19 @@ static void iaq(unsigned short* a)
 
 static void hwn(unsigned short* a)
 {
-    *a = hard_number;
+    *a = hard_count();
     cycles_counter += 2;
 }
 
 static void hwq(unsigned short* a)
 {
-    unsigned short hard_no = *a;
-    if (hard_no < hard_number)
-        hard_array[hard_no].hard_info();
+    hard_info(*a);
     cycles_counter += 4;
 }
 
 static void hwi(unsigned short* a)
 {
-    unsigned short hard_no = *a;
-    if (hard_no < hard_number)
-    {
-        struct hardware* hardware = hard_array + hard_no;
-        cycles_counter += hardware->hard_send_int(hardware->hard_PCID);
-    }
-    cycles_counter += 4;
+    cycles_counter += hard_send_int(*a) + 4;
 }
 
 static void NONE(unsigned short* a)
