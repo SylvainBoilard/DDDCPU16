@@ -32,7 +32,8 @@ struct event
    See <https://en.wikipedia.org/wiki/Binary_heap> */
 struct event events_heap[MAX_EVENTS];
 unsigned int heap_size = 0;
-unsigned long next_event_ID = 0;
+/* 0 is reserved as a handy value when no event is scheduled. */
+unsigned long next_event_ID = 1;
 
 static void swap_events(unsigned int first, unsigned int second)
 {

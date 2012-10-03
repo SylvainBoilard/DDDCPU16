@@ -23,10 +23,11 @@ struct dddcpu16_context
 {
     unsigned short* memory;
     unsigned short* registers;
-    const unsigned long* emu_freq;
-    const unsigned int* emu_speed;
+    const unsigned long* emu_freq; /* In Hertz. */
+    const unsigned int* emu_speed; /* Speed factor. */
     const unsigned int* emu_granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
+
     /* add_hard() takes three arguments:
        - a pointer to a function whos job is to load the registers with the
          hardware informations.
@@ -37,6 +38,7 @@ struct dddcpu16_context
          same piece of hardware. */
     void (* add_hard)(void (*)(void), unsigned int (*)(unsigned short),
                       unsigned short);
+    /* send_int() takes the interrupt value as argument. */
     void (* send_int)(unsigned short);
     /* schedule_event() takes three arguments:
        - a cycle number at which the event will be triggered.
@@ -44,9 +46,11 @@ struct dddcpu16_context
          triggered.
        - a pointer which will be passed as an argument to the previously
          provided function when this one will be called.
-       Returns an event ID, used to cancel events. */
+       Returns an event ID, used to cancel events when necessary. The returned
+       ID will never be 0, except if more than 2^64 events are scheduled in one
+       session. Very unlikely. */
     unsigned long (* schedule_event)(unsigned long, void (*)(void*), void*);
-    /* cancel_event() take 2 arguments:
+    /* cancel_event() takes two arguments:
        - the event ID of the event to cancel.
        - a pointer to a function whos job is to free the resources allocated
          for the arguments pointer associated with the event. Can be NULL. */

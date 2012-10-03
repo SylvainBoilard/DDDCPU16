@@ -10,9 +10,7 @@ eventually-upcoming, nerd-friendly, space-exploration-and-stuff game "0x10c".
 
 This software feature efficient DCPU16 emulation, at arbitrary speed and
 frequency, and will also feature a modular plugin system (for hardware
-emulation, debugging, and so on). It is designed to perform efficiently into a
-graphical environment, a framebuffer, or even a bare terminal if you do not care
-about fancy display facilities, custom fonts and colors and stuff.
+emulation, debugging, and so on).
 
 === USAGE ======================================================================
 
@@ -100,8 +98,10 @@ Plugins
  * Hardware
    * Implement lem180x.
    * Implement keyboard.
-   * Implement clock.
    * Implement hmd2043.
+   * Ameliorate the clock so that we do not lose the fractions of cycle
+     currently lost at each tick if the delay between each tick is not an
+     integer number when expressed as cycles.
 
 General
  * Write documentation.
