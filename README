@@ -93,6 +93,12 @@ DCPU16 interrupts
 
 === TODO =======================================================================
 
+Emulator
+ * Events system
+   * Make it thread safe.
+   * Optimize events canceling (lazy removal ?).
+   * Allow arbitrary large number of simultaneous scheduled events ?
+
 Plugins
  * Implement debug plugin.
  * Hardware
