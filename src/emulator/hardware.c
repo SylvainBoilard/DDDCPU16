@@ -93,9 +93,6 @@ void hard_info(unsigned short hard_no)
 unsigned long hard_send_int(unsigned short hard_no)
 {
     if (hard_no < hard_number)
-    {
-        struct hardware* hardware = hard_array + hard_no;
-        return hardware->hard_send_int(hardware->hard_PCID);
-    }
+        return hard_array[hard_no].hard_send_int(hard_array[hard_no].hard_PCID);
     return 0;
 }
