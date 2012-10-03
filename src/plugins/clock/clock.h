@@ -33,7 +33,8 @@ struct clock_context
     unsigned long cycles_per_tick;
     unsigned long last_set;
     unsigned short interrupt;
-    struct event event;
+    unsigned long tick;
+    unsigned long event_ID;
 };
 
 #endif /* CLOCK_H_INCLUDED */

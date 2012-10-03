@@ -31,14 +31,15 @@ static void info(void)
     context.registers[4] = 0;
 }
 
-static void tick(unsigned int event_ID, void* arguments)
+static void tick(void* arguments)
 {
     struct clock_context* current_clock = (struct clock_context*)arguments;
 
     if (current_clock->interrupt)
         context.send_int(current_clock->interrupt);
-    current_clock->event.trigger += current_clock->cycles_per_tick;
-    context.schedule_event(&current_clock->event);
+    current_clock->tick += current_clock->cycles_per_tick;
+    current_clock->event_ID =
+        context.schedule_event(current_clock->tick, tick, arguments);
 }
 
 static unsigned int recv_int(unsigned short PCID)
@@ -47,15 +48,20 @@ static unsigned int recv_int(unsigned short PCID)
     {
     case 0:
         clock_array[PCID].last_set = *context.cycles_counter;
-        context.cancel_event(clock_array[PCID].event.event_ID, NULL);
+        if (clock_array[PCID].event_ID)
+            context.cancel_event(clock_array[PCID].event_ID, NULL);
         if (context.registers[1])
         {
             clock_array[PCID].cycles_per_tick =
                 *context.emu_freq * 60 / context.registers[1];
-            clock_array[PCID].event.trigger =
+            clock_array[PCID].tick =
                 *context.cycles_counter + clock_array[PCID].cycles_per_tick;
-            context.schedule_event(&clock_array[PCID].event);
+            clock_array[PCID].event_ID =
+                context.schedule_event(clock_array[PCID].tick, tick,
+                                       clock_array + PCID);
         }
+        else
+            clock_array[PCID].event_ID = 0;
 
         break;
 
@@ -89,22 +95,23 @@ void complete_load(void)
         malloc(sizeof(struct clock_context) * clock_number);
     for (i = 0; i < clock_number; ++i)
     {
-        struct hardware hardware = {info, recv_int, 0};
-        struct clock_context base_context = {
-            0, 0, 0, {0, 0, tick, NULL}
-        };
+        context.add_hard(info, recv_int, i);
 
-        hardware.hard_PCID = i;
-        context.add_hard(&hardware);
-
-        base_context.event.event_ID = context.get_event_ID();
-        base_context.event.arguments = (void*)clock_array;
-        clock_array[i] = base_context;
+        /* Other values are set when needed. */
+        clock_array[i].interrupt = 0;
+        clock_array[i].event_ID = 0;
     }
 }
 
 void term(void)
 {
     if (clock_array)
+    {
+        unsigned int i;
+
+        for (i = 0; i < clock_number; ++i)
+            if (clock_array[i].event_ID)
+                context.cancel_event(clock_array[i].event_ID, NULL);
         free(clock_array);
+    }
 }
