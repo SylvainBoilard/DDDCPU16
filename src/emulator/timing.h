@@ -22,8 +22,6 @@
 #define _POSIX_C_SOURCE 200112L
 #include <time.h>
 
-#include <dddcpu16.h>
-
 #include "events.h"
 
 void init_timing(void);

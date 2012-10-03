@@ -33,7 +33,7 @@ int load_plugin(int plugin_argc, char* plugin_argv[])
         memory, registers, &emu_freq, &emu_speed, &emu_granularity,
         &cycles_counter,
         /* Functions */
-        add_hard, recv_int, get_event_ID, schedule_event, cancel_event
+        add_hard, recv_int, schedule_event, cancel_event
     };
     struct plugin_node* plugin_node_temp;
     void* dl_handle;

@@ -19,14 +19,6 @@
 #ifndef DDDCPU16_H_INCLUDED
 #define DDDCPU16_H_INCLUDED
 
-struct event
-{
-    unsigned long trigger;
-    unsigned int event_ID;
-    void (* callback)(unsigned int, void*);
-    void* arguments;
-};
-
 struct dddcpu16_context
 {
     unsigned short* memory;
@@ -35,7 +27,7 @@ struct dddcpu16_context
     const unsigned int* emu_speed;
     const unsigned int* emu_granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
-    /* add_hard() takes three arguments :
+    /* add_hard() takes three arguments:
        - a pointer to a function whos job is to load the registers with the
          hardware informations.
        - a pointer to a function whos job is to handle interrupts sent to a
@@ -46,9 +38,19 @@ struct dddcpu16_context
     void (* add_hard)(void (*)(void), unsigned int (*)(unsigned short),
                       unsigned short);
     void (* send_int)(unsigned short);
-    unsigned int (* get_event_ID)(void);
-    void (* schedule_event)(const struct event*);
-    void (* cancel_event)(unsigned int, void (*)(void*));
+    /* schedule_event() takes three arguments:
+       - a cycle number at which the event will be triggered.
+       - a pointer to a function which will be called when the event is
+         triggered.
+       - a pointer which will be passed as an argument to the previously
+         provided function when this one will be called.
+       Returns an event ID, used to cancel events. */
+    unsigned long (* schedule_event)(unsigned long, void (*)(void*), void*);
+    /* cancel_event() take 2 arguments:
+       - the event ID of the event to cancel.
+       - a pointer to a function whos job is to free the resources allocated
+         for the arguments pointer associated with the event. Can be NULL. */
+    void (* cancel_event)(unsigned long, void (*)(void*));
 };
 
 #endif /* DDDCPU16_H_INCLUDED */

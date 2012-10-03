@@ -18,9 +18,6 @@
 
 #include "hardware.h"
 
-static struct hardware* hard_array = NULL;
-static unsigned int hard_number = 0;
-
 struct hardware
 {
     void (* hard_info)(void);
@@ -34,7 +31,10 @@ struct hardware_node
     struct hardware hard;
 };
 
-static struct hardware_node* hard_stack = NULL;
+struct hardware_node* hard_stack = NULL;
+
+struct hardware* hard_array = NULL;
+unsigned int hard_number = 0;
 
 void add_hard(void (* hard_info_callback)(void),
               unsigned int (* hard_send_int_callback)(unsigned short),

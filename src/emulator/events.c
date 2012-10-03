@@ -20,10 +20,19 @@
 
 #define MAX_EVENTS 1024 /* TODO : add option to modify this value. */
 
+struct event
+{
+    unsigned long trigger;
+    unsigned long event_ID;
+    void (* callback)(void*);
+    void* arguments;
+};
+
 /* events_heap is a binary min-heap storing events against their trigger value.
    See <https://en.wikipedia.org/wiki/Binary_heap> */
 struct event events_heap[MAX_EVENTS];
 unsigned int heap_size = 0;
+unsigned long next_event_ID = 0;
 
 static void swap_events(unsigned int first, unsigned int second)
 {
@@ -74,26 +83,26 @@ static void reorder_elem_down(unsigned int index)
     }
 }
 
-unsigned int get_event_ID(void)
-{
-    static unsigned int number = 0;
-    return number++;
-}
-
-void schedule_event(const struct event* event)
+unsigned long schedule_event(unsigned long trigger, void (* callback)(void*),
+                             void* arguments)
 {
     if (heap_size == MAX_EVENTS)
     {
-        printf("Ignored event scheduling: "
-               "no more space available on events heap.");
-        return;
+        printf("FATAL: no more space available on events heap (This should have"
+               "never happened, go tell the developper he is a lazy guy).");
+        exit(1);
     }
 
-    events_heap[heap_size] = *event;
+    events_heap[heap_size].trigger = trigger;
+    events_heap[heap_size].event_ID = next_event_ID;
+    events_heap[heap_size].callback = callback;
+    events_heap[heap_size].arguments = arguments;
     reorder_elem_up(heap_size++);
+
+    return next_event_ID++;
 }
 
-void cancel_event(unsigned int event_ID, void (* callback)(void*))
+void cancel_event(unsigned long event_ID, void (* callback)(void*))
 {
     unsigned int i;
 
@@ -123,7 +132,6 @@ void trigger_events(void)
             swap_events(0, heap_size);
             reorder_elem_down(0);
         }
-        events_heap[heap_size].callback(events_heap[heap_size].event_ID,
-                                        events_heap[heap_size].arguments);
+        events_heap[heap_size].callback(events_heap[heap_size].arguments);
     }
 }

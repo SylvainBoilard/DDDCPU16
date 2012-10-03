@@ -20,14 +20,13 @@
 #define EVENTS_H_INCLUDED
 
 #include <stdio.h>
-
-#include <dddcpu16.h>
+#include <stdlib.h>
 
 #include "globals.h"
 
-unsigned int get_event_ID(void);
-void schedule_event(const struct event* event);
-void cancel_event(unsigned int event_ID, void (* callback)(void*));
+unsigned long schedule_event(unsigned long trigger, void (* callback)(void*),
+                             void* arguments);
+void cancel_event(unsigned long event_ID, void (* callback)(void*));
 void trigger_events(void);
 
 #endif /* EVENTS_H_INCLUDED */
