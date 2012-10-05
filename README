@@ -108,9 +108,6 @@ Plugins
    * Implement keyboard.
    * Implement hmd2043.
    * Implement sped-3.
-   * Ameliorate the clock so that we do not lose the fractions of cycle
-     currently lost at each tick if the delay between each tick is not an
-     integer number when expressed as cycles.
 
 General
  * Write documentation.

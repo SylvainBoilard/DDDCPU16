@@ -22,6 +22,15 @@ struct dddcpu16_context context;
 unsigned short clock_number = 0;
 struct clock_context* clock_array = NULL;
 
+static unsigned long pgcd60(unsigned long n)
+{
+    unsigned long k = 60;
+    while (n %= k)
+        if (!(k %= n))
+            return n;
+    return k;
+}
+
 static void info(void)
 {
     context.registers[0] = 0xb402;
@@ -37,27 +46,39 @@ static void tick(void* arguments)
 
     if (current_clock->interrupt)
         context.send_int(current_clock->interrupt);
-    current_clock->tick += current_clock->cycles_per_tick;
+    current_clock->trigger_tick += current_clock->cycles_per_tick;
+    current_clock->current_drift += current_clock->drift_per_tick;
+    if (current_clock->current_drift >= current_clock->max_drift)
+    {
+        ++current_clock->trigger_tick;
+        current_clock->current_drift -= current_clock->max_drift;
+    }
     current_clock->event_ID =
-        context.schedule_event(current_clock->tick, tick, arguments);
+        context.schedule_event(current_clock->trigger_tick, tick, arguments);
 }
 
 static unsigned int recv_int(unsigned short PCID)
 {
+    unsigned short reg_B = context.registers[1];
+
     switch (context.registers[0])
     {
     case 0:
         clock_array[PCID].last_set = *context.cycles_counter;
         if (clock_array[PCID].event_ID)
             context.cancel_event(clock_array[PCID].event_ID, NULL);
-        if (context.registers[1])
+        if (reg_B)
         {
-            clock_array[PCID].cycles_per_tick =
-                *context.emu_freq * 60 / context.registers[1];
-            clock_array[PCID].tick =
+            unsigned long freq_x_reg_B = *context.emu_freq * reg_B;
+            clock_array[PCID].max_drift = 60 / pgcd60(freq_x_reg_B);
+            clock_array[PCID].drift_per_tick =
+                freq_x_reg_B % clock_array[PCID].max_drift;
+            clock_array[PCID].current_drift = clock_array[PCID].drift_per_tick;
+            clock_array[PCID].cycles_per_tick = freq_x_reg_B / 60;
+            clock_array[PCID].trigger_tick =
                 *context.cycles_counter + clock_array[PCID].cycles_per_tick;
             clock_array[PCID].event_ID =
-                context.schedule_event(clock_array[PCID].tick, tick,
+                context.schedule_event(clock_array[PCID].trigger_tick, tick,
                                        clock_array + PCID);
         }
         else
@@ -71,7 +92,7 @@ static unsigned int recv_int(unsigned short PCID)
         break;
 
     case 2:
-        clock_array[PCID].interrupt = context.registers[1];
+        clock_array[PCID].interrupt = reg_B;
 
     default:;
     }

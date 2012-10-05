@@ -31,9 +31,12 @@ void term(void);
 struct clock_context
 {
     unsigned long cycles_per_tick;
+    unsigned long drift_per_tick;
+    unsigned long max_drift;
+    unsigned long current_drift;
     unsigned long last_set;
     unsigned short interrupt;
-    unsigned long tick;
+    unsigned long trigger_tick;
     unsigned long event_ID;
 };
 
