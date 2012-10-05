@@ -8,9 +8,10 @@ at French IT engineer school EFREI, while he had way more urgent things to do.
 The DCPU16 is an imaginary CPU designed by Markus "Notch" Personn for his
 eventually-upcoming, nerd-friendly, space-exploration-and-stuff game "0x10c".
 
-This software feature efficient DCPU16 emulation, at arbitrary speed and
-frequency, and will also feature a modular plugin system (for hardware
-emulation, debugging, and so on).
+This software features efficient DCPU16 emulation, at arbitrary speed and
+frequency, and a plugin system, mainly used for hardware emulation and
+debugging. Currently (and when I am not too lazy) development efforts are
+focused on the latter part. See the TODO part of this file.
 
 === USAGE ======================================================================
 
@@ -21,7 +22,7 @@ Synopsis:
 ram_image
     The content of this RAM image will be loaded into the RAM on the DCPU16 at
     the beginning of the emulation, and the execution will begin at address 0.
-    You can generate this file by runing a DASM16 assembler on a DASM16 source
+    You can generate this file by running a DASM16 assembler on a DASM16 source
     file, but DDDCPU16 does not provide such a tool.
 
 
@@ -43,13 +44,13 @@ emulation speed twice, the second value will be recorded.
     with emulation speed, which is a different value.
 
     This value can be suffixed with Hz, kHz, MHz or GHz to indicate a value
-    exprimed in Hertz, kilo-Hertz, mega-Hertz or giga-Hertz. If no suffix is
+    expressed in Hertz, kilo-Hertz, mega-Hertz or giga-Hertz. If no suffix is
     given, the value is considered to be in Hertz.
 
 -p plugin [options...] [--]
     Load a plugin. You can pass options to the plugin by putting them after the
     plugin's name, and you can separate the plugin's options from the rest of
-    the emulator's options with --. This is particularily usefull when you want
+    the emulator's options with --. This is particularly useful when you want
     to load multiple plugins.
 
 -B, -L
@@ -70,19 +71,20 @@ emulation speed twice, the second value will be recorded.
         to match this delay.
 
     Doing this is necessary because the overhead of the sleep function is not
-    neglectible, and sleeping between each instruction would waste lots of
-    ressources. (This does not mean that the emulation timing is imprecise. The
+    negligible, and sleeping between each instruction would waste lots of
+    resources. (This does not mean that the emulation timing is imprecise. The
     overhead of time of the sleep function and the overhead of cycles at the end
     of a chunk are compensated in the next chunk, leading to correct behaviour
     asymptotically.)
 
     If you need a smoother emulation, try to decrease this value. If you want to
     run the emulator at a high speed and/or frequency but end up using all of
-    your computer's ressources, try to increase it.
+    your computer's resources, try to increase it.
 
 === KNOWN BUGS =================================================================
 
-DCPU16 interrupts
+DCPU16 catching fire.
+ * The non-basic instruction 0x07 HCF (Hang Catch Fire) is not implemented.
  * If the size of the interrupts queue grows longer than 256, the DCPU16
    processor is supposed to catch fire. Practically, this would lead to random
    words in the RAM getting randomly corrupted every once in a while, quickly
@@ -105,6 +107,7 @@ Plugins
    * Implement lem180x.
    * Implement keyboard.
    * Implement hmd2043.
+   * Implement sped-3.
    * Ameliorate the clock so that we do not lose the fractions of cycle
      currently lost at each tick if the delay between each tick is not an
      integer number when expressed as cycles.
