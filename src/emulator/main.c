@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
                RAM is full of those. */
             ++cycles_counter;
 
-        trigger_interrupt();
         trigger_events();
+        trigger_interrupt();
     }
 
   terminate:
