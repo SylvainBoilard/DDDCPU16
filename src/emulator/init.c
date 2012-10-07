@@ -18,11 +18,18 @@
 
 #include "init.h"
 
+unsigned int emu_run = 1;
+
 /* Returns 1 if host uses little-endian, 0 overwise. */
 static unsigned int host_endn(void)
 {
     const unsigned int test = 0x00000001;
     return *(const unsigned char *)&test;
+}
+
+static void halt_emu(int signal)
+{
+    emu_run = 0;
 }
 
 static int load_ram(const char* file, unsigned int file_endn)
@@ -51,9 +58,16 @@ static int load_ram(const char* file, unsigned int file_endn)
 
 int init(int argc, char* argv[])
 {
+    struct sigaction sigaction_term;
     unsigned int ram_image_index = 0;
     unsigned int ram_image_endn = 1; /* Default is little endian. */
     int i;
+
+    sigaction_term.sa_handler = halt_emu;
+    sigemptyset(&sigaction_term.sa_mask);
+    sigaction_term.sa_flags = 0;
+    sigaction(SIGTERM, &sigaction_term, NULL);
+    sigaction(SIGINT, &sigaction_term, NULL);
 
     for (i = 1; i < argc; ++i)
     {

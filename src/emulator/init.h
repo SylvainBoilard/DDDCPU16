@@ -19,6 +19,9 @@
 #ifndef INIT_H_INCLUDED
 #define INIT_H_INCLUDED
 
+#define _POSIX_C_SOURCE 200112L
+#include <signal.h>
+
 #include <string.h>
 #include <stdio.h>
 
@@ -26,6 +29,8 @@
 #include "plugin.h"
 #include "parse.h"
 #include "timing.h"
+
+extern unsigned int emu_run;
 
 int init(int argc, char* argv[]);
 void term(void);

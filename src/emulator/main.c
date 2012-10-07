@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     if (ret_val)
         goto terminate;
 
-    while (1)
+    while (emu_run)
     {
         const unsigned short o = memory[PC] & 0x001F;
         const unsigned short b = memory[PC] >> 5 & 0x001F;
