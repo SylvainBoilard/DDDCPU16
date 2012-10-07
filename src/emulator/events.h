@@ -24,6 +24,16 @@
 
 #include "globals.h"
 
+#define MAX_EVENTS 1024 /* TODO : add option to modify this value. */
+
+struct event
+{
+    unsigned long trigger;
+    unsigned long event_ID;
+    void (* callback)(void*);
+    void* arguments;
+};
+
 unsigned long schedule_event(unsigned long trigger, void (* callback)(void*),
                              void* arguments);
 void cancel_event(unsigned long event_ID, void (* callback)(void*));

@@ -18,12 +18,6 @@
 
 #include "plugin.h"
 
-struct plugin_node
-{
-    struct plugin_node* next;
-    void* dl_handle;
-};
-
 static struct plugin_node* plugin_list = NULL;
 
 int load_plugin(int plugin_argc, char* plugin_argv[])

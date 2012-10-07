@@ -21,6 +21,19 @@
 
 #include <stdlib.h>
 
+struct hardware
+{
+    void (* hard_info)(void);
+    unsigned int (* hard_send_int)(unsigned short);
+    unsigned short hard_PCID;
+};
+
+struct hardware_node
+{
+    struct hardware_node* next;
+    struct hardware hard;
+};
+
 void add_hard(void (* hard_info_callback)(void),
               unsigned int (* hard_send_int_callback)(unsigned short),
               unsigned short hard_PCID);

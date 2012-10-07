@@ -30,6 +30,12 @@
 #include "interrupts.h"
 #include "hardware.h"
 
+struct plugin_node
+{
+    struct plugin_node* next;
+    void* dl_handle;
+};
+
 int load_plugin(int plugin_argc, char* plugin_argv[]);
 void complete_load_plugins(void);
 void free_plugins(void);

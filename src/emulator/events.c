@@ -18,16 +18,6 @@
 
 #include "events.h"
 
-#define MAX_EVENTS 1024 /* TODO : add option to modify this value. */
-
-struct event
-{
-    unsigned long trigger;
-    unsigned long event_ID;
-    void (* callback)(void*);
-    void* arguments;
-};
-
 /* events_heap is a binary min-heap storing events against their trigger value.
    See <https://en.wikipedia.org/wiki/Binary_heap> */
 struct event events_heap[MAX_EVENTS];

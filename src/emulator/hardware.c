@@ -18,19 +18,6 @@
 
 #include "hardware.h"
 
-struct hardware
-{
-    void (* hard_info)(void);
-    unsigned int (* hard_send_int)(unsigned short);
-    unsigned short hard_PCID;
-};
-
-struct hardware_node
-{
-    struct hardware_node* next;
-    struct hardware hard;
-};
-
 struct hardware_node* hard_stack = NULL;
 
 struct hardware* hard_array = NULL;
