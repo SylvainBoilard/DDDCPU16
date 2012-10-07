@@ -35,7 +35,7 @@ int load_plugin(int plugin_argc, char* plugin_argv[])
 
     if (!plugin_argc)
     {
-        printf("You have to specify a plugin with option -h.\n");
+        printf("You have to specify a plugin with option -p.\n");
         return 1;
     }
     dl_handle = dlopen(plugin_argv[0], RTLD_LAZY);
