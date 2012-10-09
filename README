@@ -96,18 +96,25 @@ DCPU16 catching fire.
 === TODO =======================================================================
 
 Emulator
+ * Plugin system.
+   * Prevent loading multiple times the same plugin.
+   * Load plugins at once (i.e. without the need to call the plugin's
+     complete_load() function).
  * Events system
    * Make it thread safe.
    * Optimize events canceling (lazy removal ?).
    * Allow arbitrary large number of simultaneous scheduled events ?
+ * Prevent drifting in emulation timing (none appears with default values, but
+   it would be a good idea to do it eventually).
 
 Plugins
  * Implement debug plugin.
  * Hardware
    * Implement lem180x.
    * Implement keyboard.
-   * Implement hmd2043.
    * Implement sped-3.
+   * Implement m35fd.
+   * Implement hmd2043 ?
 
 General
  * Write documentation.
