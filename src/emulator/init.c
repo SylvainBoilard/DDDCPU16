@@ -192,16 +192,16 @@ int init(int argc, char* argv[])
         return 2;
     }
 
-    init_timing();
     complete_load_plugins();
-    complete_load_hard();
+    load_hard();
+    init_timing();
 
     return 0;
 }
 
 void term(void)
 {
-    term_timing();
-    free_hard();
     free_plugins();
+    free_hard();
+    term_timing();
 }

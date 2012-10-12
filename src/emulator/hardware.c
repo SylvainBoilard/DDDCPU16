@@ -38,7 +38,7 @@ void add_hard(void (* hard_info_callback)(void),
     ++hard_number;
 }
 
-void complete_load_hard(void)
+void load_hard(void)
 {
     unsigned int i;
 
