@@ -19,7 +19,7 @@
 #include "clock.h"
 
 struct dddcpu16_context context;
-unsigned short clock_number = 0;
+unsigned int clock_number = 0;
 struct clock_context* clock_array = NULL;
 
 static int read_uint(const char* string)
