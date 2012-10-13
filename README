@@ -96,10 +96,6 @@ DCPU16 catching fire.
 === TODO =======================================================================
 
 Emulator
- * Plugin system.
-   * Prevent loading multiple times the same plugin.
-   * Load plugins at once (i.e. without the need to call the plugin's
-     complete_load() function).
  * Events system
    * Make it thread safe.
    * Optimize events canceling (lazy removal ?).

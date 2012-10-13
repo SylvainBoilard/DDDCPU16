@@ -18,70 +18,90 @@
 
 #include "plugin.h"
 
-static struct plugin_node* plugin_list = NULL;
+struct plugin_node* plugin_list = NULL;
+struct plugin_to_load_node* plugin_to_load_list = NULL;
 
-int load_plugin(int plugin_argc, char* plugin_argv[])
+void add_plugin(int plugin_argc, char* plugin_argv[])
 {
-    static const struct dddcpu16_context context = {
+    struct plugin_to_load_node* plugin_to_load_node_temp =
+        (struct plugin_to_load_node*)malloc(sizeof(struct plugin_to_load_node));
+    plugin_to_load_node_temp->next = plugin_to_load_list;
+    plugin_to_load_node_temp->argc = plugin_argc;
+    plugin_to_load_node_temp->argv = plugin_argv;
+    plugin_to_load_list = plugin_to_load_node_temp;
+}
+
+int load_plugins(void)
+{
+    const struct dddcpu16_context context = {
         /* Variables */
         memory, registers, &emu_freq, &emu_speed, &emu_granularity,
         &cycles_counter,
         /* Functions */
         add_hard, recv_int, schedule_event, cancel_event
     };
-    struct plugin_node* plugin_node_temp;
-    void* dl_handle;
-    int (* plugin_init)(const struct dddcpu16_context*, int, char*[]);
 
-    if (!plugin_argc)
+    while (plugin_to_load_list)
     {
-        printf("You have to specify a plugin with option -p.\n");
-        return 1;
+        struct plugin_node* plugin_node_temp;
+        struct plugin_to_load_node* plugin_to_load_node_temp;
+        void* dl_handle;
+        int (* plugin_init)(const struct dddcpu16_context*, int, char*[]);
+        int ret_val;
+
+        /* RTLD_NOLOAD seems to be a glibc-only flag,
+           this could cause portability issues. */
+        if (dlopen(plugin_to_load_list->argv[0], RTLD_NOLOAD | RTLD_LAZY))
+        {
+            printf("Error loading %s : plugins can only be loaded once.\n",
+                   plugin_to_load_list->argv[0]);
+            return 2;
+        }
+
+        dl_handle = dlopen(plugin_to_load_list->argv[0], RTLD_LAZY);
+        if (!dl_handle)
+        {
+            printf("%s\n", dlerror());
+            return 2;
+        }
+
+        /* C9X leaves cast from void* to function pointer undefined.
+           The assignement used below is the POSIX.1-2003 TC1 workaround. */
+        *(void**)(&plugin_init) = dlsym(dl_handle, "init");
+        if (!plugin_init)
+        {
+            printf("%s\n", dlerror());
+            dlclose(dl_handle);
+            return 2;
+        }
+
+        /* Plugin is correctly loaded, we can push it. */
+        plugin_node_temp = (struct plugin_node*)malloc(sizeof(struct plugin_node));
+        plugin_node_temp->dl_handle = dl_handle;
+        plugin_node_temp->next = plugin_list;
+        plugin_list = plugin_node_temp;
+
+        ret_val = plugin_init(&context, plugin_to_load_list->argc,
+                              plugin_to_load_list->argv);
+        if (ret_val)
+            return ret_val;
+
+        plugin_to_load_node_temp = plugin_to_load_list;
+        plugin_to_load_list = plugin_to_load_list->next;
+        free(plugin_to_load_node_temp);
     }
-    dl_handle = dlopen(plugin_argv[0], RTLD_LAZY);
-    if (!dl_handle)
-    {
-        printf("%s\n", dlerror());
-        return 2;
-    }
 
-    /* C9X leaves cast from void* to function pointer undefined.
-       The assignement used below is the POSIX.1-2003 TC1 workaround. */
-    *(void**)(&plugin_init) = dlsym(dl_handle, "init");
-    if (!plugin_init)
-    {
-        printf("%s\n", dlerror());
-        dlclose(dl_handle);
-        return 2;
-    }
-
-    /* Plugin is correctly loaded, we can push it. */
-    plugin_node_temp = (struct plugin_node*)malloc(sizeof(struct plugin_node));
-    plugin_node_temp->dl_handle = dl_handle;
-    plugin_node_temp->next = plugin_list;
-    plugin_list = plugin_node_temp;
-
-    return plugin_init(&context, plugin_argc, plugin_argv);
-}
-
-void complete_load_plugins(void)
-{
-    struct plugin_node* plugin_node_iter = plugin_list;
-
-    while (plugin_node_iter)
-    {
-        void (* complete_load)(void);
-        *(void**)&complete_load =
-            dlsym(plugin_node_iter->dl_handle, "complete_load");
-
-        if (complete_load)
-            complete_load();
-        plugin_node_iter = plugin_node_iter->next;
-    }
+    return 0;
 }
 
 void free_plugins(void)
 {
+    while (plugin_to_load_list)
+    {
+        struct plugin_to_load_node* current_node = plugin_to_load_list;
+        plugin_to_load_list = plugin_to_load_list->next;
+        free(current_node);
+    }
     while (plugin_list)
     {
         void (* plugin_term)(void);

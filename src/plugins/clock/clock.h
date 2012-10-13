@@ -20,12 +20,12 @@
 #define CLOCK_H_INCLUDED
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <dddcpu16.h>
 
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[]);
-void complete_load(void);
 void term(void);
 
 struct clock_context

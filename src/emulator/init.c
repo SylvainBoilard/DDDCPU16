@@ -62,6 +62,7 @@ int init(int argc, char* argv[])
     unsigned int ram_image_index = 0;
     unsigned int ram_image_endn = 1; /* Default is little endian. */
     int i;
+    int load_plugins_ret_val;
 
     sigaction_term.sa_handler = halt_emu;
     sigemptyset(&sigaction_term.sa_mask);
@@ -74,7 +75,6 @@ int init(int argc, char* argv[])
         if (argv[i][0] == '-')
         {
             int curr_arg = i;
-            int ret_val;
             long value;
 
             switch (argv[i][1])
@@ -162,9 +162,12 @@ int init(int argc, char* argv[])
             case 'p': /* Plugin loading option. */
                 ++curr_arg;
                 while (++i < argc && strcmp(argv[i], "--"));
-                ret_val = load_plugin(i - curr_arg, argv + curr_arg);
-                if (ret_val)
-                    return ret_val;
+                if (i == curr_arg)
+                {
+                    printf("You have to specify a plugin with option -p.\n");
+                    return 1;
+                }
+                add_plugin(i - curr_arg, argv + curr_arg);
                 break;
 
             default:
@@ -192,7 +195,9 @@ int init(int argc, char* argv[])
         return 2;
     }
 
-    complete_load_plugins();
+    load_plugins_ret_val = load_plugins();
+    if (load_plugins_ret_val)
+        return load_plugins_ret_val;
     load_hard();
     init_timing();
 

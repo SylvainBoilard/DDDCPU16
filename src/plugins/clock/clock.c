@@ -22,6 +22,22 @@ struct dddcpu16_context context;
 unsigned short clock_number = 0;
 struct clock_context* clock_array = NULL;
 
+static int read_uint(const char* string)
+{
+    unsigned int result = 0;
+
+    if (*string < '0' || *string > '9')
+        return -1;
+
+    do
+        result = result * 10 + *string - '0';
+    while (*++string >= '0' && *string <= '9');
+
+    if (*string)
+        return -1;
+    return result;
+}
+
 static void info(void)
 {
     context.registers[0] = 0xb402;
@@ -92,14 +108,32 @@ static unsigned int recv_int(unsigned short PCID)
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[])
 {
-    context = *dddcpu16_context;
-    ++clock_number;
-    return 0;
-}
-
-void complete_load(void)
-{
     unsigned int i;
+    int result;
+    context = *dddcpu16_context;
+
+    if (argc > 1)
+    {
+        result = read_uint(argv[1]);
+        if (result < 0)
+        {
+            printf("Could not read clock number \"%s\".\n", argv[1]);
+            return 1;
+        }
+        if (!result)
+        {
+            printf("Cannot set clock number to 0.\n");
+            return 1;
+        }
+        if (result > 0x10000)
+        {
+            printf("Cannot set clock number superior to 65536.\n");
+            return 1;
+        }
+        clock_number = result;
+    }
+    else
+        clock_number = 1;
 
     clock_array = (struct clock_context*)
         malloc(sizeof(struct clock_context) * clock_number);
@@ -111,6 +145,7 @@ void complete_load(void)
         clock_array[i].interrupt = 0;
         clock_array[i].event_ID = 0;
     }
+    return 0;
 }
 
 void term(void)
