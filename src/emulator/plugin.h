@@ -30,9 +30,9 @@
 #include "interrupts.h"
 #include "hardware.h"
 
-struct plugin_to_load_node
+struct plugin_args_node
 {
-    struct plugin_to_load_node* next;
+    struct plugin_args_node* next;
     int argc;
     char** argv;
 };

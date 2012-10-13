@@ -19,16 +19,16 @@
 #include "plugin.h"
 
 struct plugin_node* plugin_list = NULL;
-struct plugin_to_load_node* plugin_to_load_list = NULL;
+struct plugin_args_node* plugin_args_list = NULL;
 
 void add_plugin(int plugin_argc, char* plugin_argv[])
 {
-    struct plugin_to_load_node* plugin_to_load_node_temp =
-        (struct plugin_to_load_node*)malloc(sizeof(struct plugin_to_load_node));
-    plugin_to_load_node_temp->next = plugin_to_load_list;
-    plugin_to_load_node_temp->argc = plugin_argc;
-    plugin_to_load_node_temp->argv = plugin_argv;
-    plugin_to_load_list = plugin_to_load_node_temp;
+    struct plugin_args_node* plugin_args_node_temp =
+        (struct plugin_args_node*)malloc(sizeof(struct plugin_args_node));
+    plugin_args_node_temp->next = plugin_args_list;
+    plugin_args_node_temp->argc = plugin_argc;
+    plugin_args_node_temp->argv = plugin_argv;
+    plugin_args_list = plugin_args_node_temp;
 }
 
 int load_plugins(void)
@@ -41,24 +41,24 @@ int load_plugins(void)
         add_hard, recv_int, schedule_event, cancel_event
     };
 
-    while (plugin_to_load_list)
+    while (plugin_args_list)
     {
         struct plugin_node* plugin_node_temp;
-        struct plugin_to_load_node* plugin_to_load_node_temp;
+        struct plugin_args_node* plugin_args_node_temp;
         void* dl_handle;
         int (* plugin_init)(const struct dddcpu16_context*, int, char*[]);
         int ret_val;
 
         /* RTLD_NOLOAD seems to be a glibc-only flag,
            this could cause portability issues. */
-        if (dlopen(plugin_to_load_list->argv[0], RTLD_NOLOAD | RTLD_LAZY))
+        if (dlopen(plugin_args_list->argv[0], RTLD_NOLOAD | RTLD_LAZY))
         {
             printf("Error loading %s : plugins can only be loaded once.\n",
-                   plugin_to_load_list->argv[0]);
+                   plugin_args_list->argv[0]);
             return 2;
         }
 
-        dl_handle = dlopen(plugin_to_load_list->argv[0], RTLD_LAZY);
+        dl_handle = dlopen(plugin_args_list->argv[0], RTLD_LAZY);
         if (!dl_handle)
         {
             printf("%s\n", dlerror());
@@ -76,19 +76,20 @@ int load_plugins(void)
         }
 
         /* Plugin is correctly loaded, we can push it. */
-        plugin_node_temp = (struct plugin_node*)malloc(sizeof(struct plugin_node));
+        plugin_node_temp =
+            (struct plugin_node*)malloc(sizeof(struct plugin_node));
         plugin_node_temp->dl_handle = dl_handle;
         plugin_node_temp->next = plugin_list;
         plugin_list = plugin_node_temp;
 
-        ret_val = plugin_init(&context, plugin_to_load_list->argc,
-                              plugin_to_load_list->argv);
+        ret_val = plugin_init(&context, plugin_args_list->argc,
+                              plugin_args_list->argv);
         if (ret_val)
             return ret_val;
 
-        plugin_to_load_node_temp = plugin_to_load_list;
-        plugin_to_load_list = plugin_to_load_list->next;
-        free(plugin_to_load_node_temp);
+        plugin_args_node_temp = plugin_args_list;
+        plugin_args_list = plugin_args_list->next;
+        free(plugin_args_node_temp);
     }
 
     return 0;
@@ -96,10 +97,10 @@ int load_plugins(void)
 
 void free_plugins(void)
 {
-    while (plugin_to_load_list)
+    while (plugin_args_list)
     {
-        struct plugin_to_load_node* current_node = plugin_to_load_list;
-        plugin_to_load_list = plugin_to_load_list->next;
+        struct plugin_args_node* current_node = plugin_args_list;
+        plugin_args_list = plugin_args_list->next;
         free(current_node);
     }
     while (plugin_list)
