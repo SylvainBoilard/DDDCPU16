@@ -23,11 +23,16 @@ struct hardware_node* hard_stack = NULL;
 struct hardware* hard_array = NULL;
 unsigned int hard_number = 0;
 
-void add_hard(void (* hard_info_callback)(void),
-              unsigned int (* hard_send_int_callback)(unsigned short),
-              unsigned short hard_PCID)
+unsigned int add_hard(void (* hard_info_callback)(void),
+                      unsigned int (* hard_send_int_callback)(unsigned short),
+                      unsigned short hard_PCID)
 {
-    struct hardware_node* hard_node_temp =
+    struct hardware_node* hard_node_temp;
+
+    if (hard_number >= 0x10000)
+        return 1;
+
+    hard_node_temp =
         (struct hardware_node*)malloc(sizeof(struct hardware_node));
     hard_node_temp->hard.hard_info = hard_info_callback;
     hard_node_temp->hard.hard_send_int = hard_send_int_callback;
@@ -36,6 +41,8 @@ void add_hard(void (* hard_info_callback)(void),
     hard_node_temp->next = hard_stack;
     hard_stack = hard_node_temp;
     ++hard_number;
+
+    return 0;
 }
 
 void load_hard(void)

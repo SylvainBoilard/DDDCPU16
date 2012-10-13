@@ -139,12 +139,21 @@ int init(const struct dddcpu16_context* dddcpu16_context,
         malloc(sizeof(struct clock_context) * clock_number);
     for (i = 0; i < clock_number; ++i)
     {
-        context.add_hard(info, recv_int, i);
-
+        if (context.add_hard(info, recv_int, i))
+        {
+            printf("There is no more hardware slots "
+                   "available to plug another clock.\n");
+            /* Prevent term from canceling events : there is none scheduled at
+               that time, and it will also prevent canceling events based on
+               uninitialized event IDs. */
+            clock_number = 0;
+            return 1;
+        }
         /* Other values are set when needed. */
         clock_array[i].interrupt = 0;
         clock_array[i].event_ID = 0;
     }
+
     return 0;
 }
 

@@ -34,9 +34,9 @@ struct hardware_node
     struct hardware hard;
 };
 
-void add_hard(void (* hard_info_callback)(void),
-              unsigned int (* hard_send_int_callback)(unsigned short),
-              unsigned short hard_PCID);
+unsigned int add_hard(void (* hard_info_callback)(void),
+                      unsigned int (* hard_send_int_callback)(unsigned short),
+                      unsigned short hard_PCID);
 void load_hard(void);
 void free_hard(void);
 unsigned short hard_count(void);
