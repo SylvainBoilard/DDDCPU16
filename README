@@ -96,6 +96,8 @@ DCPU16 catching fire.
 === TODO =======================================================================
 
 Emulator
+ * Implement a shared configuration system for the core emulator and plugins.
+ * Implement a console with customizable commands for core emulator and plugins.
  * Events system
    * Make it thread safe.
    * Optimize events canceling (lazy removal ?).
@@ -110,7 +112,6 @@ Plugins
    * Implement keyboard.
    * Implement sped-3.
    * Implement m35fd.
-   * Implement hmd2043 ?
 
 General
  * Write documentation.
