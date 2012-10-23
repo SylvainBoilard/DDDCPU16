@@ -47,11 +47,11 @@ unsigned int add_hard(void (* hard_info_callback)(void),
 
 void load_hard(void)
 {
-    unsigned int i;
+    unsigned int i = hard_number;
 
     hard_array =
         (struct hardware*)malloc(sizeof(struct hardware) * hard_number);
-    for (i = 0; i < hard_number; ++i)
+    while (i--)
     {
         struct hardware_node* hard_node = hard_stack;
         hard_stack = hard_stack->next;
