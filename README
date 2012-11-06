@@ -97,18 +97,18 @@ DCPU16 catching fire.
 
 Emulator
  * Implement a shared configuration system for the core emulator and plugins.
- * Implement a console with customizable commands for core emulator and plugins.
  * Events system
    * Make it thread safe.
-   * Optimize events canceling (lazy removal ?).
-   * Allow arbitrary large number of simultaneous scheduled events ?
+   * Allow arbitrary large number of simultaneous scheduled events.
+   * Optimize events canceling.
  * Prevent drifting in emulation timing (none appears with default values, but
    it would be a good idea to do it eventually).
+ * Allow arbitrary large command lines.
 
 Plugins
  * Implement debug plugin.
  * Hardware
-   * Implement lem180x.
+   * Implement lem1802.
    * Implement keyboard.
    * Implement sped-3.
    * Implement m35fd.

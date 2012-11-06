@@ -16,36 +16,40 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLUGIN_H_INCLUDED
-#define PLUGIN_H_INCLUDED
+#ifndef CONSOLE_H_INCLUDED
+#define CONSOLE_H_INCLUDED
 
-#include <stdlib.h>
 #include <stdio.h>
-#include <dlfcn.h>
+#include <stdlib.h>
+#include <string.h>
+#include <pthread.h>
+#include <unistd.h>
 
-#include <dddcpu16.h>
+#include "init.h"
 
-#include "globals.h"
-#include "events.h"
-#include "interrupts.h"
-#include "hardware.h"
-#include "console.h"
+#define COMMAND_BUFFER_SIZE 256
 
-struct plugin_args_node
+struct command
 {
-    struct plugin_args_node* next;
-    int argc;
-    char** argv;
+    const char* name;
+    void (* callback)(unsigned int, const char*[]);
 };
 
-struct plugin_node
+struct command_node
 {
-    struct plugin_node* next;
-    void* dl_handle;
+    struct command command;
+    struct command_node* next;
 };
 
-void add_plugin(int plugin_argc, char* plugin_argv[]);
-int load_plugins(void);
-void free_plugins(void);
+struct uint_node
+{
+    unsigned int value;
+    struct uint_node* next;
+};
 
-#endif /* PLUGIN_H_INCLUDED */
+void add_command(const char* name,
+                 void (* callback)(unsigned int, const char*[]));
+void init_console(void);
+void term_console(void);
+
+#endif /* CONSOLE_H_INCLUDED */

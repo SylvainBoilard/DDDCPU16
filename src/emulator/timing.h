@@ -19,7 +19,6 @@
 #ifndef TIMING_H_INCLUDED
 #define TIMING_H_INCLUDED
 
-#define _POSIX_C_SOURCE 200112L
 #include <time.h>
 
 #include "events.h"

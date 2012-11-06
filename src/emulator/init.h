@@ -19,16 +19,15 @@
 #ifndef INIT_H_INCLUDED
 #define INIT_H_INCLUDED
 
-#define _POSIX_C_SOURCE 200112L
-#include <signal.h>
-
 #include <string.h>
 #include <stdio.h>
+#include <signal.h>
 
 #include "globals.h"
 #include "plugin.h"
 #include "parse.h"
 #include "timing.h"
+#include "console.h"
 
 extern unsigned int emu_run;
 

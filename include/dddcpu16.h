@@ -36,8 +36,14 @@ struct dddcpu16_context
          number of cycles needed to do so.
        - a plugin-side ID to differenciate between numerous instances of the
          same piece of hardware. */
-    unsigned int(* add_hard)(void (*)(void), unsigned int (*)(unsigned short),
-                             unsigned short);
+    unsigned int (* add_hard)(void (*)(void), unsigned int (*)(unsigned short),
+                              unsigned short);
+    /* add_command takes two arguments:
+       - the name of the command to add.
+       - a pointer to a function to call when the command is issued, taking the
+         number of arguments plus one and an array containing the command and
+         its arguments as arguments. */
+    void (* add_command)(const char *, void (*)(unsigned int, const char*[]));
     /* send_int() takes the interrupt value as argument. */
     void (* send_int)(unsigned short);
     /* schedule_event() takes three arguments:

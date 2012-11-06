@@ -27,9 +27,16 @@ static unsigned int host_endn(void)
     return *(const unsigned char *)&test;
 }
 
-static void halt_emu(int signal)
+static void command_quit(unsigned int argc, const char* argv[])
 {
     emu_run = 0;
+    printf("Exiting...\n");
+}
+
+static void halt_emu(int signal)
+{
+    printf("Caught signal %s. ", signal == SIGINT ? "SIGINT" : "SIGTERM");
+    command_quit(0, NULL);
 }
 
 static int load_ram(const char* file, unsigned int file_endn)
@@ -199,6 +206,9 @@ int init(int argc, char* argv[])
     if (load_plugins_ret_val)
         return load_plugins_ret_val;
     load_hard();
+
+    add_command("quit", command_quit);
+    init_console();
     init_timing();
 
     return 0;
@@ -208,5 +218,6 @@ void term(void)
 {
     free_plugins();
     free_hard();
+    term_console();
     term_timing();
 }

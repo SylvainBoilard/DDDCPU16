@@ -38,7 +38,7 @@ int load_plugins(void)
         memory, registers, &emu_freq, &emu_speed, &emu_granularity,
         &cycles_counter,
         /* Functions */
-        add_hard, recv_int, schedule_event, cancel_event
+        add_hard, add_command, recv_int, schedule_event, cancel_event
     };
 
     while (plugin_args_list)
