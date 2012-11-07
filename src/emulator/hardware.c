@@ -23,14 +23,11 @@ struct hardware_node* hard_stack = NULL;
 struct hardware* hard_array = NULL;
 unsigned int hard_number = 0;
 
-unsigned int add_hard(void (* hard_info_callback)(void),
-                      unsigned int (* hard_send_int_callback)(unsigned short),
-                      unsigned short hard_PCID)
+void add_hard(void (* hard_info_callback)(void),
+              unsigned int (* hard_send_int_callback)(unsigned short),
+              unsigned short hard_PCID)
 {
     struct hardware_node* hard_node_temp;
-
-    if (hard_number >= 0x10000)
-        return 1;
 
     hard_node_temp =
         (struct hardware_node*)malloc(sizeof(struct hardware_node));
@@ -41,13 +38,17 @@ unsigned int add_hard(void (* hard_info_callback)(void),
     hard_node_temp->next = hard_stack;
     hard_stack = hard_node_temp;
     ++hard_number;
-
-    return 0;
 }
 
-void load_hard(void)
+int load_hard(void)
 {
     unsigned int i = hard_number;
+
+    if (hard_number >= 0x10000)
+    {
+        printf("Too many pieces of hardware plugged-in (%u).\n", hard_number);
+        return 1;
+    }
 
     hard_array =
         (struct hardware*)malloc(sizeof(struct hardware) * hard_number);
@@ -58,6 +59,7 @@ void load_hard(void)
         hard_array[i] = hard_node->hard;
         free(hard_node);
     }
+    return 0;
 }
 
 void free_hard(void)

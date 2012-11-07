@@ -69,7 +69,7 @@ int init(int argc, char* argv[])
     unsigned int ram_image_index = 0;
     unsigned int ram_image_endn = 1; /* Default is little endian. */
     int i;
-    int load_plugins_ret_val;
+    int ret_val;
 
     sigaction_term.sa_handler = halt_emu;
     sigemptyset(&sigaction_term.sa_mask);
@@ -202,10 +202,12 @@ int init(int argc, char* argv[])
         return 2;
     }
 
-    load_plugins_ret_val = load_plugins();
-    if (load_plugins_ret_val)
-        return load_plugins_ret_val;
-    load_hard();
+    ret_val = load_plugins();
+    if (ret_val)
+        return ret_val;
+    ret_val = load_hard();
+    if (ret_val)
+        return ret_val;
 
     add_command("quit", command_quit);
     init_console();
