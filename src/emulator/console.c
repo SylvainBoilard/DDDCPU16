@@ -59,9 +59,9 @@ static void* console_main(void* arguments)
 
         printf("(dddcpu16) ");
         fflush(stdout);
-        read_length = read(STDIN_FILENO, buffer, COMMAND_BUFFER_SIZE);
-        if (!read_length)
-            continue;
+        do
+            read_length = read(STDIN_FILENO, buffer, COMMAND_BUFFER_SIZE);
+        while (!read_length);
         /* Replace trailing '\n' by a '\0' terminator
            and update read_length accordingly. */
         buffer[--read_length] = '\0';
