@@ -41,13 +41,14 @@ static void halt_emu(int signal)
 
 static int load_ram(const char* file, unsigned int file_endn)
 {
-    FILE* ram_img;
+    int ram_img_fd;
 
-    ram_img = fopen(file, "rb");
-    if (!ram_img)
+    ram_img_fd = open(file, O_RDONLY);
+    if (ram_img_fd < 0)
         return 1;
-    fread(memory, 1, 0x20000, ram_img);
-    fclose(ram_img);
+    read(ram_img_fd, memory, 0x20000);
+    close(ram_img_fd);
+
     if (host_endn() != file_endn)
     {
         unsigned char* raw_mem = (unsigned char*)memory;
@@ -60,6 +61,7 @@ static int load_ram(const char* file, unsigned int file_endn)
             raw_mem[i + 1] = temp;
         }
     }
+
     return 0;
 }
 

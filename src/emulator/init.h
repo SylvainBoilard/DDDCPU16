@@ -22,6 +22,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "globals.h"
 #include "plugin.h"
