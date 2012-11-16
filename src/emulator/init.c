@@ -36,7 +36,8 @@ static void command_quit(unsigned int argc, const char* argv[])
 static void halt_emu(int signal)
 {
     emu_run = 0;
-    printf("Caught signal %s. Exiting...\n", signal == SIGINT ? "SIGINT" : "SIGTERM");
+    printf("Caught signal %s. Exiting...\n",
+           signal == SIGINT ? "SIGINT" : "SIGTERM");
 }
 
 static int load_ram(const char* file, unsigned int file_endn)
