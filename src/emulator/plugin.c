@@ -55,7 +55,7 @@ int load_plugins(void)
         {
             printf("Error loading %s : plugins can only be loaded once.\n",
                    plugin_args_list->argv[0]);
-            return 2;
+            return 1;
         }
 
         dl_handle = dlopen(plugin_args_list->argv[0], RTLD_LAZY);
