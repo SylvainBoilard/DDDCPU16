@@ -57,6 +57,7 @@ int load_plugins(void)
                    plugin_args_list->argv[0]);
             return 1;
         }
+        dlerror();
 
         dl_handle = dlopen(plugin_args_list->argv[0], RTLD_LAZY);
         if (!dl_handle)
