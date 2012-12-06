@@ -221,8 +221,8 @@ int init(int argc, char* argv[])
 
 void term(void)
 {
+    term_console();
     free_plugins();
     free_hard();
-    term_console();
     term_timing();
 }
