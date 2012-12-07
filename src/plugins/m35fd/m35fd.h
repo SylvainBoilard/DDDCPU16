@@ -21,6 +21,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <pthread.h>
 
 #include <dddcpu16.h>
@@ -52,6 +55,8 @@ struct m35fd_context
 {
     enum m35fd_states state;
     enum m35fd_errors last_error;
+    int floppy_fd;
+    unsigned int write_protected;
     pthread_mutex_t lock;
 };
 
