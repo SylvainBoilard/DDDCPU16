@@ -97,26 +97,26 @@ static void* console_main(void* arguments)
             free(offset_node_temp);
         }
 
+        pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
+
         for (i = hash(argv[0]) % command_table_size;;
              i = (i + 1) % command_table_size)
         {
             if (!command_table[i].name)
             {
-                /* printf might be a cancelation point, we have to
-                   free our resources before making a call to it. */
-                free(argv);
                 printf("Unknown command: %s.\n", argv[0]);
                 break;
             }
             if (!strcmp(argv[0], command_table[i].name))
             {
-                pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
                 command_table[i].callback(argc, argv);
-                free(argv);
-                pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
                 break;
             }
         }
+
+        free(argv);
+
+        pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     }
 
     return NULL;
