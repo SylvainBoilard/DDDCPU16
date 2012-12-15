@@ -108,18 +108,14 @@ Emulator
 Plugins
  * Implement debug plugin.
  * Hardware
+   * Finish m35fd.
    * Implement lem1802.
    * Implement keyboard.
    * Implement sped-3.
-   * Implement m35fd.
 
 General
  * Write documentation.
-   * User documentation.
-   * Developer documentation.
  * Test.
-   * Fix bugs.
-     * Test again.
 
 === AUTHORS ====================================================================
 

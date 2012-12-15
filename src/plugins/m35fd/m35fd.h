@@ -55,8 +55,14 @@ struct m35fd_context
 {
     enum m35fd_states state;
     enum m35fd_errors last_error;
+    unsigned short interrupt;
+    unsigned char write_protected;
+    unsigned char current_track;
+    unsigned int is_read;
+    unsigned long event_ID;
+    unsigned short disk_sector;
+    unsigned short memory_location;
     int floppy_fd;
-    unsigned int write_protected;
     pthread_mutex_t lock;
 };
 
