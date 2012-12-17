@@ -152,16 +152,16 @@ static void do_action(void* argument)
     struct m35fd_context* current_m35fd = (struct m35fd_context*)argument;
 
     pthread_mutex_lock(&current_m35fd->lock);
-
-    if (lseek(current_m35fd->floppy_fd,
-              current_m35fd->disk_sector * 1024, SEEK_SET) < 0)
+    if (current_m35fd->state != STATE_BUSY)
     {
-        /* The disk was probably ninja-ejected between the moment this event was
-           triggered and the moment we actually took the lock. Bad luck. */
+        /* The disk was ejected between the moment this event was triggered and
+           the moment we actually took the lock. It is even possible (although
+           very unlikely) that another disk was inserted in the mean time. */
         pthread_mutex_unlock(&current_m35fd->lock);
         return;
     };
 
+    lseek(current_m35fd->floppy_fd, current_m35fd->disk_sector * 1024,SEEK_SET);
     /* TODO : Handle endianness and wrapping at the end of memory. */
     if (current_m35fd->is_read)
     {
@@ -208,7 +208,6 @@ static void schedule_action(unsigned int is_read, unsigned short disk_sector,
     case STATE_READY:
         if (disk_sector >= 1440)
         {
-            /* The spec is not clear about what do do in this case. */
             m35fd_array[PCID].last_error = ERROR_BAD_SECTOR;
             goto action_error;
         }
@@ -250,7 +249,6 @@ static unsigned int recv_int(unsigned short PCID)
         m35fd_array[PCID].interrupt = context.registers[1];
         break;
 
-        /* TODO : inline these ? */
     case 2:
         schedule_action(0, context.registers[3], context.registers[4], PCID);
         break;
