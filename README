@@ -108,7 +108,6 @@ Emulator
 Plugins
  * Implement debug plugin.
  * Hardware
-   * Finish m35fd.
    * Implement lem1802.
    * Implement keyboard.
    * Implement sped-3.

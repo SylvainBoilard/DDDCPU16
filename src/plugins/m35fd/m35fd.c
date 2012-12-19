@@ -24,6 +24,13 @@ struct dddcpu16_context context;
 unsigned int m35fd_number = 0;
 struct m35fd_context* m35fd_array = NULL;
 
+/* Returns 1 if host uses little-endian, 0 overwise. */
+static unsigned int host_endn(void)
+{
+    const unsigned int test = 0x00000001;
+    return *(const unsigned char *)&test;
+}
+
 static int read_uint(const char* string)
 {
     unsigned int result = 0;
@@ -100,6 +107,11 @@ static void cmd_insert(unsigned int argc, const char* argv[])
     {
         m35fd_array[drive_ID].state = STATE_READY + write_protect;
         m35fd_array[drive_ID].write_protected = write_protect;
+        m35fd_array[drive_ID].floppy_map =
+            mmap(NULL, FLOPPY_SIZE, PROT_READ | (PROT_WRITE * !write_protect),
+                 MAP_SHARED, m35fd_array[drive_ID].floppy_fd, 0);
+        if (m35fd_array[drive_ID].interrupt)
+            context.send_int(m35fd_array[drive_ID].interrupt);
     }
 
     pthread_mutex_unlock(&m35fd_array[drive_ID].lock);
@@ -138,11 +150,12 @@ static void cmd_eject(unsigned int argc, const char* argv[])
     {
         context.cancel_event(m35fd_array[drive_ID].event_ID, NULL);
         m35fd_array[drive_ID].last_error = ERROR_EJECT;
-        if (m35fd_array[drive_ID].interrupt)
-            context.send_int(m35fd_array[drive_ID].interrupt);
     }
     m35fd_array[drive_ID].state = STATE_NO_MEDIA;
+    munmap(m35fd_array[drive_ID].floppy_map, FLOPPY_SIZE);
     close(m35fd_array[drive_ID].floppy_fd);
+    if (m35fd_array[drive_ID].interrupt)
+        context.send_int(m35fd_array[drive_ID].interrupt);
 
     pthread_mutex_unlock(&m35fd_array[drive_ID].lock);
 }
@@ -150,6 +163,8 @@ static void cmd_eject(unsigned int argc, const char* argv[])
 static void do_action(void* argument)
 {
     struct m35fd_context* current_m35fd = (struct m35fd_context*)argument;
+    unsigned short* sector_location;
+    unsigned int i;
 
     pthread_mutex_lock(&current_m35fd->lock);
     if (current_m35fd->state != STATE_BUSY)
@@ -161,19 +176,32 @@ static void do_action(void* argument)
         return;
     };
 
-    lseek(current_m35fd->floppy_fd, current_m35fd->disk_sector * 1024,SEEK_SET);
-    /* TODO : Handle endianness and wrapping at the end of memory. */
+    sector_location =
+        current_m35fd->floppy_map + current_m35fd->disk_sector * 512;
     if (current_m35fd->is_read)
     {
-        unsigned int amount_read =
-            read(current_m35fd->floppy_fd,
-                 context.memory + current_m35fd->memory_location, 1024);
-        for (; amount_read < 1024; ++amount_read)
-            ((char*)context.memory)[amount_read] = 0;
+        for (i = 0; i < 512; ++i)
+            context.memory[(current_m35fd->memory_location + i) % 0x10000] =
+                sector_location[i];
+        if (!host_endn())
+            for (i = 0; i < 512; ++i)
+            {
+                unsigned short* word = context.memory +
+                    ((current_m35fd->memory_location + i) % 0x10000);
+                *word = *word << 8 | *word >> 8;
+            }
     }
     else
-        write(current_m35fd->floppy_fd,
-              context.memory + current_m35fd->memory_location, 1024);
+    {
+        for (i = 0; i < 512; ++i)
+            sector_location[i] =
+                context.memory[(current_m35fd->memory_location + i) % 0x10000];
+        if (!host_endn())
+            for (i = 0; i < 512; ++i)
+                sector_location[i] =
+                    sector_location[i] << 8 | sector_location[i] >> 8;
+        msync(sector_location, 1024, MS_ASYNC);
+    }
 
     current_m35fd->state = STATE_READY + current_m35fd->write_protected;
     if (current_m35fd->interrupt)

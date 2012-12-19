@@ -24,9 +24,12 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/mman.h>
 #include <pthread.h>
 
 #include <dddcpu16.h>
+
+#define FLOPPY_SIZE 1474560
 
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[]);
@@ -63,6 +66,7 @@ struct m35fd_context
     unsigned short disk_sector;
     unsigned short memory_location;
     int floppy_fd;
+    unsigned short* floppy_map;
     pthread_mutex_t lock;
 };
 
