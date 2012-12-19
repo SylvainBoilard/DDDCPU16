@@ -176,15 +176,15 @@ static void do_action(void* argument)
         return;
     };
 
-    sector_location =
-        current_m35fd->floppy_map + current_m35fd->disk_sector * 512;
+    sector_location = current_m35fd->floppy_map +
+        current_m35fd->disk_sector * SECTOR_SIZE_WORDS;
     if (current_m35fd->is_read)
     {
-        for (i = 0; i < 512; ++i)
+        for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
             context.memory[(current_m35fd->memory_location + i) % 0x10000] =
                 sector_location[i];
         if (!host_endn())
-            for (i = 0; i < 512; ++i)
+            for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
             {
                 unsigned short* word = context.memory +
                     ((current_m35fd->memory_location + i) % 0x10000);
@@ -193,14 +193,14 @@ static void do_action(void* argument)
     }
     else
     {
-        for (i = 0; i < 512; ++i)
+        for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
             sector_location[i] =
                 context.memory[(current_m35fd->memory_location + i) % 0x10000];
         if (!host_endn())
-            for (i = 0; i < 512; ++i)
+            for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
                 sector_location[i] =
                     sector_location[i] << 8 | sector_location[i] >> 8;
-        msync(sector_location, 1024, MS_ASYNC);
+        msync(sector_location, SECTOR_SIZE_BYTES, MS_ASYNC);
     }
 
     current_m35fd->state = STATE_READY + current_m35fd->write_protected;
@@ -234,7 +234,7 @@ static void schedule_action(unsigned int is_read, unsigned short disk_sector,
         }
 
     case STATE_READY:
-        if (disk_sector >= 1440)
+        if (disk_sector >= FLOPPY_SECTORS)
         {
             m35fd_array[PCID].last_error = ERROR_BAD_SECTOR;
             goto action_error;
@@ -346,7 +346,10 @@ void term(void)
             if (m35fd_array[i].event_ID)
                 context.cancel_event(m35fd_array[i].event_ID, NULL);
             if (m35fd_array[i].state != STATE_NO_MEDIA)
+            {
+                munmap(m35fd_array[i].floppy_map, FLOPPY_SIZE);
                 close(m35fd_array[i].floppy_fd);
+            }
         }
         free(m35fd_array);
     }

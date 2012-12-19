@@ -30,6 +30,9 @@
 #include <dddcpu16.h>
 
 #define FLOPPY_SIZE 1474560
+#define FLOPPY_SECTORS 1440
+#define SECTOR_SIZE_BYTES 1024
+#define SECTOR_SIZE_WORDS 512
 
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[]);
