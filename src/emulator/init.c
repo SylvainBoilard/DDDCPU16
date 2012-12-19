@@ -52,15 +52,9 @@ static int load_ram(const char* file, unsigned int file_endn)
 
     if (host_endn() != file_endn)
     {
-        unsigned char* raw_mem = (unsigned char*)memory;
-        unsigned char temp;
         unsigned int i;
-        for (i = 0; i < 0x20000; i += 2)
-        {
-            temp = raw_mem[i];
-            raw_mem[i] = raw_mem[i + 1];
-            raw_mem[i + 1] = temp;
-        }
+        for (i = 0; i < 0x10000; ++i)
+            memory[i] = memory[i] << 8 | memory[i] >> 8;
     }
 
     return 0;
