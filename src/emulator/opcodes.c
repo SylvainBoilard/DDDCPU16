@@ -239,6 +239,7 @@ static void sti(unsigned short* b, const unsigned short* a)
     *b = *a;
     ++registers[6];
     ++registers[7];
+    cycles_counter += 2;
 }
 
 static void std(unsigned short* b, const unsigned short* a)
@@ -246,6 +247,7 @@ static void std(unsigned short* b, const unsigned short* a)
     *b = *a;
     --registers[6];
     --registers[7];
+    cycles_counter += 2;
 }
 
 static void NONE(unsigned short* b, const unsigned short* a)
