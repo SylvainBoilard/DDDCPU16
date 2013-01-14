@@ -23,7 +23,8 @@
 struct event events_heap[MAX_EVENTS];
 unsigned int heap_size = 0;
 /* 0 is reserved as a handy value when no event is scheduled. */
-unsigned long next_event_ID = 1;
+unsigned long higher_event_ID = 0;
+pthread_mutex_t heap_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static void swap_events(unsigned int first, unsigned int second)
 {
@@ -77,52 +78,88 @@ static void reorder_elem_down(unsigned int index)
 unsigned long schedule_event(unsigned long trigger, void (* callback)(void*),
                              void* arguments)
 {
+    unsigned long event_ID;
+
+    pthread_mutex_lock(&heap_lock);
+
     if (heap_size == MAX_EVENTS)
     {
         printf("FATAL: no more space available on events heap (This should have"
                "never happened, go tell the developper he is a lazy guy).");
-        exit(1);
+        exit(2);
     }
 
+    event_ID = ++higher_event_ID;
     events_heap[heap_size].trigger = trigger;
-    events_heap[heap_size].event_ID = next_event_ID;
+    events_heap[heap_size].event_ID = event_ID;
     events_heap[heap_size].callback = callback;
     events_heap[heap_size].arguments = arguments;
     reorder_elem_up(heap_size++);
 
-    return next_event_ID++;
+    pthread_mutex_unlock(&heap_lock);
+
+    return event_ID;
 }
 
 void cancel_event(unsigned long event_ID, void (* callback)(void*))
 {
     unsigned int i;
+    void* arguments;
+
+    pthread_mutex_lock(&heap_lock);
 
     for (i = 0; i < heap_size; ++i)
         if (events_heap[i].event_ID == event_ID)
             goto found;
+
+    pthread_mutex_unlock(&heap_lock);
     return;
 
   found:
+    arguments = events_heap[heap_size].arguments;
     if (--heap_size != i)
     {
-        swap_events(i, heap_size);
+        events_heap[i] = events_heap[heap_size];
         reorder_elem_up(i);
         reorder_elem_down(i);
     }
 
+    pthread_mutex_unlock(&heap_lock);
+
     if (callback)
-        callback(events_heap[heap_size].arguments);
+        callback(arguments);
 }
 
 void trigger_events(void)
 {
+    /* Greedily check if there seem to be an event to trigger, and then
+       only try to take the lock. It forces us to check for events a
+       second time after we took the lock to make sure we will not mess
+       things up, but we probably will not have an event to trigger after
+       every instruction, so this trick will prevent us from taking the
+       lock unnecessarily in most cases. */
     while (heap_size && events_heap[0].trigger <= cycles_counter)
     {
+        void (* callback)(void*);
+        void* arguments;
+
+        pthread_mutex_lock(&heap_lock);
+        if (!heap_size || events_heap[0].trigger > cycles_counter)
+        {
+            pthread_mutex_unlock(&heap_lock);
+            return;
+        }
+
+        callback = events_heap[heap_size].callback;
+        arguments = events_heap[heap_size].arguments;
         if (--heap_size)
         {
-            swap_events(0, heap_size);
+            events_heap[0] = events_heap[heap_size];
             reorder_elem_down(0);
         }
-        events_heap[heap_size].callback(events_heap[heap_size].arguments);
+
+        pthread_mutex_unlock(&heap_lock);
+
+        callback(arguments);
     }
 }

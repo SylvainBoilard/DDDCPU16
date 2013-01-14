@@ -98,7 +98,6 @@ DCPU16 catching fire.
 Emulator
  * Implement a shared configuration system for the core emulator and plugins.
  * Events system
-   * Make it thread safe.
    * Allow arbitrary large number of simultaneous scheduled events.
    * Optimize events canceling.
  * Prevent drifting in emulation timing (none appears with default values, but
@@ -113,8 +112,8 @@ Plugins
    * Implement sped-3.
 
 General
+ * A lot of stuff should probably be declared as 'versatile'.
  * Write documentation.
- * Test.
 
 === AUTHORS ====================================================================
 
