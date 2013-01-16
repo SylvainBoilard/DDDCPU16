@@ -47,15 +47,6 @@ static int read_uint(const char* string)
     return result;
 }
 
-static void info(void)
-{
-    context.registers[0] = 0x24c5;
-    context.registers[1] = 0x4fd5;
-    context.registers[2] = 0x000b;
-    context.registers[3] = 0x7e91;
-    context.registers[4] = 0x1eb3;
-}
-
 static void cmd_insert(unsigned int argc, const char* argv[])
 {
     unsigned int drive_ID = 0;
@@ -291,6 +282,15 @@ static unsigned int recv_int(unsigned short PCID)
     return 0;
 }
 
+static void info(void)
+{
+    context.registers[0] = 0x24c5;
+    context.registers[1] = 0x4fd5;
+    context.registers[2] = 0x000b;
+    context.registers[3] = 0x7e91;
+    context.registers[4] = 0x1eb3;
+}
+
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[])
 {
@@ -338,9 +338,10 @@ int init(const struct dddcpu16_context* dddcpu16_context,
 
 void term(void)
 {
-    unsigned int i;
     if (m35fd_array)
     {
+        unsigned int i;
+
         for (i = 0; i < m35fd_number; ++i)
         {
             if (m35fd_array[i].event_ID)

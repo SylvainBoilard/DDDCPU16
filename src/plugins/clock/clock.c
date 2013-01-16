@@ -38,15 +38,6 @@ static int read_uint(const char* string)
     return result;
 }
 
-static void info(void)
-{
-    context.registers[0] = 0xb402;
-    context.registers[1] = 0x12d0;
-    context.registers[2] = 0;
-    context.registers[3] = 0;
-    context.registers[4] = 0;
-}
-
 static void tick(void* arguments)
 {
     struct clock_context* current_clock = (struct clock_context*)arguments;
@@ -103,6 +94,15 @@ static unsigned int recv_int(unsigned short PCID)
     }
 
     return 0;
+}
+
+static void info(void)
+{
+    context.registers[0] = 0xb402;
+    context.registers[1] = 0x12d0;
+    context.registers[2] = 0;
+    context.registers[3] = 0;
+    context.registers[4] = 0;
 }
 
 int init(const struct dddcpu16_context* dddcpu16_context,
