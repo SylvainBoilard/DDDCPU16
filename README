@@ -112,7 +112,7 @@ Plugins
    * Implement sped-3.
 
 General
- * A lot of stuff should probably be declared as 'versatile'.
+ * A lot of stuff should probably be declared as 'volatile'.
  * Write documentation.
 
 === AUTHORS ====================================================================
