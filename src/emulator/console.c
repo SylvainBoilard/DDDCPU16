@@ -67,11 +67,11 @@ static void* console_main(void* arguments)
         buffer[--read_length] = '\0';
 
         /* Split command line against spaces. */
-        for (i = 0; i < read_length; ++i)
+        do
         {
             while (buffer[i] == ' ')
                 ++i;
-            if (!buffer[i])
+            if (i >= read_length)
                 break;
 
             offset_node_temp =
@@ -80,10 +80,12 @@ static void* console_main(void* arguments)
             offset_node_temp->next = offset_list;
             offset_list = offset_node_temp;
             ++argc;
-            while (buffer[i] != ' ' && buffer[i])
+            while (buffer[i] & 0xdf) /* Not a space or a '\0'. */
                 ++i;
             buffer[i] = '\0';
         }
+        while (++i < read_length);
+
         if (!argc)
             continue;
 
