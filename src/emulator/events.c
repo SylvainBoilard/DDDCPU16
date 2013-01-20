@@ -116,7 +116,7 @@ void cancel_event(unsigned long event_ID, void (* callback)(void*))
     return;
 
   found:
-    arguments = events_heap[heap_size].arguments;
+    arguments = events_heap[i].arguments;
     if (--heap_size != i)
     {
         events_heap[i] = events_heap[heap_size];
@@ -150,8 +150,9 @@ void trigger_events(void)
             return;
         }
 
-        callback = events_heap[heap_size].callback;
-        arguments = events_heap[heap_size].arguments;
+        callback = events_heap[0].callback;
+        arguments = events_heap[0].arguments;
+
         if (--heap_size)
         {
             events_heap[0] = events_heap[heap_size];
