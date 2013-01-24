@@ -10,8 +10,13 @@ eventually-upcoming, nerd-friendly, space-exploration-and-stuff game "0x10c".
 
 This software features efficient DCPU16 emulation, at arbitrary speed and
 frequency, and a plugin system, mainly used for hardware emulation and
-debugging. Currently (and when I am not too lazy) development efforts are
-focused on the latter part. See the TODO part of this file.
+debugging. It runs on GNU/Linux and should be easy to port on any other
+POSIX-friendly system.
+
+Currently (and when I am not too lazy) development efforts are focused on
+hardware support. See the TODO section of this file.
+
+DDDCPU16 is hosted on GitHub at https://github.com/DeathlyDeep/DDDCPU16 .
 
 === USAGE ======================================================================
 
@@ -20,7 +25,7 @@ Synopsis:
   dddcpu16 [options...] ram_image
 
 ram_image
-    The content of this RAM image will be loaded into the RAM on the DCPU16 at
+    The content of this binary file will be loaded in the RAM on the DCPU16 at
     the beginning of the emulation, and the execution will begin at address 0.
     You can generate this file by running a DASM16 assembler on a DASM16 source
     file, but DDDCPU16 does not provide such a tool.
@@ -48,10 +53,12 @@ emulation speed twice, the second value will be recorded.
     given, the value is considered to be in Hertz.
 
 -p plugin [options...] [--]
-    Load a plugin. You can pass options to the plugin by putting them after the
+    Load a plugin. You can pass options to the plugin by adding them after the
     plugin's name, and you can separate the plugin's options from the rest of
-    the emulator's options with --. This is particularly useful when you want
-    to load multiple plugins.
+    the command line with --. So, if you want to load multiple plugins, you will
+    go with something like this:
+
+    $ dddcpu16 ram_image.bin -p clock.so -- -p m35fd.so
 
 -B, -L
     Select desired endianness (Big or Little) for the ram image. Default is
@@ -60,7 +67,7 @@ emulation speed twice, the second value will be recorded.
 -G granularity
     Select time granularity. The value can be suffixed with ms, us or ns to give
     a value in milli, micro or nano-seconds. If no suffix is added, the value is
-    considered to be nanoseconds. This value can not be greater than 1 second.
+    considered to be nanoseconds. This value must be lesser than 1 second.
     Default is 1 millisecond.
 
     This value represents the granularity of time for the emulation process. For
@@ -71,15 +78,30 @@ emulation speed twice, the second value will be recorded.
         to match this delay.
 
     Doing this is necessary because the overhead of the sleep function is not
-    negligible, and sleeping between each instruction would waste lots of
-    resources. (This does not mean that the emulation timing is imprecise. The
-    overhead of time of the sleep function and the overhead of cycles at the end
-    of a chunk are compensated in the next chunk, leading to correct behaviour
+    negligible, and sleeping between each instruction would simply not work.
+    (This does not mean that the emulation timing is imprecise. The overhead of
+    time spent to sleep and the overhead of cycles executed during a time chunk
+    are compensated in the next chunk, leading to correct behaviour
     asymptotically.)
 
-    If you need a smoother emulation, try to decrease this value. If you want to
-    run the emulator at a high speed and/or frequency but end up using all of
-    your computer's resources, try to increase it.
+    If for some reasons you need a smoother emulation, try to decrease this
+    value. If you want to run the emulator at a high speed and/or frequency but
+    end up using all of your computer's resources, you can enhance a bit the
+    performance of the emulator by increasing it.
+
+=== PLUGINS OPTIONS =============================================================
+
+Currently, plugins only accepts one optional argument specifying the number of
+hardware pieces to add. For example, if you want to plug two clocks to your
+DCPU16, you will launch DDDCPU16 with a similar command line :
+
+$ dddcpu16 ram_image.bin -p clock.so 2
+
+=== RETURN VALUES ==============================================================
+
+0 : Everything went well.
+1 : Wrong argument in command line.
+2 : Run-time error.
 
 === KNOWN BUGS =================================================================
 
@@ -96,13 +118,18 @@ DCPU16 catching fire.
 === TODO =======================================================================
 
 Emulator
+ * Add firmware support.
  * Implement a shared configuration system for the core emulator and plugins.
  * Events system
    * Allow arbitrary large number of simultaneous scheduled events.
    * Optimize events canceling.
  * Prevent drifting in emulation timing (none appears with default values, but
    it would be a good idea to do it eventually).
- * Allow arbitrary large command lines.
+ * Console
+   * Allow arbitrary large command lines.
+   * Use '\n' as command line terminator instead of supposing the last read
+     character is.
+   * Add basic 'help' command to list available commands.
 
 Plugins
  * Implement debug plugin.
@@ -110,16 +137,20 @@ Plugins
    * Implement lem1802.
    * Implement keyboard.
    * Implement sped-3.
+   * m35fd
+     * Handle disk endianness.
+     * Allow starting with a disk already inserted.
 
 General
- * A lot of stuff should probably be declared as 'volatile'.
+ * A lot of stuff should be declared as 'volatile'.
  * Write documentation.
 
-=== AUTHORS ====================================================================
+=== AUTHOR =====================================================================
 
 Sylvain "DeathlyDeep" Boilard
  * e-mail : boilard@crans.org
- * twitter : @DeathlyDeep
+ * Twitter : @DeathlyDeep
+ * GitHub : https://github.com/DeathlyDeep/
 
 === LICENSE ====================================================================
 
