@@ -33,8 +33,8 @@ static unsigned int hash(const char* str)
 
     while (*str)
     {
-        unsigned int chunk =
-            *(unsigned short*)str | *(unsigned short*)str << 16;
+        const unsigned short subchunk = *str | *(str + 1) << 8;
+        const unsigned int chunk = subchunk | subchunk << 16;
         r1 = r1 ^ chunk >> (r2 & 0xf);
         r2 = r2 ^ chunk >> (r1 & 0xf);
         if (!*(str + 1))
@@ -55,7 +55,7 @@ static void* console_main(void* arguments)
         struct uint_node* offset_node_temp;
         unsigned int argc = 0;
         const char** argv;
-        unsigned int i = 0;
+        int i = 0;
 
         printf("(dddcpu16) ");
         fflush(stdout);

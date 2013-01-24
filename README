@@ -142,7 +142,7 @@ Plugins
      * Allow starting with a disk already inserted.
 
 General
- * A lot of stuff should be declared as 'volatile'.
+ * A lot of stuff should be declared as 'volatile' and/or 'const'.
  * Write documentation.
 
 === AUTHOR =====================================================================
