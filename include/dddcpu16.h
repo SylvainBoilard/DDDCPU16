@@ -23,10 +23,10 @@ struct dddcpu16_context
 {
     unsigned short* memory;
     unsigned short* registers;
-    const unsigned long* emu_freq; /* In Hertz. */
-    const unsigned int* emu_speed; /* Speed factor. */
-    const unsigned int* emu_granularity; /* In nanoseconds. */
     const unsigned long* cycles_counter;
+    unsigned long emu_freq; /* In Hertz. */
+    unsigned int emu_speed; /* Speed factor. */
+    unsigned int emu_granularity; /* In nanoseconds. */
 
     /* add_hard() takes three arguments:
        - a pointer to a function whos job is to load the registers with the

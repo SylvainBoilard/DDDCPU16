@@ -33,13 +33,20 @@ void add_plugin(int plugin_argc, char* plugin_argv[])
 
 int load_plugins(void)
 {
-    const struct dddcpu16_context context = {
-        /* Variables */
-        memory, registers, &emu_freq, &emu_speed, &emu_granularity,
-        &cycles_counter,
-        /* Functions */
-        add_hard, add_command, recv_int, schedule_event, cancel_event
-    };
+    struct dddcpu16_context context;
+    /* Variables */
+    context.memory = memory;
+    context.registers = registers;
+    context.cycles_counter = &cycles_counter;
+    context.emu_freq = emu_freq;
+    context.emu_speed = emu_speed;
+    context.emu_granularity = emu_granularity;
+    /* Functions */
+    context.add_hard = add_hard;
+    context.add_command = add_command;
+    context.send_int = recv_int;
+    context.schedule_event = schedule_event;
+    context.cancel_event = cancel_event;
 
     while (plugin_args_list)
     {

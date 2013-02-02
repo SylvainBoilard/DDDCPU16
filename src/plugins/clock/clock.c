@@ -67,7 +67,7 @@ static unsigned int recv_int(unsigned short PCID)
             context.cancel_event(clock_array[PCID].event_ID, NULL);
         if (reg_B)
         {
-            unsigned long freq_x_reg_B = *context.emu_freq * reg_B;
+            unsigned long freq_x_reg_B = context.emu_freq * reg_B;
             clock_array[PCID].cycles_per_tick = freq_x_reg_B / 60;
             clock_array[PCID].drift_per_tick = freq_x_reg_B % 60;
             clock_array[PCID].current_drift = clock_array[PCID].drift_per_tick;

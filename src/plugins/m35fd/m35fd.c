@@ -234,8 +234,8 @@ static void schedule_action(unsigned int is_read, unsigned short disk_sector,
 
     tracks_delta = m35fd_array[PCID].current_track - disk_sector / 80;
     /* We assume sector seek time is 0 here. */
-    do_cycle = *context.cycles_counter + *context.emu_freq / 60 +
-        abs(tracks_delta) * *context.emu_freq * 24 / 10000;
+    do_cycle = *context.cycles_counter + context.emu_freq / 60 +
+        abs(tracks_delta) * context.emu_freq * 24 / 10000;
     m35fd_array[PCID].event_ID =
         context.schedule_event(do_cycle, do_action, m35fd_array + PCID);
     m35fd_array[PCID].disk_sector = context.registers[3];
