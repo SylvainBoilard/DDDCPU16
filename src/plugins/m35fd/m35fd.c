@@ -21,8 +21,9 @@
 #define abs(x) (x < 0 ? -x : x)
 
 struct dddcpu16_context context;
-unsigned int m35fd_number = 0;
+unsigned int m35fd_number = 1;
 struct m35fd_context* m35fd_array = NULL;
+unsigned int default_floppy_endn = 1;
 
 /* Returns 1 if host uses little-endian, 0 overwise. */
 static unsigned int host_endn(void)
@@ -51,49 +52,93 @@ static void cmd_insert(unsigned int argc, const char* argv[])
 {
     unsigned int drive_ID = 0;
     unsigned int write_protect = 0;
+    unsigned int floppy_endn = default_floppy_endn;
+    unsigned int filename_index = 0;
     unsigned int i;
 
-    if (argc < 2)
-    {
-        printf("Usage: m35fd.insert <filename> [-wp] [drive number]\n");
-        return;
-    }
+    /* printf("Usage: m35fd.insert <filename> [-p] [-B|-L] [-n drive_number]\n"); */
 
-    for (i = 2; i < argc; ++i)
+    for (i = 1; i < argc; ++i)
     {
-        if (!strcmp(argv[i], "-wp"))
-            write_protect = 1;
-        else
+        if (argv[i][0] == '-')
         {
-            drive_ID = read_uint(argv[i]);
-            if (drive_ID == (unsigned int)-1)
+            int value;
+
+            switch (argv[i][1])
             {
-                printf("Could not read m35fd number \"%s\"\n.", argv[i]);
+            case 'B': /* Floppy endianness options. */
+                floppy_endn = 0;
+                break;
+
+            case 'L':
+                floppy_endn = 1;
+                break;
+
+            case 'p': /* Set write protection. */
+                write_protect = 1;
+                break;
+
+            case 'n': /* Select drive by ID. */
+                if (++i >= argc)
+                {
+                    printf("You need to precise a drive "
+                           "number with option -n.\n");
+                    return;
+                }
+                value = read_uint(argv[i]);
+
+                if (value < 0)
+                {
+                    printf("Error reading drive number: %s.\n", argv[i]);
+                    return;
+                }
+
+                drive_ID = value;
+                if (drive_ID >= m35fd_number)
+                {
+                    printf("Drive number %u does not exist. There is "
+                           "currently %u m35fd connected to the computer.\n",
+                           drive_ID, m35fd_number);
+                    return;
+                }
+
+                break;
+
+            default:
+                printf("Unknown option: %s.\n", argv[i]);
                 return;
             }
         }
+        else if (!filename_index)
+            filename_index = i;
+        else
+        {
+            printf("There is more than one floppy specified.\n");
+            return;
+        }
     }
 
-    if (drive_ID >= m35fd_number)
+    if (!filename_index)
     {
-        printf("Unknown m35fd number %i. There is currently %u m35fd "
-               "connected to the computer.\n", drive_ID, m35fd_number);
+        printf("You must specify a floppy to insert.\n");
         return;
     }
 
     if (m35fd_array[drive_ID].state != STATE_NO_MEDIA)
     {
-        printf("There is already a floppy in drive %u. "
-               "You can eject it with the m35fd.eject command.\n", drive_ID);
+        printf("There is already a floppy in drive %u. You can "
+               "eject it with the 'm35fd.eject' command.\n",
+               drive_ID);
         return;
     }
 
     pthread_mutex_lock(&m35fd_array[drive_ID].lock);
 
     m35fd_array[drive_ID].floppy_fd =
-        open(argv[1], write_protect ? O_RDONLY : (O_RDWR | O_CREAT));
+        open(argv[filename_index],
+             write_protect ? O_RDONLY : (O_RDWR | O_CREAT));
     if (m35fd_array[drive_ID].floppy_fd < 0)
-        printf("Could not open file %s.\n", argv[1]);
+        printf("Could not open file %s.\n", argv[filename_index]);
     else
     {
         m35fd_array[drive_ID].state = STATE_READY + write_protect;
@@ -101,6 +146,7 @@ static void cmd_insert(unsigned int argc, const char* argv[])
         m35fd_array[drive_ID].floppy_map =
             mmap(NULL, FLOPPY_SIZE, PROT_READ | (PROT_WRITE * !write_protect),
                  MAP_SHARED, m35fd_array[drive_ID].floppy_fd, 0);
+        m35fd_array[drive_ID].floppy_endn = floppy_endn;
         if (m35fd_array[drive_ID].interrupt)
             context.send_int(m35fd_array[drive_ID].interrupt);
     }
@@ -114,24 +160,28 @@ static void cmd_eject(unsigned int argc, const char* argv[])
 
     if (argc > 1)
     {
-        drive_ID = read_uint(argv[1]);
-        if (drive_ID == (unsigned int)-1)
+        int value = read_uint(argv[1]);
+
+        if (value < 0)
         {
-            printf("Could not read m35fd number \"%s\"\n.", argv[1]);
+            printf("Error reading m35fd number %s.\n", argv[1]);
             return;
         }
 
+        drive_ID = value;
         if (drive_ID >= m35fd_number)
         {
-            printf("Unknown m35fd number %i. There is currently %u m35fd "
-                   "connected to the computer.\n", drive_ID, m35fd_number);
+            printf("Drive number %u does not exist. There is "
+                   "currently %u m35fd connected to the computer.\n",
+                   drive_ID, m35fd_number);
             return;
         }
     }
 
     if (m35fd_array[drive_ID].state == STATE_NO_MEDIA)
     {
-        printf("There is no floppy in drive %u.\n", drive_ID);
+        printf("There is no floppy in drive %u. You can insert "
+               "one with the 'm35fd.insert' command.\n", drive_ID);
         return;
     }
 
@@ -171,7 +221,7 @@ static void do_action(void* argument)
         current_m35fd->disk_sector * SECTOR_SIZE_WORDS;
     if (current_m35fd->is_read)
     {
-        if (host_endn())
+        if (host_endn() == current_m35fd->floppy_endn)
             for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
                 context.memory[(current_m35fd->memory_location + i) % 0x10000] =
                     sector_location[i];
@@ -182,7 +232,7 @@ static void do_action(void* argument)
     }
     else
     {
-        if (host_endn())
+        if (host_endn() == current_m35fd->floppy_endn)
             for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
                 sector_location[i] = context.memory [
                     (current_m35fd->memory_location + i) % 0x10000 ];
@@ -296,40 +346,73 @@ static void info(void)
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[])
 {
-    unsigned int i;
-    int result;
+    int i;
+    unsigned int j;
     context = *dddcpu16_context;
 
-    if (argc > 1)
+    for (i = 1; i < argc; ++i)
     {
-        result = read_uint(argv[1]);
-        if (result < 0)
+        if (argv[i][0] == '-')
         {
-            printf("Could not read m35fd number \"%s\".\n", argv[1]);
+            int result;
+
+            switch (argv[i][1])
+            {
+            case 'B': /* Default floppy endianness options. */
+                default_floppy_endn = 0;
+                break;
+
+            case 'L':
+                default_floppy_endn = 1;
+                break;
+
+            case 'n': /* Set number of m35fd to connect. */
+                if (++i >= argc)
+                {
+                    printf("You need to precise a drive "
+                           "number with option -n.\n");
+                    return 1;
+                }
+                result = read_uint(argv[i]);
+
+                if (result < 0)
+                {
+                    printf("Error reading m35fd number %s.\n", argv[i]);
+                    return 1;
+                }
+                if (!result)
+                {
+                    printf("Cannot set m35fd number to 0.\n");
+                    return 1;
+                }
+
+                m35fd_number = result;
+                break;
+
+            default:
+                printf("Unknown option: %s.\n", argv[i]);
+                return 1;
+            }
+        }
+        else
+        {
+            printf("Unknown option: %s.\n", argv[i]);
             return 1;
         }
-        if (!result)
-        {
-            printf("Cannot set m35fd number to 0.\n");
-            return 1;
-        }
-        m35fd_number = result;
     }
-    else
-        m35fd_number = 1;
 
     m35fd_array = (struct m35fd_context*)
         malloc(sizeof(struct m35fd_context) * m35fd_number);
-    for (i = 0; i < m35fd_number; ++i)
+    for (j = 0; j < m35fd_number; ++j)
     {
-        context.add_hard(info, recv_int, i);
+        context.add_hard(info, recv_int, j);
         /* Other values are set when needed. */
-        m35fd_array[i].state = STATE_NO_MEDIA;
-        m35fd_array[i].last_error = ERROR_NONE;
-        m35fd_array[i].interrupt = 0;
-        m35fd_array[i].current_track = 0;
-        m35fd_array[i].event_ID = 0;
-        pthread_mutex_init(&m35fd_array[i].lock, NULL);
+        m35fd_array[j].state = STATE_NO_MEDIA;
+        m35fd_array[j].last_error = ERROR_NONE;
+        m35fd_array[j].interrupt = 0;
+        m35fd_array[j].current_track = 0;
+        m35fd_array[j].event_ID = 0;
+        pthread_mutex_init(&m35fd_array[j].lock, NULL);
     }
 
     context.add_command("m35fd.insert", cmd_insert);

@@ -89,13 +89,30 @@ emulation speed twice, the second value will be recorded.
     end up using all of your computer's resources, you can enhance a bit the
     performance of the emulator by increasing it.
 
-=== PLUGINS OPTIONS =============================================================
+=== PLUGINS USAGE ==============================================================
+====== CLOCK PLUGIN ============================================================
 
-Currently, plugins only accepts one optional argument specifying the number of
-hardware pieces to add. For example, if you want to plug two clocks to your
-DCPU16, you will launch DDDCPU16 with a similar command line :
+Synopsis:
 
-$ dddcpu16 ram_image.bin -p clock.so 2
+  clock.so [clock_number]
+
+clock_number
+    Select the number of clocks to connect to the DCPU16.
+
+====== M35FD PLUGIN ============================================================
+
+Synopsis:
+
+  m35fd.so [options...]
+
+Options:
+
+-n m35fd_number
+    Select the number of m35fd to connect to the DCPU16.
+
+-B,-L
+    Select default endianness (Big or Little) for the newly inserted floppies.
+    Default is little endian.
 
 === RETURN VALUES ==============================================================
 
@@ -138,8 +155,7 @@ Plugins
    * Implement keyboard.
    * Implement sped-3.
    * m35fd
-     * Handle disk endianness.
-     * Allow starting with a disk already inserted.
+     * Allow starting with floppies already inserted.
 
 General
  * Check const-correctness.

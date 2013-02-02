@@ -70,6 +70,7 @@ struct m35fd_context
     unsigned short memory_location;
     int floppy_fd;
     unsigned short* floppy_map;
+    unsigned int floppy_endn;
     pthread_mutex_t lock;
 };
 
