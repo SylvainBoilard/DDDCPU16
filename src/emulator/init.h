@@ -31,7 +31,7 @@
 #include "timing.h"
 #include "console.h"
 
-extern unsigned int emu_run;
+extern volatile unsigned int emu_run;
 
 int init(int argc, char* argv[]);
 void term(void);

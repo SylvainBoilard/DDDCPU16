@@ -132,19 +132,23 @@ void cancel_event(unsigned long event_ID, void (* callback)(void*))
 
 void trigger_events(void)
 {
+    volatile unsigned int* v_heap_size = &heap_size;
+    volatile unsigned long* v_heap_top_trigger = &events_heap[0].trigger;
+
     /* Greedily check if there seem to be an event to trigger, and then
        only try to take the lock. It forces us to check for events a
        second time after we took the lock to make sure we will not mess
        things up, but we probably will not have an event to trigger after
        every instruction, so this trick will prevent us from taking the
        lock unnecessarily in most cases. */
-    while (heap_size && events_heap[0].trigger <= cycles_counter)
+    while (*v_heap_size && *v_heap_top_trigger <= cycles_counter)
     {
         void (* callback)(void*);
         void* arguments;
+        unsigned int l_heap_size = *v_heap_size;
 
         pthread_mutex_lock(&heap_lock);
-        if (!heap_size || events_heap[0].trigger > cycles_counter)
+        if (!l_heap_size || *v_heap_top_trigger > cycles_counter)
         {
             pthread_mutex_unlock(&heap_lock);
             return;
@@ -153,9 +157,10 @@ void trigger_events(void)
         callback = events_heap[0].callback;
         arguments = events_heap[0].arguments;
 
-        if (--heap_size)
+        *v_heap_size = --l_heap_size;
+        if (l_heap_size)
         {
-            events_heap[0] = events_heap[heap_size];
+            events_heap[0] = events_heap[l_heap_size];
             reorder_elem_down(0);
         }
 
