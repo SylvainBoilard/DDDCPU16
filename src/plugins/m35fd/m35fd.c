@@ -171,26 +171,28 @@ static void do_action(void* argument)
         current_m35fd->disk_sector * SECTOR_SIZE_WORDS;
     if (current_m35fd->is_read)
     {
-        for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
-            context.memory[(current_m35fd->memory_location + i) % 0x10000] =
-                sector_location[i];
-        if (!host_endn())
+        if (host_endn())
             for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
-            {
-                unsigned short* word = context.memory +
-                    ((current_m35fd->memory_location + i) % 0x10000);
-                *word = *word << 8 | *word >> 8;
-            }
+                context.memory[(current_m35fd->memory_location + i) % 0x10000] =
+                    sector_location[i];
+        else
+            for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
+                context.memory[(current_m35fd->memory_location + i) % 0x10000] =
+                    sector_location[i] << 8 | sector_location[i] >> 8;
     }
     else
     {
-        for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
-            sector_location[i] =
-                context.memory[(current_m35fd->memory_location + i) % 0x10000];
-        if (!host_endn())
+        if (host_endn())
             for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
-                sector_location[i] =
-                    sector_location[i] << 8 | sector_location[i] >> 8;
+                sector_location[i] = context.memory [
+                    (current_m35fd->memory_location + i) % 0x10000 ];
+        else
+            for (i = 0; i < SECTOR_SIZE_WORDS; ++i)
+            {
+                unsigned short word = context.memory [
+                    (current_m35fd->memory_location + i) % 0x10000 ];
+                sector_location[i] = word << 8 | word >> 8;
+            }
         msync(sector_location, SECTOR_SIZE_BYTES, MS_ASYNC);
     }
 
