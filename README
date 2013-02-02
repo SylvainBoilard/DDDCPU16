@@ -89,6 +89,13 @@ emulation speed twice, the second value will be recorded.
     end up using all of your computer's resources, you can enhance a bit the
     performance of the emulator by increasing it.
 
+
+Commands:
+
+ * quit
+
+    Exit gracefully from the emulator.
+
 === PLUGINS USAGE ==============================================================
 ====== CLOCK PLUGIN ============================================================
 
@@ -113,6 +120,36 @@ Options:
 -B,-L
     Select default endianness (Big or Little) for the newly inserted floppies.
     Default is little endian.
+
+
+Commands:
+
+ * m35fd.insert [options...] floppy
+
+    Inserts a floppy in a drive.
+
+floppy
+    This file will be used to read and possibly write the floppy. If it does not
+    exist, it will be created.
+
+
+Options:
+
+-n drive_number
+    Select drive in which to insert the floppy. Default is 0.
+
+-B,-L
+    Select endianness (Big or Little) for the floppy to insert. If this option
+    is not present, the default endianness is selected.
+
+
+ * m35fd.eject [drive_number]
+
+    Ejects a floppy from a drive.
+
+drive_number
+    Select drive from which to eject the floppy. Default is 0.
+
 
 === RETURN VALUES ==============================================================
 
