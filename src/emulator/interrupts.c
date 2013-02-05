@@ -44,8 +44,9 @@ void trigger_interrupt(void)
             memory[--SP] = PC;
             memory[--SP] = registers[0];
             PC = IA;
-            registers[0] = int_queue[iq_back];
+            registers[0] = int_queue[++iq_back];
         }
-        ++iq_back;
+        else
+            iq_back = iq_front;
     }
 }
