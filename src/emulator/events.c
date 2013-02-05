@@ -22,8 +22,6 @@
    See <https://en.wikipedia.org/wiki/Binary_heap> */
 struct event events_heap[MAX_EVENTS];
 unsigned int heap_size = 0;
-/* 0 is reserved as a handy value when no event is scheduled. */
-unsigned long higher_event_ID = 0;
 pthread_mutex_t heap_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static void swap_events(unsigned int first, unsigned int second)
@@ -78,6 +76,8 @@ static void reorder_elem_down(unsigned int index)
 unsigned long schedule_event(unsigned long trigger, void (* callback)(void*),
                              void* arguments)
 {
+    /* 0 is reserved as a handy value when no event is scheduled. */
+    static unsigned long higher_event_ID = 0;
     unsigned long event_ID;
 
     pthread_mutex_lock(&heap_lock);
