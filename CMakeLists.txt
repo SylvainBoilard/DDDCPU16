@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(DDDCPU16)
 ENABLE_LANGUAGE(C)
 
-SET(CMAKE_C_FLAGS "-ansi -pedantic -Werror -Wall -Wextra -Wmain -Wmissing-include-dirs -Wmissing-declarations -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wno-unused-parameter -pthread -D_POSIX_C_SOURCE=200809L")
+SET(CMAKE_C_FLAGS "-ansi -pedantic -Wall -Wextra -Wmain -Wmissing-include-dirs -Wmissing-declarations -Wfloat-equal -Wundef -Wcast-align -Wredundant-decls -Winit-self -Wshadow -Wno-unused-parameter -pthread -D_POSIX_C_SOURCE=200809L")
 SET(CMAKE_C_FLAGS_DEBUG "-g")
 SET(CMAKE_C_FLAGS_RELEASE "-s -O2")
 
