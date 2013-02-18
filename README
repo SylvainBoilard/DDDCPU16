@@ -104,7 +104,7 @@ Synopsis:
   clock.so [clock_number]
 
 clock_number
-    Select the number of clocks to connect to the DCPU16.
+    Select the number of clocks to connect to the DCPU16. Default is 1.
 
 ====== M35FD PLUGIN ============================================================
 
@@ -115,7 +115,7 @@ Synopsis:
 Options:
 
 -n m35fd_number
-    Select the number of m35fd to connect to the DCPU16.
+    Select the number of m35fd to connect to the DCPU16. Default is 1.
 
 -B,-L
     Select default endianness (Big or Little) for the newly inserted floppies.
@@ -137,6 +137,9 @@ Options:
 
 -n drive_number
     Select drive in which to insert the floppy. Default is 0.
+
+-p
+    Set write protection.
 
 -B,-L
     Select endianness (Big or Little) for the floppy to insert. If this option
