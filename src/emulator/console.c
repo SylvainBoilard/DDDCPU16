@@ -176,6 +176,10 @@ void term_console(void)
     if (command_table)
     {
         unsigned int i;
+
+        pthread_cancel(console_main_thread);
+        pthread_join(console_main_thread, NULL);
+
         for (i = 0; i < command_table_size; ++i)
             if (command_table[i].name)
                 free((void*)command_table[i].name);
@@ -189,6 +193,4 @@ void term_console(void)
             free((void*)command_node_temp->command.name);
             free(command_node_temp);
         }
-    pthread_cancel(console_main_thread);
-    pthread_join(console_main_thread, NULL);
 }
