@@ -16,32 +16,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LEM1802_H_INCLUDED
-#define LEM1802_H_INCLUDED
+#ifndef DEFAULTS_H_INCLUDED
+#define DEFAULTS_H_INCLUDED
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <pthread.h>
-#include <GL/gl.h>
-#include <SFML/System.h>
-#include <SFML/Window.h>
+extern const unsigned short default_font[256];
+extern const unsigned short default_palette[16];
 
-#include <dddcpu16.h>
-
-#include "defaults.h"
-
-int init(const struct dddcpu16_context* dddcpu16_context,
-         int argc, char* argv[]);
-void term(void);
-
-struct lem1802_context
-{
-    sfWindow* window;
-    unsigned short screen_map;
-    unsigned short font_map;
-    unsigned short palette_map;
-    unsigned short border_color;
-    unsigned int heating;
-};
-
-#endif /* LEM1802_H_INCLUDED */
+#endif /* DEFAULTS_H_INCLUDED */

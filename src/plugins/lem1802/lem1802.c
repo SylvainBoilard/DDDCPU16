@@ -19,10 +19,14 @@
 #include "lem1802.h"
 
 struct dddcpu16_context context;
-unsigned int lem1802_number = 0;
+unsigned int lem1802_number = 1;
 struct lem1802_context* lem1802_array = NULL;
+unsigned int lem1802_ratio = 1;
+unsigned int lem1802_fps = 10;
 
-/*static int read_uint(const char* string)
+pthread_t display_thread;
+
+static int read_uint(const char* string)
 {
     unsigned int result = 0;
 
@@ -38,8 +42,77 @@ struct lem1802_context* lem1802_array = NULL;
     return result;
 }
 
+static void display_lem1802(unsigned int n)
+{
+    const unsigned short* font = lem1802_array[n].font_map ?
+        context.memory + lem1802_array[n].font_map : default_font;
+    unsigned int i;
+
+    sfWindow_setActive(lem1802_array[n].window, 1);
+
+    for (i = 0; i < 384; ++i)
+    {
+        /* Draw what is in the VRAM. */
+    }
+
+    sfWindow_display(lem1802_array[n].window);
+}
+
+static void* lem1802_run(void* argument)
+{
+    while (1)
+    {
+        unsigned int i;
+
+        pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
+
+        for (i = 0; i < lem1802_number; ++i)
+            display_lem1802(i);
+
+        pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+        pthread_testcancel();
+    }
+
+    return NULL; /* This function never actually returns. */
+}
+
 static unsigned int recv_int(unsigned short PCID)
 {
+    unsigned int i;
+
+    switch (context.registers[0])
+    {
+    case 0:
+        lem1802_array[PCID].screen_map = context.registers[1];
+        break;
+
+    case 1:
+        lem1802_array[PCID].font_map = context.registers[1];
+        break;
+
+    case 2:
+        lem1802_array[PCID].palette_map = context.registers[1];
+        break;
+
+    case 3:
+        lem1802_array[PCID].border_color = context.registers[1];
+        break;
+
+    case 4:
+        for (i = 0; i < 256; ++i)
+            context.memory[(context.registers[1] + i) % 0x10000] =
+                default_font[i];
+        return 256;
+
+    case 5:
+        for (i = 0; i < 16; ++i)
+            context.memory[(context.registers[1] + i) % 0x10000] =
+                default_palette[i];
+        return 16;
+
+    default:;
+    }
+
     return 0;
 }
 
@@ -50,12 +123,124 @@ static void info(void)
     context.registers[2] = 0x1802;
     context.registers[3] = 0x8b36;
     context.registers[4] = 0x1c6c;
-}*/
+}
 
 int init(const struct dddcpu16_context* dddcpu16_context,
          int argc, char* argv[])
 {
+    int i;
+    unsigned int j;
+    sfVideoMode videomode;
     context = *dddcpu16_context;
+
+    for (i = 1; i < argc; ++i)
+    {
+        if (argv[i][0] == '-')
+        {
+            int result;
+
+            switch (argv[i][1])
+            {
+            case 'f': /* Set lem1802 refresh rate. */
+                if (++i >= argc)
+                {
+                    printf("You need to precise a refresh "
+                           "rate number with option -f.\n");
+                    return 1;
+                }
+                result = read_uint(argv[i]);
+
+                if (result < 0)
+                {
+                    printf("Error reading refresh rate %s.\n", argv[i]);
+                    return 1;
+                }
+                if (!result)
+                {
+                    printf("Cannot set refresh rate to 0.\n");
+                    return 1;
+                }
+
+                lem1802_fps = result;
+                break;
+
+            case 'n': /* Set number of lem1802 to connect. */
+                if (++i >= argc)
+                {
+                    printf("You need to precise a lem1802 "
+                           "number with option -n.\n");
+                    return 1;
+                }
+                result = read_uint(argv[i]);
+
+                if (result < 0)
+                {
+                    printf("Error reading lem1802 number %s.\n", argv[i]);
+                    return 1;
+                }
+                if (!result)
+                {
+                    printf("Cannot set lem1802 number to 0.\n");
+                    return 1;
+                }
+
+                lem1802_number = result;
+                break;
+
+            case 'r': /* Set lem1802 display ratio. */
+                if (++i >= argc)
+                {
+                    printf("You need to precise a positive "
+                           "integer with option -r.\n");
+                    return 1;
+                }
+                result = read_uint(argv[i]);
+
+                if (result < 0)
+                {
+                    printf("Error reading ratio %s.\n", argv[i]);
+                    return 1;
+                }
+                if (!result)
+                {
+                    printf("Cannot set ratio to 0.\n");
+                    return 1;
+                }
+
+                lem1802_ratio = result;
+                break;
+
+            default:
+                printf("Unknown option: %s.\n", argv[i]);
+                return 1;
+            }
+        }
+        else
+        {
+            printf("Unknown option: %s.\n", argv[i]);
+            return 1;
+        }
+    }
+
+    lem1802_array = (struct lem1802_context*)
+        malloc(sizeof(struct lem1802_context) * lem1802_number);
+    videomode.width = lem1802_ratio * 136;
+    videomode.height = lem1802_ratio * 104;
+    videomode.bitsPerPixel = 12;
+    for (j = 0; j < lem1802_number; ++j)
+    {
+        context.add_hard(info, recv_int, j);
+        lem1802_array[j].window =
+            sfWindow_create(videomode, "LEM1802", sfTitlebar, NULL);
+        lem1802_array[j].screen_map = 0;
+        lem1802_array[j].font_map = 0;
+        lem1802_array[j].palette_map = 0;
+        lem1802_array[j].border_color = 0;
+        lem1802_array[j].heating = 0;
+        sfWindow_setFramerateLimit(lem1802_array[j].window, lem1802_fps);
+    }
+
+    pthread_create(&display_thread, NULL, lem1802_run, NULL);
 
     return 0;
 }
@@ -65,8 +250,12 @@ void term(void)
     if (lem1802_array)
     {
         unsigned int i;
+
+        pthread_cancel(display_thread);
+        pthread_join(display_thread, NULL);
+
         for (i = 0; i < lem1802_number; ++i)
-            ;
+            sfWindow_destroy(lem1802_array[i].window);
         free(lem1802_array);
     }
 }
