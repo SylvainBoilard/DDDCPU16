@@ -44,16 +44,62 @@ static int read_uint(const char* string)
 
 static void display_lem1802(unsigned int n)
 {
-    const unsigned short* font = lem1802_array[n].font_map ?
-        context.memory + lem1802_array[n].font_map : default_font;
-    unsigned int i;
+    const unsigned short* font;
+    const unsigned short* palette;
+    unsigned short border_color;
+    unsigned char i;
+    unsigned char j;
 
     sfWindow_setActive(lem1802_array[n].window, 1);
 
-    for (i = 0; i < 384; ++i)
+    if (!lem1802_array[n].screen_map ||
+        ++lem1802_array[n].heating < lem1802_fps)
     {
-        /* Draw what is in the VRAM. */
+        float val = (float)lem1802_array[n].heating / lem1802_fps;
+        glClearColor(val, val, val, 0.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        sfWindow_display(lem1802_array[n].window);
+        return;
     }
+
+    font = lem1802_array[n].font_map ?
+        context.memory + lem1802_array[n].font_map : default_font;
+    palette = lem1802_array[n].palette_map ?
+        context.memory + lem1802_array[n].palette_map : default_palette;
+    border_color = palette[lem1802_array[n].border_color];
+
+    glClearColor((border_color >> 4 & 0xf0) / 16.f,
+                 (border_color & 0xf0) / 16.f,
+                 (border_color << 4 & 0xf0) / 16.f,
+                 0.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    for (i = 0; i < 12; ++i)
+        for (j = 0; j < 32; ++j)
+        {
+            /* TODO:
+               - Prevent overflows.
+               - Handle endianness.
+               - Support scaling.
+               - Get colors to work. */
+            const unsigned short current_char =
+                context.memory[lem1802_array[n].screen_map + i * 32 + j];
+            const unsigned short colors[2] = {
+                palette[current_char >> 8 & 0xf], palette[current_char >> 12]
+            };
+            unsigned int bits = 0;
+
+            glColorTable(GL_COLOR_TABLE, GL_RGB4, 2, GL_RGB,
+                         GL_UNSIGNED_SHORT_4_4_4_4, colors);
+            glRasterPos2s(12 + 8 * i, 8 + 4 * j);
+            if (!(current_char >> 7 & 1) ||
+                (lem1802_array[n].heating / lem1802_fps) % 2)
+            {
+                bits = font[(current_char & 0x7f) * 2] << 16 |
+                    font[(current_char & 0x7f) * 2 + 1];
+            }
+            glBitmap(8, 4, 0.f, 0.f, 0.f, 0.f, (const GLubyte*)&bits);
+        }
 
     sfWindow_display(lem1802_array[n].window);
 }
@@ -84,6 +130,8 @@ static unsigned int recv_int(unsigned short PCID)
     {
     case 0:
         lem1802_array[PCID].screen_map = context.registers[1];
+        if (!lem1802_array[PCID].screen_map)
+            lem1802_array[PCID].heating = 0;
         break;
 
     case 1:
@@ -224,14 +272,17 @@ int init(const struct dddcpu16_context* dddcpu16_context,
 
     lem1802_array = (struct lem1802_context*)
         malloc(sizeof(struct lem1802_context) * lem1802_number);
-    videomode.width = lem1802_ratio * 136;
-    videomode.height = lem1802_ratio * 104;
+    videomode.width = lem1802_ratio * 104;
+    videomode.height = lem1802_ratio * 136;
     videomode.bitsPerPixel = 12;
     for (j = 0; j < lem1802_number; ++j)
     {
         context.add_hard(info, recv_int, j);
-        lem1802_array[j].window =
+        lem1802_array[j].window = /* TODO: Handle failing to create a window. */
             sfWindow_create(videomode, "LEM1802", sfTitlebar, NULL);
+        sfWindow_setActive(lem1802_array[j].window, 0);
+        glOrtho(104, 0, 136, 0, 1, -1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         lem1802_array[j].screen_map = 0;
         lem1802_array[j].font_map = 0;
         lem1802_array[j].palette_map = 0;
