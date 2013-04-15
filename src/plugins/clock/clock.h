@@ -39,4 +39,4 @@ struct clock_context
     unsigned short interrupt;
 };
 
-#endif /* CLOCK_H_INCLUDED */
+#endif // CLOCK_H_INCLUDED

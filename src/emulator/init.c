@@ -20,7 +20,7 @@
 
 volatile unsigned int emu_run = 1;
 
-/* Returns 1 if host uses little-endian, 0 overwise. */
+// Returns 1 if host uses little-endian, 0 overwise.
 static unsigned int host_endn(void)
 {
     const unsigned int test = 0x00000001;
@@ -64,7 +64,7 @@ int init(int argc, char* argv[])
 {
     struct sigaction sigaction_term;
     unsigned int ram_image_index = 0;
-    unsigned int ram_image_endn = 1; /* Default is little endian. */
+    unsigned int ram_image_endn = 1; // Default is little endian.
     int i;
     int ret_val;
 
@@ -83,7 +83,7 @@ int init(int argc, char* argv[])
 
             switch (argv[i][1])
             {
-            case 'B': /* Ram image's endian-ness options. */
+            case 'B': // Ram image's endian-ness options.
                 ram_image_endn = 0;
                 break;
 
@@ -91,7 +91,7 @@ int init(int argc, char* argv[])
                 ram_image_endn = 1;
                 break;
 
-            case 'G': /* Granularity for emulation timing option. */
+            case 'G': // Granularity for emulation timing option.
                 if (++i >= argc)
                 {
                     printf("You need to precise a granularity "
@@ -119,7 +119,7 @@ int init(int argc, char* argv[])
                 emu_granularity = value;
                 break;
 
-            case 's': /* Emulation speed option. */
+            case 's': // Emulation speed option.
                 if (++i >= argc)
                 {
                     printf("You need to precise a speed with option -s.\n");
@@ -141,7 +141,7 @@ int init(int argc, char* argv[])
                 emu_speed = value;
                 break;
 
-            case 'f': /* Emulation frequency option. */
+            case 'f': // Emulation frequency option.
                 if (++i >= argc)
                 {
                     printf("You need to precise a frequency with option -f.\n");
@@ -163,7 +163,7 @@ int init(int argc, char* argv[])
                 emu_freq = value;
                 break;
 
-            case 'p': /* Plugin loading option. */
+            case 'p': // Plugin loading option.
                 ++curr_arg;
                 while (++i < argc && strcmp(argv[i], "--"));
                 if (i == curr_arg)

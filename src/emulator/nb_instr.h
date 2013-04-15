@@ -25,4 +25,4 @@
 
 extern void (* const nb_instr[])(unsigned short* a);
 
-#endif /* NB_INSTR_H */
+#endif // NB_INSTR_H

@@ -25,7 +25,7 @@ static void jsr(unsigned short* a)
     cycles_counter += 3;
 }
 
-static void swi(unsigned short* a) /* Called INT in spec. */
+static void swi(unsigned short* a) // Called INT in spec.
 {
     recv_int(*a);
     cycles_counter += 4;
@@ -76,7 +76,7 @@ static void hwi(unsigned short* a)
 
 static void NONE(unsigned short* a)
 {
-    ++cycles_counter; /* See main.c for explanations. */
+    ++cycles_counter; // See main.c for explanations.
 }
 
 void (* const nb_instr[])(unsigned short* a) = {

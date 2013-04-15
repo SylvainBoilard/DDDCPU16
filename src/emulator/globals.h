@@ -30,4 +30,4 @@ extern unsigned long emu_freq;
 extern unsigned int emu_speed;
 extern unsigned int emu_granularity;
 
-#endif /* GLOBALS_H_INCLUDED */
+#endif // GLOBALS_H_INCLUDED

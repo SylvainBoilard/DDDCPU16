@@ -34,14 +34,14 @@ void add_plugin(int plugin_argc, char* plugin_argv[])
 int load_plugins(void)
 {
     struct dddcpu16_context context;
-    /* Variables */
+    // Variables
     context.memory = memory;
     context.registers = registers;
     context.cycles_counter = &cycles_counter;
     context.emu_freq = emu_freq;
     context.emu_speed = emu_speed;
     context.emu_granularity = emu_granularity;
-    /* Functions */
+    // Functions
     context.add_hard = add_hard;
     context.add_command = add_command;
     context.send_int = recv_int;
@@ -83,7 +83,7 @@ int load_plugins(void)
             return 2;
         }
 
-        /* Plugin is correctly loaded, we can push it. */
+        // Plugin is correctly loaded, we can push it.
         plugin_node_temp =
             (struct plugin_node*)malloc(sizeof(struct plugin_node));
         plugin_node_temp->dl_handle = dl_handle;

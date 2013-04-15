@@ -52,4 +52,4 @@ void add_command(const char* name,
 void init_console(void);
 void term_console(void);
 
-#endif /* CONSOLE_H_INCLUDED */
+#endif // CONSOLE_H_INCLUDED

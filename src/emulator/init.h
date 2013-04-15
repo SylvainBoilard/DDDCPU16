@@ -36,4 +36,4 @@ extern volatile unsigned int emu_run;
 int init(int argc, char* argv[]);
 void term(void);
 
-#endif /* INIT_H_INCLUDED */
+#endif // INIT_H_INCLUDED

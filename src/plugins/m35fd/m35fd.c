@@ -25,7 +25,7 @@ unsigned int m35fd_number = 1;
 struct m35fd_context* m35fd_array = NULL;
 unsigned int default_floppy_endn = 1;
 
-/* Returns 1 if host uses little-endian, 0 overwise. */
+// Returns 1 if host uses little-endian, 0 overwise.
 static unsigned int host_endn(void)
 {
     const unsigned int test = 0x00000001;
@@ -56,7 +56,7 @@ static void cmd_insert(unsigned int argc, const char* argv[])
     unsigned int filename_index = 0;
     unsigned int i;
 
-    /* printf("Usage: m35fd.insert <filename> [-p] [-B|-L] [-n drive_number]\n"); */
+    // printf("Usage: m35fd.insert <filename> [-p] [-B|-L] [-n drive_number]\n");
 
     for (i = 1; i < argc; ++i)
     {
@@ -66,7 +66,7 @@ static void cmd_insert(unsigned int argc, const char* argv[])
 
             switch (argv[i][1])
             {
-            case 'B': /* Floppy endianness options. */
+            case 'B': // Floppy endianness options.
                 floppy_endn = 0;
                 break;
 
@@ -74,11 +74,11 @@ static void cmd_insert(unsigned int argc, const char* argv[])
                 floppy_endn = 1;
                 break;
 
-            case 'p': /* Set write protection. */
+            case 'p': // Set write protection.
                 write_protect = 1;
                 break;
 
-            case 'n': /* Select drive by ID. */
+            case 'n': // Select drive by ID.
                 if (++i >= argc)
                 {
                     printf("You need to precise a drive "
@@ -285,7 +285,7 @@ static void schedule_action(unsigned int is_read, unsigned short disk_sector,
     }
 
     tracks_delta = m35fd_array[PCID].current_track - disk_sector / 80;
-    /* We assume sector seek time is 0 here. */
+    // We assume sector seek time is 0 here.
     do_cycle = *context.cycles_counter + context.emu_freq / 60 +
         abs(tracks_delta) * context.emu_freq * 24 / 10000;
     m35fd_array[PCID].event_ID =
@@ -358,7 +358,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
 
             switch (argv[i][1])
             {
-            case 'B': /* Default floppy endianness options. */
+            case 'B': // Default floppy endianness options.
                 default_floppy_endn = 0;
                 break;
 
@@ -366,7 +366,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
                 default_floppy_endn = 1;
                 break;
 
-            case 'n': /* Set number of m35fd to connect. */
+            case 'n': // Set number of m35fd to connect.
                 if (++i >= argc)
                 {
                     printf("You need to precise a drive "
@@ -406,7 +406,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
     for (j = 0; j < m35fd_number; ++j)
     {
         context.add_hard(info, recv_int, j);
-        /* Other values are set when needed. */
+        // Other values are set when needed.
         m35fd_array[j].state = STATE_NO_MEDIA;
         m35fd_array[j].last_error = ERROR_NONE;
         m35fd_array[j].interrupt = 0;

@@ -26,4 +26,4 @@
 void init_timing(void);
 void term_timing(void);
 
-#endif /* TIMING_H_INCLUDED */
+#endif // TIMING_H_INCLUDED

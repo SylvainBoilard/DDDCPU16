@@ -63,7 +63,7 @@ static void reorder_elem_down(unsigned int index)
         index = lower_child;
     }
 
-    /* Special case for a possible mono-leaf node. */
+    // Special case for a possible mono-leaf node.
     if (index == half_size && !(heap_size % 2))
     {
         unsigned int child = index * 2 + 1;
@@ -76,7 +76,7 @@ static void reorder_elem_down(unsigned int index)
 unsigned long schedule_event(unsigned long trigger, void (* callback)(void*),
                              void* arguments)
 {
-    /* 0 is reserved as a handy value when no event is scheduled. */
+    // 0 is reserved as a handy value when no event is scheduled.
     static unsigned long higher_event_ID = 0;
     unsigned long event_ID;
 

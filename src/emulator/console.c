@@ -66,7 +66,7 @@ static void* console_main(void* arguments)
            and update read_length accordingly. */
         buffer[--read_length] = '\0';
 
-        /* Split command line against spaces. */
+        // Split command line against spaces.
         do
         {
             while (buffer[i] == ' ')
@@ -80,7 +80,7 @@ static void* console_main(void* arguments)
             offset_node_temp->next = offset_list;
             offset_list = offset_node_temp;
             ++argc;
-            while (buffer[i] & 0xdf) /* Not a space or a '\0'. */
+            while (buffer[i] & 0xdf) // Not a space or a '\0'.
                 ++i;
             buffer[i] = '\0';
         }

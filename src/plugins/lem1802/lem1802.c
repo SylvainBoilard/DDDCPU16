@@ -119,7 +119,7 @@ static void* lem1802_run(void* argument)
         pthread_testcancel();
     }
 
-    return NULL; /* This function never actually returns. */
+    return NULL; // This function never actually returns.
 }
 
 static unsigned int recv_int(unsigned short PCID)
@@ -189,7 +189,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
 
             switch (argv[i][1])
             {
-            case 'f': /* Set lem1802 refresh rate. */
+            case 'f': // Set lem1802 refresh rate.
                 if (++i >= argc)
                 {
                     printf("You need to precise a refresh "
@@ -212,7 +212,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
                 lem1802_fps = result;
                 break;
 
-            case 'n': /* Set number of lem1802 to connect. */
+            case 'n': // Set number of lem1802 to connect.
                 if (++i >= argc)
                 {
                     printf("You need to precise a lem1802 "
@@ -235,7 +235,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
                 lem1802_number = result;
                 break;
 
-            case 'r': /* Set lem1802 display ratio. */
+            case 'r': // Set lem1802 display ratio.
                 if (++i >= argc)
                 {
                     printf("You need to precise a positive "
@@ -278,7 +278,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
     for (j = 0; j < lem1802_number; ++j)
     {
         context.add_hard(info, recv_int, j);
-        lem1802_array[j].window = /* TODO: Handle failing to create a window. */
+        lem1802_array[j].window = // TODO: Handle failing to create a window.
             sfWindow_create(videomode, "LEM1802", sfTitlebar, NULL);
         sfWindow_setActive(lem1802_array[j].window, 0);
         glOrtho(104, 0, 136, 0, 1, -1);

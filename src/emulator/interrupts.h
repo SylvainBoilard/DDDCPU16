@@ -29,4 +29,4 @@ extern unsigned int int_queueing;
 void recv_int(unsigned short int_val);
 void trigger_interrupt(void);
 
-#endif /* INTERRUPTS_H_INCLUDED */
+#endif // INTERRUPTS_H_INCLUDED

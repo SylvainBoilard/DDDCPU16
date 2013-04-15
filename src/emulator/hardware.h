@@ -44,4 +44,4 @@ unsigned short hard_count(void);
 void hard_info(unsigned short hard_no);
 unsigned long hard_send_int(unsigned short hard_no);
 
-#endif /* HARDWARE_H_INCLUDED */
+#endif // HARDWARE_H_INCLUDED

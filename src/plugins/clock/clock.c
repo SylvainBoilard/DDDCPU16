@@ -135,7 +135,7 @@ int init(const struct dddcpu16_context* dddcpu16_context,
     for (i = 0; i < clock_number; ++i)
     {
         context.add_hard(info, recv_int, i);
-        /* Other values are set when needed. */
+        // Other values are set when needed.
         clock_array[i].interrupt = 0;
         clock_array[i].event_ID = 0;
     }

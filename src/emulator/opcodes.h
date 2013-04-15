@@ -23,4 +23,4 @@
 
 extern void (* const opcodes[])(unsigned short* b, const unsigned short* a);
 
-#endif /* OPCODES_H_INCLUDED */
+#endif // OPCODES_H_INCLUDED

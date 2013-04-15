@@ -48,4 +48,4 @@ void add_plugin(int plugin_argc, char* plugin_argv[]);
 int load_plugins(void);
 void free_plugins(void);
 
-#endif /* PLUGIN_H_INCLUDED */
+#endif // PLUGIN_H_INCLUDED

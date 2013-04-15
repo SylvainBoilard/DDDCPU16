@@ -23,4 +23,4 @@
 
 extern unsigned short*(* const advanced[])(unsigned short is_a);
 
-#endif /* ADV_H_INCLUDED */
+#endif // ADV_H_INCLUDED

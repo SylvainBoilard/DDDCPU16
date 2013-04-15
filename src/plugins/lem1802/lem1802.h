@@ -44,4 +44,4 @@ struct lem1802_context
     unsigned int heating;
 };
 
-#endif /* LEM1802_H_INCLUDED */
+#endif // LEM1802_H_INCLUDED

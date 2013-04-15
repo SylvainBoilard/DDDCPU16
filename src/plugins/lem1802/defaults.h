@@ -22,4 +22,4 @@
 extern const unsigned short default_font[256];
 extern const unsigned short default_palette[16];
 
-#endif /* DEFAULTS_H_INCLUDED */
+#endif // DEFAULTS_H_INCLUDED

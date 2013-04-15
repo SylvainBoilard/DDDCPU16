@@ -18,7 +18,7 @@
 
 #include "opcodes.h"
 
-/* This macro checks if the given value reads a word. */
+// This macro checks if the given value reads a word.
 #define VRW(op) \
     (((op & 0x30) == 0x10) && ((op & 0x0A) != 0x08) && ((op & 0x0D) != 0x09))
 
@@ -252,7 +252,7 @@ static void std(unsigned short* b, const unsigned short* a)
 
 static void NONE(unsigned short* b, const unsigned short* a)
 {
-    ++cycles_counter; /* See main.c for explanations. */
+    ++cycles_counter; // See main.c for explanations.
 }
 
 void (* const opcodes[])(unsigned short* b, const unsigned short* a) = {

@@ -74,4 +74,4 @@ struct m35fd_context
     pthread_mutex_t lock;
 };
 
-#endif /* M35FD_H_INCLUDED */
+#endif // M35FD_H_INCLUDED
