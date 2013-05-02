@@ -1,6 +1,12 @@
 # This script locates the CSFML library
 # ------------------------------------
 #
+# This script is a modified version of the FindSFML.cmake script from the SFML
+# source tree. Basicaly, every occurrences of "sfml" is replaced with "csfml",
+# and every occurrences of "hpp" is replaced with "h", for lower and upper cases.
+# Modifications made by Sylvain Boilard <boilard@crans.org>.
+# --------------------
+#
 # Usage
 # -----
 #
