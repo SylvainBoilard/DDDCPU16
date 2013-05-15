@@ -18,7 +18,7 @@
 
 #include "init.h"
 
-volatile unsigned int emu_run = 1;
+unsigned int emu_run = 1;
 
 // Returns 1 if host uses little-endian, 0 overwise.
 static unsigned int host_endn(void)
