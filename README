@@ -189,13 +189,16 @@ Emulator
    * Add basic 'help' command to list available commands.
 
 Plugins
+ * Make plugins get API entries with dlopen instead of via a context structure.
  * Implement debug plugin.
  * Hardware
-   * Implement lem1802.
+   * Finish to implement lem1802.
    * Implement keyboard.
    * Implement sped-3.
    * m35fd
      * Allow starting with floppies already inserted.
+     * Fix crashing when legitimately trying to access data at the end of a
+       floppy while the underlying file is smaller than an entire floppy.
 
 General
  * Check const-correctness.
