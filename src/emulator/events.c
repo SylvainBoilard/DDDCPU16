@@ -145,9 +145,11 @@ void trigger_events(void)
     {
         void (* callback)(void*);
         void* arguments;
-        unsigned int l_heap_size = *v_heap_size;
+        unsigned int l_heap_size;
 
         pthread_mutex_lock(&heap_lock);
+
+        l_heap_size = *v_heap_size;
         if (!l_heap_size || *v_heap_top_trigger > cycles_counter)
         {
             pthread_mutex_unlock(&heap_lock);
